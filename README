@@ -1,0 +1,28 @@
+mktoc v1.0 // (c) 2008, Patrick C. McGinty, mktoc[@]tuxcoder[dot]com
+
+Description:
+   Convert an ExactAudioCopy (EAC) CUE file to the TOC format that is readable
+   by 'cdrdao'.
+
+   This program focuses primarily on EAC CUE files. It includes support for
+   non-compliant CUE files, including pregaps at the end of previous tracks.
+   There are additional features to detect and fix incorrect file path names and
+   extension types.
+
+Usage:
+   mktoc.py [CUE_FILE]
+   mktoc.py [CUE_FILE] -o [TOC_FILE]
+   mktoc.py < CUE_FILE
+
+   CUE_FILE must contain a valid CUE format. When FILE is not provided, the
+   program will read from STDIN. All output will be sent to STDOUT.
+
+   All attempts will be made to preserve any and all information from the input
+   file. For any case where the CUE file contains unknown or bad values, the
+   user will be notified on STDERR.
+
+E-mail:
+   mktoc[@]tuxcoder[dot]com
+
+Info:
+   http://blog.tuxcoder.com
