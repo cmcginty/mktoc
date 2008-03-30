@@ -61,7 +61,7 @@ DATE     = '2008'
 AUTHOR   = 'Patrick C. McGinty'
 EMAIL    = 'mktoc[@]tuxcoder[dot]com'
 
-WAV_PAT = re.compile(r'\.wav$', re.IGNORECASE)
+WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
 
 # WAV file reading command-line switch
 #  - allow 'file not found' errors when reading WAV files
@@ -238,9 +238,9 @@ class CueParser(object):
 
       self._opt = opt
       # create a list of regular expressions before starting the parse
-      re_rem   = re.compile( r'^\s*REM\s+COMMENT' )
+      rem_regex   = re.compile( r'^\s*REM\s+COMMENT' )
       # parse disc into memory, ignore comments
-      self._cue = [l.strip() for l in fh.readlines() if not re_rem.search(l)]
+      self._cue = [l.strip() for l in fh.readlines() if not rem_regex.search(l)]
       self._build_lookup_tbl()
       # create data objects for CUE info
       self._disc    = self._parse_disc()
@@ -611,15 +611,19 @@ class TrackIndex(object):
       # convert a DOS file path to Linux
       tmp_name = tmp_name.replace('\\','/')
       # base case: file exists, and is has a 'WAV' extension
-      if WAV_PAT.search(tmp_name) and os.path.exists(tmp_name):
+      if WAV_REGEX.search(tmp_name) and os.path.exists(tmp_name):
          return file_       # return match
       # case 2: file is locatable in path with a little work
       fn = os.path.basename(tmp_name)     # strip leading path
       fn,ext = os.path.splitext(fn)       # strip extension
-      file_pat = re.compile(fn, re.IGNORECASE)
+      fn = os.sep + fn + '.wav'     # full file name to search
+      # escape any special characters in the file, and the '$' prevents
+      # matching if any extra chars come after the name
+      fn_pat = re.escape(fn)  + '$'
+      file_regex = re.compile( fn_pat, re.IGNORECASE)
       for f in WavFileCache():
-         if file_pat.search(f):  # if match was found
-            return f             # return match
+         if file_regex.search(f):   # if match was found
+            return f                # return match
       raise CueFileNotFoundError, file_
 
 
@@ -701,7 +705,7 @@ class WavFileCache(list):
          if fc > 1000: break     # only cache first n files
          fc += len(files)
          f_tup = zip( [root]*len(files), files )
-         wav_files = [os.path.join(r,f) for r,f in f_tup if WAV_PAT.search(f)]
+         wav_files = [os.path.join(r,f) for r,f in f_tup if WAV_REGEX.search(f)]
          self.extend( wav_files )
 
 
