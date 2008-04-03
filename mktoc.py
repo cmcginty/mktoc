@@ -118,6 +118,8 @@ def main():
                      (OPT_TEMP_WAV, OPT_OFFSET_CORRECT) )
    # open CUE file
    if opt.cue_file:
+      # set the working dir of the input file
+      opt.cue_dir = os.path.dirname( opt.cue_file )
       try:
          fh_in = open(opt.cue_file)
       except:
@@ -136,7 +138,7 @@ def main():
       fh_out = sys.stdout
 
    # !! Main program steps begin here !!
-   cue_parse = CueParser(fh_in, opt)
+   cue_parse = CueParser(fh_in, **opt.__dict__)
    if opt.wav_offset:
       cue_parse.mod_wav_offset( opt.wav_offset )
    data = cue_parse.get_toc()
@@ -177,8 +179,12 @@ def error_msg_file(e):
 ##############################################################################
 class CueParser(object):
    """"""
-   def __init__(self, fh, opt):
+   def __init__(self, fh, **opts):
       """"""
+      # init class options
+      self._opts = opts
+      opts.setdefault('find_wav', True)
+      opts.setdefault('cue_dir', '.')
       # global search pattern unused in all other searches
       file_regex  = [
          ('file',  r"""
@@ -233,10 +239,9 @@ class CueParser(object):
 
       self._part_search  = RegExDict( dict(file_regex + track_regex) )
       self._disc_search  = RegExDict( dict(file_regex + disc_regex) )
-      self._tinfo_search = RegExDict(
-                              dict(file_regex + tinfo_regex + track_regex) )
+      self._tinfo_search = RegExDict( dict(file_regex + tinfo_regex + \
+                                             track_regex) )
 
-      self._opt = opt
       # create a list of regular expressions before starting the parse
       rem_regex   = re.compile( r'^\s*REM\s+COMMENT' )
       # parse disc into memory, ignore comments
@@ -348,7 +353,9 @@ class CueParser(object):
          elif re_key == 'index':
             # track INDEX, file_name is associated with the index
             idx_num,time = match.groups()
-            i = TrackIndex(idx_num, time, file_name, self._opt.find_wav)
+            i = TrackIndex(idx_num, time, file_name,
+                           file_exists = self._opts['find_wav'],
+                           search_dir  = self._opts['cue_dir'])
             trk.append_idx( i )
          elif re_key == 'quote' or re_key == 'named':
             # track information (PERFORMER, TITLE, ...)
@@ -518,17 +525,19 @@ class TrackIndex(object):
    """"""
    PREAUDIO, AUDIO, INDEX, START = range(4)
 
-   def __init__(self, num, time, file_, find_file ):
+   def __init__(self, num, time, file_, **opts):
       """"""
+      opts.setdefault('search_dir','.')
+      opts.setdefault('file_exists',True)
       self.num = int(num)
       self.time = TrackTime(time)
       self.cmd  = self.AUDIO
+      self.file_ = file_
       try:  # attempt to find the WAV file for this index
-         self.file_ = self._mung_file(file_)
+         self.file_ = self._mung_file(file_, opts['search_dir'])
       except CueFileNotFoundError:
-         if find_file is False:
-            self.file_ = file_
-         else: raise    # notify the user that there was a failure
+         # notify the user that there was a failure
+         if opts['file_exists']: raise
       # set length to maximum possible for now (total - start)
       file_len = self._file_len()
       if file_len:
@@ -605,7 +614,7 @@ class TrackIndex(object):
       w.close()
       return TrackTime(frames)
 
-   def _mung_file(self,file_):
+   def _mung_file(self, file_, dir_):
       """Mung the file name, to an existing WAV file name"""
       tmp_name = file_
       # convert a DOS file path to Linux
@@ -621,7 +630,7 @@ class TrackIndex(object):
       # matching if any extra chars come after the name
       fn_pat = re.escape(fn)  + '$'
       file_regex = re.compile( fn_pat, re.IGNORECASE)
-      for f in WavFileCache():
+      for f in WavFileCache(dir_):
          if file_regex.search(f):   # if match was found
             return f                # return match
       raise CueFileNotFoundError, file_
@@ -692,16 +701,16 @@ class WavFileCache(list):
       inst = cls.__dict__.get('__instance__')
       if inst is None:
          cls.__instance__ = inst = list.__new__(cls)
-         WavFileCache._init_cache(inst)
+         WavFileCache._init_cache(inst,*args,**kwargs)
       return inst
 
    # this line is required, or no elements will show up in the list
-   def __init__(self): pass
+   def __init__(self,_dir): pass
 
-   def _init_cache(self):
+   def _init_cache(self,_dir):
       """Return a list of files in the vicinity of the current working dir."""
       fc = 0
-      for root, dirs, files in os.walk('.'):
+      for root, dirs, files in os.walk(_dir):
          if fc > 1000: break     # only cache first n files
          fc += len(files)
          f_tup = zip( [root]*len(files), files )

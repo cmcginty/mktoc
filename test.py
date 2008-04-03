@@ -14,10 +14,6 @@ import mktoc
 CUE_DIR = './cue'
 TOC_DIR = './toc'
 
-# create a class to hold default mktoc command line options
-class DefaultOpt:
-   find_wav = False  # ignore missing wav files
-
 class IntegrationTest(unittest.TestCase):
 
    if not os.path.exists(CUE_DIR): os.mkdir(CUE_DIR)
@@ -86,7 +82,7 @@ class IntegrationTest(unittest.TestCase):
       if not os.path.exists(toc_path):
          cue_fh = open(os.path.join(CUE_DIR,self.cue_file))
          toc_fh = open(toc_path,'w')
-         toc_str = mktoc.CueParser(cue_fh, DefaultOpt()).get_toc()
+         toc_str = mktoc.CueParser(cue_fh, find_wav=False).get_toc()
          # write the data
          toc_fh.write( toc_str.read() )
          cue_fh.close()
@@ -95,7 +91,7 @@ class IntegrationTest(unittest.TestCase):
    def check_file(self):
       # calculate test data
       cue_fh = open(os.path.join(CUE_DIR,self.cue_file))
-      toc_fh = mktoc.CueParser(cue_fh, DefaultOpt()).get_toc()
+      toc_fh = mktoc.CueParser(cue_fh, find_wav=False).get_toc()
       cue_fh.close()
       toc = [s for s in toc_fh.readlines()]
       toc_fh.close()
