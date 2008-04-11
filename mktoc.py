@@ -96,7 +96,7 @@ def main():
          help='specify the input CUE file to read')
    parser.add_option('-o', '--output', dest='toc_file',
          help='specify the output TOC file to write')
-   parser.add_option(OPT_TEMP_WAV, '--use-temp', dest='wav_temp',
+   parser.add_option(OPT_TEMP_WAV, '--use-temp', dest='write_tmp',
          action='store_true', default=False,
          help='write offset corrected WAV files to /tmp directory' )
    opt,args = parser.parse_args()
@@ -179,12 +179,12 @@ def error_msg_file(e):
 ##############################################################################
 class CueParser(object):
    """"""
-   def __init__(self, fh, **opts):
+   def __init__(self, fh, find_wav=True, cue_dir='.', write_tmp=False):
       """"""
       # init class options
-      self._opts = opts
-      opts.setdefault('find_wav', True)
-      opts.setdefault('cue_dir', '.')
+      self._find_wav = find_wav
+      self._cue_dir = cue_dir
+      self._write_tmp = write_tmp
       # global search pattern unused in all other searches
       file_regex  = [
          ('file',  r"""
@@ -269,10 +269,9 @@ class CueParser(object):
    def mod_wav_offset(self,samples):
       """"""
       files = [y for x,y in self._file_tbl]
-      # create WavOffset object, intialize sample offset and progress output
+      # create WavOffset object, initialize sample offset and progress output
       wo = WavOffsetWriter( samples, self._show_progress )
-      new_files = wo.execute( files, self._opt.wav_temp )
-      sys.stderr.write('\n')        # add EOF to progress output
+      new_files = wo.execute( files, self._write_tmp )
 
       # change all index file names to newly generated files
       file_map = dict( zip(files,new_files) )
@@ -354,8 +353,8 @@ class CueParser(object):
             # track INDEX, file_name is associated with the index
             idx_num,time = match.groups()
             i = TrackIndex(idx_num, time, file_name,
-                           file_exists = self._opts['find_wav'],
-                           search_dir  = self._opts['cue_dir'])
+                           file_exists = self._find_wav,
+                           search_dir  = self._cue_dir)
             trk.append_idx( i )
          elif re_key == 'quote' or re_key == 'named':
             # track information (PERFORMER, TITLE, ...)
@@ -389,8 +388,10 @@ class CueParser(object):
          remain_str = '\tETA [%d:%02d]' % divmod(remain_time,60)
       else:
          remain_str = '\tETA [?:??]'
-      sys.stderr.write( '\rprocessing WAV files: %3d%% %s' % \
-                           (percent, remain_str) )
+      print >> sys.stderr, '\rprocessing WAV files: %3d%% %s' % \
+                           (percent, remain_str),
+      if self._samp_count == total:
+         print >> sys.stderr, ''       # print new-line character
 
    def _strip_buf(self,buf):
       """"""
@@ -525,19 +526,17 @@ class TrackIndex(object):
    """"""
    PREAUDIO, AUDIO, INDEX, START = range(4)
 
-   def __init__(self, num, time, file_, **opts):
+   def __init__(self, num, time, file_, search_dir='.', file_exists=True):
       """"""
-      opts.setdefault('search_dir','.')
-      opts.setdefault('file_exists',True)
       self.num = int(num)
       self.time = TrackTime(time)
       self.cmd  = self.AUDIO
       self.file_ = file_
       try:  # attempt to find the WAV file for this index
-         self.file_ = self._mung_file(file_, opts['search_dir'])
+         self.file_ = self._mung_file(file_, search_dir)
       except CueFileNotFoundError:
-         # notify the user that there was a failure
-         if opts['file_exists']: raise
+         # file not found, but 'file_exists' indicates that the file must exists
+         if file_exists: raise
       # set length to maximum possible for now (total - start)
       file_len = self._file_len()
       if file_len:
@@ -723,24 +722,24 @@ class WavOffsetWriter(object):
    """"""
    _COPY_SIZE = 256*1024
 
-   def __init__(self,offset_samples,data_cb):
+   def __init__(self, offset_samples, data_cb):
       """"""
-      self.offset = offset_samples
-      self.data_cb = data_cb
+      self._offset  = offset_samples
+      self._data_cb = data_cb
 
    def execute(self, files, use_tmp_dir):
       """"""
       self._total_samp = self._get_total_samp( files )
       # positive offset correction, insert silence in first track,
       # all other tracks insert end data of previous track
-      if self.offset > 0:
+      if self._offset > 0:
          # create a list of 'previous' file names
          f2_list = [None] + files[:-1]
          offsetter_fnct = self._insert_prv_end
 
       # negative offset correction, append silence to end of last track,
       # all other tracks append start data of next track
-      elif self.offset < 0:
+      elif self._offset < 0:
          # create a list of 'next' file names
          f2_list = files[1:] + [None]
          offsetter_fnct = self._append_nxt_start
@@ -763,31 +762,31 @@ class WavOffsetWriter(object):
       wav_in = wave.open(fn)
       # setup the output parameters
       bytes_p_samp = wav_in.getsampwidth() * wav_in.getnchannels()
-      offset_bytes = abs(self.offset) * bytes_p_samp
+      offset_bytes = abs(self._offset) * bytes_p_samp
       wav_out.setparams( wav_in.getparams() )
       # seek ahead sample offset amount
-      wav_in.setpos( abs(self.offset) )
+      wav_in.setpos( abs(self._offset) )
       # copy all frame date from 1st file into new file
       while True:
          data = wav_in.readframes(self._COPY_SIZE)
          if len(data) == 0: break
          wav_out.writeframes( data )
-         self.data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
          del data
       wav_in.close()
       # finally copy the remaining data from the next track, or silence
       if nxt_fn:
          # copy offset frame date from next file into new file
          wav_in = wave.open(nxt_fn)
-         data = wav_in.readframes( abs(self.offset) )
+         data = wav_in.readframes( abs(self._offset) )
          assert len(data) == offset_bytes
          wav_out.writeframes( data )
-         self.data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
       else:
          # write silence to end of last track
          data = '\x00' * offset_bytes
          wav_out.writeframes( data )
-         self.data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
       del data
       wav_in.close()
       wav_out.close()
@@ -795,7 +794,7 @@ class WavOffsetWriter(object):
    def _get_new_name(self, f):
       """"""
       dir_,name = os.path.split(f)
-      new_dir = os.path.join(dir_, 'wav%+d' % self.offset)
+      new_dir = os.path.join(dir_, 'wav%+d' % self._offset)
       if not os.path.exists(new_dir):
          os.mkdir( new_dir )
       return os.path.join( new_dir, name)
@@ -819,31 +818,31 @@ class WavOffsetWriter(object):
       wav_in = wave.open(fn)
       # setup the output parameters
       bytes_p_samp = wav_in.getsampwidth() * wav_in.getnchannels()
-      offset_bytes = self.offset * bytes_p_samp
+      offset_bytes = self._offset * bytes_p_samp
       wav_out.setparams( wav_in.getparams() )
       wav_in.close()
       # if previous file exists, insert end of stream to new file
       if prv_fn:
          wav_in = wave.open(prv_fn)
-         pos = wav_in.getnframes() - self.offset   # seek position
+         pos = wav_in.getnframes() - self._offset   # seek position
          wav_in.setpos( pos ) # seek to EOF - offset
-         data = wav_in.readframes( self.offset )
+         data = wav_in.readframes( self._offset )
          assert len(data) == offset_bytes
          wav_out.writeframes( data )
-         self.data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
          wav_in.close()
       else:    # insert silence if no previous file
          data = '\x00' * offset_bytes
          wav_out.writeframes( data )
-         self.data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
       # add original file data to output stream
       wav_in = wave.open( fn )
-      samples = wav_in.getnframes() - self.offset
+      samples = wav_in.getnframes() - self._offset
       while samples:
          data = wav_in.readframes( min(samples,self._COPY_SIZE) )
          samples -= len(data) / bytes_p_samp
          wav_out.writeframes( data )
-         self.data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
          del data
       wav_in.close()
       wav_out.close()
