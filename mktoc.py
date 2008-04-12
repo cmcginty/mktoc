@@ -473,7 +473,7 @@ class Track( object ):
 
    def __str__(self):
       """"""
-      if self.is_data == True: return ''    # do not print data tracks
+      if self.is_data: return ''    # do not print data tracks
       out = ['\n//Track %d' % self.num]
       out += ['TRACK AUDIO']
       if self.isrc:       out += ['\tISRC "%s"' % self.isrc]
