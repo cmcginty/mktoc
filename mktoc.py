@@ -113,7 +113,7 @@ def main():
       parser.error("Can not combine '%s' and '%s' options!" % \
                      (OPT_ALLOW_WAV_FNF,OPT_OFFSET_CORRECT) )
    # test "offset correction" and "temp WAV" argument combination
-   if opt.wav_temp and not opt.wav_offset:
+   if opt.write_tmp and not opt.wav_offset:
       parser.error("Can not use '%s' wihtout '%s' option!" % \
                      (OPT_TEMP_WAV, OPT_OFFSET_CORRECT) )
    # open CUE file
@@ -179,68 +179,69 @@ def error_msg_file(e):
 ##############################################################################
 class CueParser(object):
    """"""
-   def __init__(self, fh, find_wav=True, cue_dir='.', write_tmp=False):
+   # global search pattern unused in all other searches
+   _FILE_REGEX  = [
+      ('file',  r"""
+         ^\s*FILE       # FILE
+         \s+"(.*)"      # 'file name' in quotes
+         \s+WAVE$       # WAVE
+      """ )]
+
+   # create search patterns for lookup table parsing
+   _TRACK_REGEX = [
+      ('track',  r"""
+         ^\s*TRACK                  # TRACK
+         \s+(\d+)                   # track 'number'
+         \s+(AUDIO|MODE.*)$         # AUDIO or MODEx/xxxx
+      """)]
+
+   # create search patterns for disc parsing
+   _DISC_REGEX = [
+      ('rem' , r"""
+         ^\s*REM           # match 'REM'
+         \s+(\w+)          # match 'key'
+         \s+(.*)$          # match 'value'
+      """),
+      ('quote', r"""
+         ^\s*(\w+)         # match 'key'
+         \s+"(.*)"$        # match 'value' surrounded with double quotes
+      """),
+      ('catalog', r"""
+         ^\s*(CATALOG)     # CATALOG
+         \s+(\d{13})$      # catalog 'value'
+      """)]
+
+   # create search patterns for track parsing
+   _TINFO_REGEX = [
+      ('index', r"""
+         ^\s*INDEX                  # INDEX
+         \s+(\d+)                   # 'index number'
+         \s+(\d{2}:\d{2}:\d{2})$    # 'index time'
+      """),
+      ('quote', r"""
+         ^\s*(PERFORMER|TITLE)      # 'key'
+         \s+"(.*)"$                 # 'value' surrounded with double quotes
+      """),
+      ('named', r"""
+         ^\s*(ISRC|PREGAP)          # a known CUE command
+         \s+(.*)$                   # single arg
+      """),
+      ('flag', r"""
+         ^\s*FLAGS               # a FLAG command
+         \s+(.*)$                # one or more flags
+      """)]
+
+   def __init__(self, fh, find_wav=True, cue_dir='.', write_tmp=False, **unk):
       """"""
       # init class options
-      self._find_wav = find_wav
-      self._cue_dir = cue_dir
-      self._write_tmp = write_tmp
-      # global search pattern unused in all other searches
-      file_regex  = [
-         ('file',  r"""
-            ^\s*FILE       # FILE
-            \s+"(.*)"      # 'file name' in quotes
-            \s+WAVE$       # WAVE
-         """ )]
+      self._find_wav    = find_wav
+      self._cue_dir     = cue_dir
+      self._write_tmp   = write_tmp
 
-      # create search patterns for lookup table parsing
-      track_regex = [
-         ('track',  r"""
-            ^\s*TRACK                  # TRACK
-            \s+(\d+)                   # track 'number'
-            \s+(AUDIO|MODE.*)$         # AUDIO or MODEx/xxxx
-         """)]
-
-      # create search patterns for disc parsing
-      disc_regex = [
-         ('rem' , r"""
-            ^\s*REM           # match 'REM'
-            \s+(\w+)          # match 'key'
-            \s+(.*)$          # match 'value'
-         """),
-         ('quote', r"""
-            ^\s*(\w+)         # match 'key'
-            \s+"(.*)"$        # match 'value' surrounded with double quotes
-         """),
-         ('catalog', r"""
-            ^\s*(CATALOG)     # CATALOG
-            \s+(\d{13})$      # catalog 'value'
-         """)]
-
-      # create search patterns for track parsing
-      tinfo_regex = [
-         ('index', r"""
-            ^\s*INDEX                  # INDEX
-            \s+(\d+)                   # 'index number'
-            \s+(\d{2}:\d{2}:\d{2})$    # 'index time'
-         """),
-         ('quote', r"""
-            ^\s*(PERFORMER|TITLE)      # 'key'
-            \s+"(.*)"$                 # 'value' surrounded with double quotes
-         """),
-         ('named', r"""
-            ^\s*(ISRC|PREGAP)          # a known CUE command
-            \s+(.*)$                   # single arg
-         """),
-         ('flag', r"""
-            ^\s*FLAGS               # a FLAG command
-            \s+(.*)$                # one or more flags
-         """)]
-
-      self._part_search  = RegExDict( dict(file_regex + track_regex) )
-      self._disc_search  = RegExDict( dict(file_regex + disc_regex) )
-      self._tinfo_search = RegExDict( dict(file_regex + tinfo_regex + \
-                                             track_regex) )
+      self._part_search  = RegExDict( dict(self._FILE_REGEX + self._TRACK_REGEX) )
+      self._disc_search  = RegExDict( dict(self._FILE_REGEX + self._DISC_REGEX) )
+      self._tinfo_search = RegExDict( dict(self._FILE_REGEX + self._TINFO_REGEX + \
+                                             self._TRACK_REGEX) )
 
       # create a list of regular expressions before starting the parse
       rem_regex   = re.compile( r'^\s*REM\s+COMMENT' )
@@ -316,10 +317,11 @@ class CueParser(object):
          if re_key == 'file': continue
          # assume all other matches are valid
          key,value = match.groups()
-         try:
+         key = key.lower()
+         if hasattr(disc,key):
             # add match value to Disc object
-            disc[ key.lower() ] = value.strip()
-         except KeyError:
+            disc.__setattr__(key, value.strip())
+         else:
             raise CueParseError, "Unmatched keyword in stream: '%s'" % txt
       return disc
 
@@ -359,17 +361,16 @@ class CueParser(object):
          elif re_key == 'quote' or re_key == 'named':
             # track information (PERFORMER, TITLE, ...)
             key,value = match.groups()
-            try:
-               trk[ key.lower() ] = value.strip()
-            except KeyError:
+            key = key.lower()
+            if hasattr(trk,key):    # add match value to Disc object
+               trk.__setattr__(key, value.strip())
+            else:
                raise CueParseError, "Unmatched keyword in stream: '%s'" % txt
          elif re_key == 'flag':
             for f in [f.strip() for f in match.group(1).split()]:
                if re.search(r'DCP|4CH|PRE',f):     # flag must be known
-                  if f == '4CH':
-                     trk.four_ch = True
-                  else:
-                     trk[f.lower()] = True
+                  if f == '4CH': f = 'four_ch'     # change '4CH' flag name
+                  trk.__setattr__(f.lower(), True)
          else: # catch unhandled patterns
             raise CueParseError, "Unmatched pattern in stream: '%s'" % txt
       return trk
@@ -408,28 +409,15 @@ class CueParser(object):
 
 
 ##############################################################################
-class FixedDict(object):
+class Disc( object ):
    """"""
-   def __init__(self,keys):
-      """"""
-      # for each string in 'fields', add to object with 'None' value
-      self.__dict__.update( map(None,keys,[None]) )
-
-   def __setitem__(self,key,val):
-      """"""
-      if not self.__dict__.has_key(key):
-         raise KeyError
-      self.__dict__[key] = val
-
-
-##############################################################################
-class Disc( FixedDict ):
-   """"""
-   _keys = ['performer','title','genre','date','discid','catalog']
-
    def __init__(self):
-      """"""
-      super(Disc,self).__init__(self._keys)
+      self.performer = None
+      self.title     = None
+      self.genre     = None
+      self.date      = None
+      self.discid    = None
+      self.catalog   = None
 
    def __str__(self):
       """Write the TOC formatted disc information to file handle 'fh' arg. The
@@ -467,13 +455,18 @@ class RegExDict(object):
 
 
 ##############################################################################
-class Track( FixedDict ):
+class Track( object ):
    """"""
-   _keys = ['performer','title','isrc','dcp','four_ch','pre','pregap']
-
    def __init__(self,num):
       """"""
-      super(Track,self).__init__(self._keys)
+      self.performer    = None
+      self.title        = None
+      self.isrc         = None
+      self.dcp          = None
+      self.four_ch      = None
+      self.pre          = None
+      self.pregap       = None
+
       self.num = num
       self.indexes = []   # a list of indexes in the track
       self.is_data = False
