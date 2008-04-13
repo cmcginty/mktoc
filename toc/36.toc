@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Hold Your Fire"
         PERFORMER "Rush"
+        DISC_ID "8F0BD60A"
 }}
 
 //Track 1

@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "The 5 Cello Sonatas"
         PERFORMER "Ludwig Van Beethoven"
+        DISC_ID "3707A505"
 }}
 
 //Track 1

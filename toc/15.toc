@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Samurai"
         PERFORMER "Juno Reactor"
+        DISC_ID "30086B05"
 }}
 
 //Track 1

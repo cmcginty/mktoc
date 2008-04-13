@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "In The Chamber with Linkin Park"
         PERFORMER "Linkin Park"
+        DISC_ID "8C079D0A"
 }}
 
 //Track 1

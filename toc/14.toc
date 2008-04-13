@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Minutes to Midnight"
         PERFORMER "Linkin Park"
+        DISC_ID "870A310C"
 }}
 
 //Track 1

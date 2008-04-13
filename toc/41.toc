@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "The 5 Cello Sonatas"
         PERFORMER "Mstislav Rostropovich"
+        DISC_ID "6F11F407"
 }}
 
 //Track 1

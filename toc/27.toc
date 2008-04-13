@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Thick As A Brick: MFSL"
         PERFORMER "Jethro Tull"
+        DISC_ID "140A3C02"
 }}
 
 //Track 1

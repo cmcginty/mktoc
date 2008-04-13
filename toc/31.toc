@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Under Cover"
         PERFORMER "Ozzy Osbourne"
+        DISC_ID "C80CEE0D"
 }}
 
 //Track 1

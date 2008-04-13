@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Spanish Guitar Music"
         PERFORMER "John Williams"
+        DISC_ID "4F114A17"
 }}
 
 //Track 1

@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Aqualung [gold disc]"
         PERFORMER "Jethro Tull"
+        DISC_ID "890A4C0B"
 }}
 
 //Track 1

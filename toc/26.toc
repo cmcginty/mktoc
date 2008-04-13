@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Hot Fuss"
         PERFORMER "The Killers"
+        DISC_ID "8F0AB30B"
 }}
 
 //Track 1

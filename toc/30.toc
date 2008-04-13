@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Magic Potion"
         PERFORMER "Black Keys"
+        DISC_ID "9A0A0D0B"
 }}
 
 //Track 1

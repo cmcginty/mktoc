@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Unknown Title"
         PERFORMER "Unknown Artist"
+        DISC_ID "2D045804"
 }}
 
 //Track 1

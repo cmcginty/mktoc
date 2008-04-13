@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Jungle High (CD Single)"
         PERFORMER "Juno Reactor"
+        DISC_ID "1204F403"
 }}
 
 //Track 1

@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Paranoid"
         PERFORMER "Black Sabbath"
+        DISC_ID "6B09DF08"
 }}
 
 //Track 1

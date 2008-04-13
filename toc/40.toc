@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Signals (Remastered)"
         PERFORMER "Rush"
+        DISC_ID "5F09FA08"
 }}
 
 //Track 1

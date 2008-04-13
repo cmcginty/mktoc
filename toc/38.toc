@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Permanent Waves (MFSL UDCD-772)"
         PERFORMER "Rush"
+        DISC_ID "38086606"
 }}
 
 //Track 1

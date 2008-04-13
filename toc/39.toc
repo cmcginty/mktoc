@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Power Windows"
         PERFORMER "Rush"
+        DISC_ID "5F0A7908"
 }}
 
 //Track 1

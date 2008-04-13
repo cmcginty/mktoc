@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Black Sabbath"
         PERFORMER "Black Sabbath"
+        DISC_ID "38093E05"
 }}
 
 //Track 1

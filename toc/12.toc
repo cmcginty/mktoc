@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "LP Underground 6.0 (EP)"
         PERFORMER "Linkin Park"
+        DISC_ID "3B051C06"
 }}
 
 //Track 1

@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Lu.ci-ana"
         PERFORMER "Juno Reactor"
+        DISC_ID "020E6001"
 }}
 
 //Track 1

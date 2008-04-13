@@ -427,6 +427,7 @@ class Disc( object ):
       out += ['CD_TEXT { LANGUAGE_MAP { 0:EN }\n\tLANGUAGE 0 {']
       if self.title:     out += ['\t\tTITLE "%s"' % self.title]
       if self.performer: out += ['\t\tPERFORMER "%s"' % self.performer]
+      if self.discid:    out += ['\t\tDISC_ID "%s"' % self.discid]
       out += ['}}']
       return str.join('\n',out)
 

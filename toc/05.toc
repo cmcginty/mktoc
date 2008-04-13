@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Desecration Smile (CD2)"
         PERFORMER "Red Hot Chili Peppers"
+        DISC_ID "1D03B803"
 }}
 
 //Track 1

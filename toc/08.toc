@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Laughing Gas"
         PERFORMER "Juno Reactor"
+        DISC_ID "2804A003"
 }}
 
 //Track 1

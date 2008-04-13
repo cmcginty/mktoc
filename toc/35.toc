@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Grace Under Pressure (The Rush Remasters)"
         PERFORMER "Rush"
+        DISC_ID "72094E08"
 }}
 
 //Track 1

@@ -5,6 +5,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "String Quartet Tribute to Dream Theater"
         PERFORMER "The String Quartet"
+        DISC_ID "7B0B7B08"
 }}
 
 //Track 1
