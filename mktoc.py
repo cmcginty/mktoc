@@ -347,7 +347,9 @@ class CueParser(object):
             raise CueParseError, "Unmatched pattern in stream: '%s'" % txt
          elif re_key == 'track':
             assert trk.num == int(match.group(1))
-            if match.group(2) != 'AUDIO': trk.is_data = True
+            if match.group(2) != 'AUDIO':
+               trk.is_data = True
+               self._disc.set_multisession()     # disc is multi-session
          elif re_key == 'file':
             # update file name
             file_name = match.group(1)
@@ -418,11 +420,12 @@ class Disc( object ):
       self.date      = None
       self.discid    = None
       self.catalog   = None
+      self._mode     = 'CD_DA'
 
    def __str__(self):
       """Write the TOC formatted disc information to file handle 'fh' arg. The
       'disc' dictionary contains all data for the disc."""
-      out = ['CD_DA']
+      out = ['%s' % self._mode]
       if self.catalog:   out += ['CATALOG "%s"' % self.catalog]
       out += ['CD_TEXT { LANGUAGE_MAP { 0:EN }\n\tLANGUAGE 0 {']
       if self.title:     out += ['\t\tTITLE "%s"' % self.title]
@@ -434,6 +437,10 @@ class Disc( object ):
    def mung(self):
       """Modify the values in 'disc' dictionary arg, if needed."""
       pass
+
+   def set_multisession(self):
+      """Update Disc info for a multi-session CD"""
+      self._mode = 'CD_ROM_XA'
 
 
 ##############################################################################
