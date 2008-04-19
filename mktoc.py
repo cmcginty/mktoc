@@ -271,7 +271,7 @@ class CueParser(object):
       """"""
       files = [y for x,y in self._file_tbl]
       # create WavOffset object, initialize sample offset and progress output
-      wo = WavOffsetWriter( samples, self._show_progress )
+      wo = WavOffsetWriter( samples, ProgressBar('processing WAV files:') )
       new_files = wo.execute( files, self._write_tmp )
 
       # change all index file names to newly generated files
@@ -377,25 +377,6 @@ class CueParser(object):
             raise CueParseError, "Unmatched pattern in stream: '%s'" % txt
       return trk
 
-   def _show_progress( self, samp, total ):
-      """"""
-      if not hasattr(self,'_samp_count'):
-         self._samp_count = 0
-         self._start_time = time.time()
-      self._samp_count += samp
-      percent = float(self._samp_count) / total * 100
-      time_dif = time.time() - self._start_time    # compute time from start
-      if not time_dif == 0:
-         samp_rate = self._samp_count / time_dif      # calculate sample/sec
-         remain_time = (total-self._samp_count) / samp_rate # estimate time left
-         remain_str = '\tETA [%d:%02d]' % divmod(remain_time,60)
-      else:
-         remain_str = '\tETA [?:??]'
-      print >> sys.stderr, '\rprocessing WAV files: %3d%% %s' % \
-                           (percent, remain_str),
-      if self._samp_count == total:
-         print >> sys.stderr, ''       # print new-line character
-
    def _strip_buf(self,buf):
       """"""
       # cleanup string data
@@ -441,6 +422,36 @@ class Disc( object ):
    def set_multisession(self):
       """Update Disc info for a multi-session CD"""
       self._mode = 'CD_ROM_XA'
+
+
+##############################################################################
+class ProgressBar( object ):
+   """"""
+   def __init__( self, notice_txt ):
+      self._notice_txt = notice_txt
+      self._samp_count = 0
+      self._samp_total = 1
+
+   def add( self, samp, total ):
+      """"""
+      self._samp_count += samp
+      self._samp_total = total
+
+   def show(self):
+      """"""
+      if not hasattr(self,'_start_time'):
+         self._start_time = time.time()
+      percent = float(self._samp_count) / self._samp_total * 100
+      time_dif = time.time() - self._start_time    # compute time from start
+      if not time_dif == 0:
+         samp_rate = self._samp_count / time_dif      # calculate sample/sec
+         # estimate time left
+         remain_time = (self._samp_total - self._samp_count) / samp_rate
+         remain_str = '\tETA [%d:%02d]' % divmod(remain_time,60)
+      else:
+         remain_str = '\tETA [?:??]'
+      print >> sys.stderr, '%s %3d%% %s\r' % \
+                           (self._notice_txt, percent, remain_str),
 
 
 ##############################################################################
@@ -723,10 +734,10 @@ class WavOffsetWriter(object):
    """"""
    _COPY_SIZE = 256*1024
 
-   def __init__(self, offset_samples, data_cb):
+   def __init__(self, offset_samples, progress_bar):
       """"""
       self._offset  = offset_samples
-      self._data_cb = data_cb
+      self._pb = progress_bar
 
    def execute(self, files, use_tmp_dir):
       """"""
@@ -772,7 +783,8 @@ class WavOffsetWriter(object):
          data = wav_in.readframes(self._COPY_SIZE)
          if len(data) == 0: break
          wav_out.writeframes( data )
-         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
+         self._pb.show()
          del data
       wav_in.close()
       # finally copy the remaining data from the next track, or silence
@@ -782,12 +794,14 @@ class WavOffsetWriter(object):
          data = wav_in.readframes( abs(self._offset) )
          assert len(data) == offset_bytes
          wav_out.writeframes( data )
-         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
       else:
          # write silence to end of last track
          data = '\x00' * offset_bytes
          wav_out.writeframes( data )
-         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
+      # print the progress bar
+      self._pb.show()
       del data
       wav_in.close()
       wav_out.close()
@@ -830,12 +844,14 @@ class WavOffsetWriter(object):
          data = wav_in.readframes( self._offset )
          assert len(data) == offset_bytes
          wav_out.writeframes( data )
-         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
          wav_in.close()
       else:    # insert silence if no previous file
          data = '\x00' * offset_bytes
          wav_out.writeframes( data )
-         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
+      # print the progress bar
+      self._pb.show()
       # add original file data to output stream
       wav_in = wave.open( fn )
       samples = wav_in.getnframes() - self._offset
@@ -843,7 +859,8 @@ class WavOffsetWriter(object):
          data = wav_in.readframes( min(samples,self._COPY_SIZE) )
          samples -= len(data) / bytes_p_samp
          wav_out.writeframes( data )
-         self._data_cb( len(data)/bytes_p_samp, self._total_samp )
+         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
+         self._pb.show()
          del data
       wav_in.close()
       wav_out.close()
