@@ -427,31 +427,34 @@ class Disc( object ):
 ##############################################################################
 class ProgressBar( object ):
    """"""
-   def __init__( self, notice_txt ):
+   def __init__(self, notice_txt):
       self._notice_txt = notice_txt
-      self._samp_count = 0
-      self._samp_total = 1
+      self._size  = 0
+      self.max_   = 0           # default max value
 
-   def add( self, samp, total ):
+   def __iadd__(self, other):
       """"""
-      self._samp_count += samp
-      self._samp_total = total
+      self._size += min(other, self.max_ - self._size)
+      return self
 
-   def show(self):
+   def __str__(self):
       """"""
+      if self.max_ == 0:
+         raise Exception, "You must initialize ProgressBar.max_ first"
       if not hasattr(self,'_start_time'):
          self._start_time = time.time()
-      percent = float(self._samp_count) / self._samp_total * 100
-      time_dif = time.time() - self._start_time    # compute time from start
+         time_dif = 0
+      else:
+         time_dif = time.time() - self._start_time    # compute time from start
+      percent = float(self._size) / self.max_ * 100
       if not time_dif == 0:
-         samp_rate = self._samp_count / time_dif      # calculate sample/sec
+         rate = self._size / time_dif      # calculate sample/sec
          # estimate time left
-         remain_time = (self._samp_total - self._samp_count) / samp_rate
+         remain_time = (self.max_ - self._size) / rate
          remain_str = '\tETA [%d:%02d]' % divmod(remain_time,60)
       else:
          remain_str = '\tETA [?:??]'
-      print >> sys.stderr, '%s %3d%% %s\r' % \
-                           (self._notice_txt, percent, remain_str),
+      return '%s %3d%% %s\r' % (self._notice_txt, percent, remain_str)
 
 
 ##############################################################################
@@ -741,7 +744,8 @@ class WavOffsetWriter(object):
 
    def execute(self, files, use_tmp_dir):
       """"""
-      self._total_samp = self._get_total_samp( files )
+      # set the maximum progress bar value
+      self._pb.max_ = self._get_total_samp( files )
       # positive offset correction, insert silence in first track,
       # all other tracks insert end data of previous track
       if self._offset > 0:
@@ -783,8 +787,8 @@ class WavOffsetWriter(object):
          data = wav_in.readframes(self._COPY_SIZE)
          if len(data) == 0: break
          wav_out.writeframes( data )
-         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
-         self._pb.show()
+         self._pb += len(data) / bytes_p_samp
+         sys.stderr.write(str(self._pb))
          del data
       wav_in.close()
       # finally copy the remaining data from the next track, or silence
@@ -794,14 +798,14 @@ class WavOffsetWriter(object):
          data = wav_in.readframes( abs(self._offset) )
          assert len(data) == offset_bytes
          wav_out.writeframes( data )
-         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
+         self._pb += len(data) / bytes_p_samp
       else:
          # write silence to end of last track
          data = '\x00' * offset_bytes
          wav_out.writeframes( data )
-         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
+         self._pb += len(data) / bytes_p_samp
       # print the progress bar
-      self._pb.show()
+      sys.stderr.write(str(self._pb))
       del data
       wav_in.close()
       wav_out.close()
@@ -844,14 +848,14 @@ class WavOffsetWriter(object):
          data = wav_in.readframes( self._offset )
          assert len(data) == offset_bytes
          wav_out.writeframes( data )
-         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
+         self._pb += len(data) / bytes_p_samp
          wav_in.close()
       else:    # insert silence if no previous file
          data = '\x00' * offset_bytes
          wav_out.writeframes( data )
-         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
+         self._pb += len(data)/bytes_p_samp
       # print the progress bar
-      self._pb.show()
+      sys.stderr.write(str(self._pb))
       # add original file data to output stream
       wav_in = wave.open( fn )
       samples = wav_in.getnframes() - self._offset
@@ -859,8 +863,8 @@ class WavOffsetWriter(object):
          data = wav_in.readframes( min(samples,self._COPY_SIZE) )
          samples -= len(data) / bytes_p_samp
          wav_out.writeframes( data )
-         self._pb.add( len(data)/bytes_p_samp, self._total_samp )
-         self._pb.show()
+         self._pb += len(data) / bytes_p_samp
+         sys.stderr.write(str(self._pb))
          del data
       wav_in.close()
       wav_out.close()
