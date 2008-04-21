@@ -13,6 +13,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>
 
+"""
+Unit testing framework for mktoc_progress_bar module.
+"""
 __author__     = 'Patrick C. McGinty'
 __email__      = 'mktoc[@]tuxcoder[dot]com'
 __copyright__  = 'Copyright (c) 2008'
