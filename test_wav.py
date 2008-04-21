@@ -19,6 +19,7 @@ __copyright__  = 'Copyright (c) 2008'
 __license__    = 'GPL'
 __date__       = '$Date$'
 
+import unittest
 
 ##############################################################################
 if __name__ == '__main__':

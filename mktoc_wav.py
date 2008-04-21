@@ -61,6 +61,7 @@ class WavOffsetWriter(object):
       """"""
       self._offset  = offset_samples
       self._pb = progress_bar
+      self._progName = os.path.basename( sys.argv[0] )
 
    def execute(self, files, use_tmp_dir):
       """"""
@@ -148,7 +149,7 @@ class WavOffsetWriter(object):
    def _get_tmp_name(self, f):
       """"""
       if not hasattr(self, '_tmp_dir'):
-         self._tmp_dir = tempfile.mkdtemp( prefix=NAME )
+         self._tmp_dir = tempfile.mkdtemp( prefix=self._progName+'.' )
       return os.path.join( self._tmp_dir, os.path.basename(f) )
 
    def _insert_prv_end(self, out_fn, fn, prv_fn):

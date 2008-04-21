@@ -174,7 +174,7 @@ usesExec = 1
 ignoreStandardLibrary = 0
 
 # ignore warnings from the list of modules
-blacklist = ['Tkinter', 'wxPython', 'gtk', 'GTK', 'GDK', 'optparse']
+blacklist = ['Tkinter', 'wxPython', 'gtk', 'GTK', 'GDK', 'optparse', 'unittest']
 
 # ignore global variables not used if name is one of these values
 variablesToIgnore = ['__version__', '__warningregistry__', '__all__', '__credits__', '__test__', '__author__', '__email__', '__revision__', '__id__', '__copyright__', '__license__', '__date__']
