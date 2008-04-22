@@ -17,21 +17,18 @@
 Unit testing framework for mktoc_paraser module.
 """
 
-__author__     = 'Patrick C. McGinty'
-__email__      = 'mktoc[@]tuxcoder[dot]com'
-__copyright__  = 'Copyright (c) 2008'
-__license__    = 'GPL'
-__date__       = '$Date$'
-
 import unittest
+from mktoc_global import __author__, __email__, __copyright__, __license__
 from mktoc_parser import *
+
+__date__ = '$Date$'
 
 class CueParserTests(unittest.TestCase):
    """Unit tests for the external interface of the CueParser class. These test
    rely on predefined input and output files. If the input CUE file does not
    match the expected output TOC file, the test will fail."""
-   _CUE_DIR = './cue'
-   _TOC_DIR = './toc'
+   _CUE_DIR = './test_cue'
+   _TOC_DIR = './test_toc'
    _cue_list   = []
    _toc_list   = []
 
