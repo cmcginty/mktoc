@@ -17,6 +17,7 @@ __author__     = 'Patrick C. McGinty'
 __email__      = 'mktoc[@]tuxcoder[dot]com'
 __copyright__  = 'Copyright (c) 2008'
 __license__    = 'GPL'
+__version__    = '1.0'
 __date__       = '$Date$'
 
 class MkTocError(Exception): pass

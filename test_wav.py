@@ -16,13 +16,11 @@
 """
 Unit testing framework for mktoc_wav module.
 """
-__author__     = 'Patrick C. McGinty'
-__email__      = 'mktoc[@]tuxcoder[dot]com'
-__copyright__  = 'Copyright (c) 2008'
-__license__    = 'GPL'
-__date__       = '$Date$'
 
 import unittest
+from mktoc_global import __author__, __email__, __copyright__, __license__
+
+__date__ = '$Date$'
 
 ##############################################################################
 if __name__ == '__main__':

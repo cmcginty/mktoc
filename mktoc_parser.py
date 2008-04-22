@@ -13,20 +13,17 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__     = 'Patrick C. McGinty'
-__email__      = 'mktoc[@]tuxcoder[dot]com'
-__copyright__  = 'Copyright (c) 2008'
-__license__    = 'GPL'
-__date__       = '$Date$'
-
 import os
 import re
 from StringIO import StringIO
 
 from mktoc_global import *
+from mktoc_global import __author__, __email__, __copyright__, __license__
 from mktoc_disc import Disc,Track,TrackIndex
 from mktoc_wav import WavOffsetWriter
 from mktoc_progress_bar import ProgressBar
+
+__date__ = '$Date$'
 
 class CueParser(object):
    """"""

@@ -13,12 +13,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__     = 'Patrick C. McGinty'
-__email__      = 'mktoc[@]tuxcoder[dot]com'
-__copyright__  = 'Copyright (c) 2008'
-__license__    = 'GPL'
-__date__       = '$Date$'
-
 import os
 import sys
 import re
@@ -26,6 +20,9 @@ import wave
 import tempfile
 
 from mktoc_global import *
+from mktoc_global import __author__, __email__, __copyright__, __license__
+
+__date__ = '$Date$'
 
 WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
 

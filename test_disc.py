@@ -16,15 +16,11 @@
 """
 Unit testing framework for mktoc_disc module.
 """
-
-__author__     = 'Patrick C. McGinty'
-__email__      = 'mktoc[@]tuxcoder[dot]com'
-__copyright__  = 'Copyright (c) 2008'
-__license__    = 'GPL'
-__date__       = '$Date$'
-
 import unittest
+from mktoc_global import __author__, __email__, __copyright__, __license__
 from mktoc_disc import *
+
+__date__ = '$Date$'
 
 class TrackTimeTests(unittest.TestCase):
    """Unit tests for the external interface of the TrackTime class."""

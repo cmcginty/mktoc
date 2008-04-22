@@ -13,19 +13,16 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__     = 'Patrick C. McGinty'
-__email__      = 'mktoc[@]tuxcoder[dot]com'
-__copyright__  = 'Copyright (c) 2008'
-__license__    = 'GPL'
-__date__       = '$Date$'
-
 import os
 import re
 import wave
 
 from mktoc_global import *
+from mktoc_global import __author__, __email__, __copyright__, __license__
 from mktoc_wav import WAV_REGEX
 from mktoc_wav import WavFileCache
+
+__date__ = '$Date$'
 
 class Disc( object ):
    """"""
