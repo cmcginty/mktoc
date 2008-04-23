@@ -16,15 +16,23 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+import mktoc.test_parser
 
-mod_to_test = ['test_disc', 'test_parser', 'test_wav', 'test_progress_bar']
+mod_to_test = [ 'mktoc.test_disc',
+                'mktoc.test_parser',
+                'mktoc.test_wav',
+                'mktoc.test_progress_bar']
 
 def suite():
    # create TestSuite object
    alltests = unittest.TestSuite()
    # load all modules define in the module list
-   for module in map(__import__, mod_to_test):
-      alltests.addTest(unittest.findTestCases(module))
+   for name in mod_to_test:
+      mod = __import__(name)        # import module or package
+      components = name.split('.')
+      for comp in components[1:]:   # load remaining items
+         mod = getattr(mod,comp)
+      alltests.addTest(unittest.findTestCases(mod))
    return alltests
 
 if __name__ == '__main__':

@@ -17,6 +17,9 @@
 Unit testing framework for mktoc_paraser module.
 """
 
+import sys
+import os
+import inspect
 import unittest
 from mktoc_global import __author__, __email__, __copyright__, __license__
 from mktoc_parser import *
@@ -27,8 +30,8 @@ class CueParserTests(unittest.TestCase):
    """Unit tests for the external interface of the CueParser class. These test
    rely on predefined input and output files. If the input CUE file does not
    match the expected output TOC file, the test will fail."""
-   _CUE_DIR = './test_cue'
-   _TOC_DIR = './test_toc'
+   _CUE_DIR = 'test_data/cue'
+   _TOC_DIR = 'test_data/toc'
    _cue_list   = []
    _toc_list   = []
 
@@ -37,6 +40,13 @@ class CueParserTests(unittest.TestCase):
       generating the starting list of CUE and TOC files to use for the test
       cases."""
       super(CueParserTests,self).__init__(*args, **kwargs)
+
+      # get the directory location of this module, and update the
+      # location of the test data dirs
+      file_dir = os.path.dirname(inspect.getfile(sys._getframe()))
+      self._CUE_DIR = os.path.join(file_dir,self._CUE_DIR)
+      self._TOC_DIR = os.path.join(file_dir,self._TOC_DIR)
+
       # on first init, generate a list of cue files
       if not len(self._cue_list):
          if not os.path.exists(self._CUE_DIR): os.mkdir(self._CUE_DIR)

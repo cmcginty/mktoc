@@ -57,8 +57,8 @@ import os
 import sys
 import traceback
 from optparse import OptionParser
-from mktoc_parser import CueParser
-from mktoc_global import *
+from mktoc.mktoc_global import *
+from mktoc.mktoc_parser import CueParser
 
 # WAV file reading command-line switch
 #  - allow 'file not found' errors when reading WAV files
