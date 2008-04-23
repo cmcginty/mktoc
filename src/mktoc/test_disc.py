@@ -17,8 +17,9 @@
 Unit testing framework for mktoc_disc module.
 """
 import unittest
-from mktoc_global import __author__, __email__, __copyright__, __license__
-from mktoc_disc import *
+from mktoc.base import __author__, __email__, __copyright__, __license__
+from mktoc.base import __version__
+from mktoc.disc import *
 
 __date__ = '$Date$'
 

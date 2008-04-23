@@ -19,8 +19,9 @@ import re
 import wave
 import tempfile
 
-from mktoc_global import *
-from mktoc_global import __author__, __email__, __copyright__, __license__
+from mktoc.base import *
+from mktoc.base import __author__, __email__, __copyright__, __license__
+from mktoc.base import __version__
 
 __date__ = '$Date$'
 

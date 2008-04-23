@@ -17,10 +17,11 @@ import os
 import re
 import wave
 
-from mktoc_global import *
-from mktoc_global import __author__, __email__, __copyright__, __license__
-from mktoc_wav import WAV_REGEX
-from mktoc_wav import WavFileCache
+from mktoc.base import *
+from mktoc.base import __author__, __email__, __copyright__, __license__
+from mktoc.base import __version__
+from mktoc.wav import WAV_REGEX
+from mktoc.wav import WavFileCache
 
 __date__ = '$Date$'
 

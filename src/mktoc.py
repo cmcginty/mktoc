@@ -46,19 +46,16 @@ Info:
    http://blog.tuxcoder.com
 """
 
-__author__     = 'Patrick C. McGinty'
-__email__      = 'mktoc[@]tuxcoder[dot]com'
-__copyright__  = 'Copyright (c) 2008'
-__license__    = 'GPL'
-__date__       = '$Date$'
-__version__    = '1.0'
-
 import os
 import sys
 import traceback
 from optparse import OptionParser
-from mktoc.mktoc_global import *
-from mktoc.mktoc_parser import CueParser
+from mktoc.base import *
+from mktoc.base import __author__, __email__, __copyright__, __license__
+from mktoc.base import __version__
+from mktoc.parser import CueParser
+
+__date__ = '$Date$'
 
 # WAV file reading command-line switch
 #  - allow 'file not found' errors when reading WAV files

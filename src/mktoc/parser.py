@@ -17,11 +17,12 @@ import os
 import re
 from StringIO import StringIO
 
-from mktoc_global import *
-from mktoc_global import __author__, __email__, __copyright__, __license__
-from mktoc_disc import Disc,Track,TrackIndex
-from mktoc_wav import WavOffsetWriter
-from mktoc_progress_bar import ProgressBar
+from mktoc.base import *
+from mktoc.base import __author__, __email__, __copyright__, __license__
+from mktoc.base import __version__
+from mktoc.disc import Disc,Track,TrackIndex
+from mktoc.wav import WavOffsetWriter
+from mktoc.progress_bar import ProgressBar
 
 __date__ = '$Date$'
 

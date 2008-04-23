@@ -21,8 +21,9 @@ import sys
 import os
 import inspect
 import unittest
-from mktoc_global import __author__, __email__, __copyright__, __license__
-from mktoc_parser import *
+from mktoc.base import __author__, __email__, __copyright__, __license__
+from mktoc.base import __version__
+from mktoc.parser import *
 
 __date__ = '$Date$'
 

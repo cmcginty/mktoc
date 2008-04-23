@@ -14,7 +14,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
-from mktoc_global import __author__, __email__, __copyright__, __license__
+from mktoc.base import __author__, __email__, __copyright__, __license__
+from mktoc.base import __version__
 
 __date__ = '$Date$'
 
