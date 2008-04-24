@@ -1,0 +1,4 @@
+include CHANGELOG
+include COPYING.txt
+include INSTALL
+recursive-exclude src test*.py
