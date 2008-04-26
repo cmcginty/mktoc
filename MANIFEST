@@ -1,0 +1,13 @@
+CHANGELOG
+COPYING.txt
+INSTALL
+Makefile
+README
+setup.py
+src/mktoc.py
+src/mktoc/__init__.py
+src/mktoc/base.py
+src/mktoc/disc.py
+src/mktoc/parser.py
+src/mktoc/progress_bar.py
+src/mktoc/wav.py
