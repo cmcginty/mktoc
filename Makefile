@@ -22,3 +22,6 @@ pydist-test:
 dist: release
 release: pydist pydist-test
 
+test:
+	src/alltests.py
+
