@@ -1,11 +1,12 @@
-mktoc v1.0 // (c) 2008, Patrick C. McGinty, mktoc[@]tuxcoder[dot]com
+mktoc // (c) 2008, Patrick C. McGinty
+mktoc[@]tuxcoder[dot]com
 
 INSTALL:
-   1) Copy mktoc.py to an appropriate 'bin' directory (i.e. ~/bin,
-      /usr/local/bin, /usr/bin)
+   1) Any one of the following command will install the program:
 
-   2) Make sure file has execute permissions.
+      a) make install
+      b) ./setup.py install
+      c) python setup.py install
 
-      chmod a+x ..../bin/mktoc.py
+   2) View README for usage instructions.
 
-   3) View README for usage instructions.
