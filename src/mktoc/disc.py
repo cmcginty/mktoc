@@ -16,6 +16,7 @@
 import os
 import re
 import wave
+import logging
 
 from mktoc.base import *
 from mktoc.base import __author__, __email__, __copyright__, __license__
@@ -23,6 +24,7 @@ from mktoc.base import __version__
 from mktoc.wav import WAV_REGEX
 
 __date__ = '$Date$'
+log = logging.getLogger('mktoc.disc')
 
 class Disc( object ):
    """"""
@@ -210,22 +212,27 @@ class TrackIndex(object):
 
    def _mung_file(self, file_, wav_files):
       """Mung the file name, to an existing WAV file name"""
+      log.debug("looking for file '%s'",file_)
       tmp_name = file_
       # convert a DOS file path to Linux
       tmp_name = tmp_name.replace('\\','/')
       # base case: file exists, and is has a 'WAV' extension
       if WAV_REGEX.search(tmp_name) and os.path.exists(tmp_name):
+         log.debug('-> FOUND\n'+'-'*5)
          return file_       # return match
       # case 2: file is locatable in path with a little work
       fn = os.path.basename(tmp_name)     # strip leading path
       fn = os.path.splitext(fn)[0]        # strip extension
       fn = os.sep + fn + '.wav'     # full file name to search
+      log.debug("-> looking for file '%s'",fn)
       # escape any special characters in the file, and the '$' prevents
       # matching if any extra chars come after the name
       fn_pat = re.escape(fn)  + '$'
       file_regex = re.compile( fn_pat, re.IGNORECASE)
       for f in wav_files.get():
+         log.debug("--> comparing file '%s'",f)
          if file_regex.search(f):   # if match was found
+            log.debug('--> FOUND\n'+'-'*5)
             return f                # return match
       raise FileNotFoundError, file_
 

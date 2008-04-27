@@ -114,6 +114,7 @@ Info:
 import os
 import sys
 import traceback
+import logging
 from optparse import OptionParser
 from mktoc.base import *
 from mktoc.base import __author__, __email__, __copyright__, __license__
@@ -146,6 +147,8 @@ def main():
          dest='wav_offset', type='int',
          help='correct reader/writer offset by creating WAV file(s) shifted by '\
          'WAV_OFFSET samples (original data is not modified)' )
+   parser.add_option('-d', '--debug', dest='debug', action="store_true",
+         default=False, help='enable debugging statements' )
    parser.add_option('-f', '--file', dest='cue_file',
          help='specify the input CUE file to read')
    parser.add_option('-o', '--output', dest='toc_file',
@@ -154,6 +157,10 @@ def main():
          action='store_true', default=False,
          help='write offset corrected WAV files to /tmp directory' )
    opt,args = parser.parse_args()
+
+   # setup logging
+   if opt.debug:
+      logging.basicConfig(level=logging.DEBUG)
 
    # verify input arguments
    if len(args)>2 or \
@@ -173,7 +180,7 @@ def main():
    # open CUE file
    if opt.cue_file:
       # set the working dir of the input file
-      opt.cue_dir = os.path.dirname( opt.cue_file )
+      opt.cue_dir = os.path.dirname( opt.cue_file ) or '.'
       try:
          fh_in = open(opt.cue_file)
       except:

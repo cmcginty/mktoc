@@ -29,7 +29,7 @@ WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
 
 class WavFileCache(object):
    """"""
-   def __init__(self,_dir):
+   def __init__(self, _dir='.'):
       self._src_dir = _dir
       self._data = []
       self._is_init = False
