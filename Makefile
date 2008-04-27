@@ -19,9 +19,9 @@ pydist-test:
 	sudo make -C ${SRC_DIR} install
 	sudo rm -rf ${SRC_DIR}
 
-dist: release
-release: pydist pydist-test
-
 test:
 	src/alltests.py
+
+dist: release
+release: test pydist pydist-test
 

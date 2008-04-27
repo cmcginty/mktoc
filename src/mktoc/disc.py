@@ -21,7 +21,6 @@ from mktoc.base import *
 from mktoc.base import __author__, __email__, __copyright__, __license__
 from mktoc.base import __version__
 from mktoc.wav import WAV_REGEX
-from mktoc.wav import WavFileCache
 
 __date__ = '$Date$'
 
@@ -122,14 +121,14 @@ class TrackIndex(object):
    """"""
    PREAUDIO, AUDIO, INDEX, START = range(4)
 
-   def __init__(self, num, time, file_, search_dir='.', file_exists=True):
+   def __init__(self, num, time, file_, wav_files, file_exists=True):
       """"""
       self.num = int(num)
       self.time = TrackTime(time)
       self.cmd  = self.AUDIO
       self.file_ = file_
       try:  # attempt to find the WAV file for this index
-         self.file_ = self._mung_file(file_, search_dir)
+         self.file_ = self._mung_file(file_, wav_files)
       except FileNotFoundError:
          # file not found, but 'file_exists' indicates that the file must exists
          if file_exists: raise
@@ -209,7 +208,7 @@ class TrackIndex(object):
       w.close()
       return TrackTime(frames)
 
-   def _mung_file(self, file_, dir_):
+   def _mung_file(self, file_, wav_files):
       """Mung the file name, to an existing WAV file name"""
       tmp_name = file_
       # convert a DOS file path to Linux
@@ -225,7 +224,7 @@ class TrackIndex(object):
       # matching if any extra chars come after the name
       fn_pat = re.escape(fn)  + '$'
       file_regex = re.compile( fn_pat, re.IGNORECASE)
-      for f in WavFileCache(dir_):
+      for f in wav_files.get():
          if file_regex.search(f):   # if match was found
             return f                # return match
       raise FileNotFoundError, file_

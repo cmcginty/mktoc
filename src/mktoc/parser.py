@@ -21,7 +21,7 @@ from mktoc.base import *
 from mktoc.base import __author__, __email__, __copyright__, __license__
 from mktoc.base import __version__
 from mktoc.disc import Disc,Track,TrackIndex
-from mktoc.wav import WavOffsetWriter
+from mktoc.wav import WavOffsetWriter, WavFileCache
 from mktoc.progress_bar import ProgressBar
 
 __date__ = '$Date$'
@@ -84,15 +84,17 @@ class CueParser(object):
       """"""
       # init class options
       self._find_wav    = find_wav
-      self._cue_dir     = cue_dir
       self._write_tmp   = write_tmp
       self._file_tbl    = []
       self._track_tbl   = []
+      self._wav_files   = WavFileCache(cue_dir)
 
-      self._part_search  = RegExDict( dict(self._FILE_REGEX + self._TRACK_REGEX) )
-      self._disc_search  = RegExDict( dict(self._FILE_REGEX + self._DISC_REGEX) )
-      self._tinfo_search = RegExDict( dict(self._FILE_REGEX + self._TINFO_REGEX + \
-                                             self._TRACK_REGEX) )
+      self._part_search  = RegexStore( dict(self._FILE_REGEX + \
+                                            self._TRACK_REGEX) )
+      self._disc_search  = RegexStore( dict(self._FILE_REGEX + \
+                                            self._DISC_REGEX) )
+      self._tinfo_search = RegexStore( dict(self._FILE_REGEX + \
+                                         self._TINFO_REGEX + self._TRACK_REGEX) )
 
       # create a list of regular expressions before starting the parse
       rem_regex   = re.compile( r'^\s*REM\s+COMMENT' )
@@ -121,7 +123,7 @@ class CueParser(object):
 
    def mod_wav_offset(self,samples):
       """"""
-      files = [x[1] for x in self._file_tbl]
+      files = list(zip(*self._file_tbl)[1]) # unzip file_tbl[1] to new list
       # create WavOffset object, initialize sample offset and progress output
       wo = WavOffsetWriter( samples, ProgressBar('processing WAV files:') )
       new_files = wo.execute( files, self._write_tmp )
@@ -172,7 +174,7 @@ class CueParser(object):
          key = key.lower()
          if hasattr(disc,key):
             # add match value to Disc object
-            disc.__setattr__(key, value.strip())
+            setattr(disc, key, value.strip())
          else:
             raise ParseError, "Unmatched keyword in stream: '%s'" % txt
       return disc
@@ -208,23 +210,22 @@ class CueParser(object):
          elif re_key == 'index':
             # track INDEX, file_name is associated with the index
             idx_num,time = match.groups()
-            i = TrackIndex(idx_num, time, file_name,
-                           file_exists = self._find_wav,
-                           search_dir  = self._cue_dir)
+            i = TrackIndex( idx_num, time, file_name, self._wav_files,
+                            file_exists = self._find_wav )
             trk.append_idx( i )
          elif re_key == 'quote' or re_key == 'named':
             # track information (PERFORMER, TITLE, ...)
             key,value = match.groups()
             key = key.lower()
             if hasattr(trk,key):    # add match value to Disc object
-               trk.__setattr__(key, value.strip())
+               setattr(trk, key, value.strip())
             else:
                raise ParseError, "Unmatched keyword in stream: '%s'" % txt
          elif re_key == 'flag':
             for f in [f.strip() for f in match.group(1).split()]:
                if re.search(r'DCP|4CH|PRE',f):     # flag must be known
                   if f == '4CH': f = 'four_ch'     # change '4CH' flag name
-                  trk.__setattr__(f.lower(), True)
+                  setattr(trk, f.lower(), True)
          else: # catch unhandled patterns
             raise ParseError, "Unmatched pattern in stream: '%s'" % txt
       return trk
@@ -244,7 +245,7 @@ class CueParser(object):
 
 
 ##############################################################################
-class RegExDict(object):
+class RegexStore(object):
    """"""
    def __init__(self, pat_dict):
       """"""

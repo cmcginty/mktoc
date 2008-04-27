@@ -27,27 +27,28 @@ __date__ = '$Date$'
 
 WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
 
-class WavFileCache(list):
+class WavFileCache(object):
    """"""
-   def __new__(cls, *args, **kwargs):
-      inst = cls.__dict__.get('__instance__')
-      if inst is None:
-         cls.__instance__ = inst = list.__new__(cls)
-         WavFileCache._init_cache(inst,*args,**kwargs)
-      return inst
+   def __init__(self,_dir):
+      self._src_dir = _dir
+      self._data = []
+      self._is_init = False
 
-   # this line is required, or no elements will show up in the list
-   def __init__(self,_dir): pass
+   def get(self):
+      if not self._is_init:
+         self._init_cache()   # initialize the data on first call
+      return self._data
 
-   def _init_cache(self,_dir):
+   def _init_cache(self):
       """Return a list of files in the vicinity of the current working dir."""
       fc = 0
-      for root, dirs, files in os.walk(_dir):
+      for root, dirs, files in os.walk(self._src_dir):
          if fc > 1000: break     # only cache first n files
          fc += len(files)
          f_tup = zip( [root]*len(files), files )
          wav_files = [os.path.join(r,f) for r,f in f_tup if WAV_REGEX.search(f)]
-         self.extend( wav_files )
+         self._data.extend( wav_files )
+      self._is_init = True
 
 
 ##############################################################################
