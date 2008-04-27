@@ -216,7 +216,7 @@ def error_msg(e):
    along with the error message below.
 
    ---> %s
-   """ % (EMAIL,e)
+   """ % (__email__,e)
 
 def error_msg_file(e):
    """Print a default error message to the user."""
@@ -236,6 +236,7 @@ if __name__ == '__main__':
    progName = os.path.basename(sys.argv[0])
    try:
       main()
+   except EmptyCueData: pass     # ignore NULL data input (Ctrl-C)
    except FileNotFoundError, e:
       error_msg_file(e)
    except MkTocError, e:

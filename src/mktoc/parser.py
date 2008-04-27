@@ -98,6 +98,8 @@ class CueParser(object):
       rem_regex   = re.compile( r'^\s*REM\s+COMMENT' )
       # parse disc into memory, ignore comments
       self._cue = [l.strip() for l in fh.readlines() if not rem_regex.search(l)]
+      if not len(self._cue):
+         raise EmptyCueData
       self._build_lookup_tbl()
       # create data objects for CUE info
       self._disc    = self._parse_disc()

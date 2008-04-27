@@ -24,4 +24,5 @@ class MkTocError(Exception): pass
 class FileNotFoundError(MkTocError): pass
 class ParseError(MkTocError): pass
 class UnderflowError(MkTocError): pass
+class EmptyCueData(MkTocError): pass
 
