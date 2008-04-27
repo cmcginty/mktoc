@@ -125,7 +125,7 @@ class CueParserTests(unittest.TestCase):
       if not os.path.exists(toc_path):
          cue_fh = open(os.path.join(self._CUE_DIR,self._cue_file))
          toc_fh = open(toc_path,'w')
-         toc_str = CueParser(cue_fh, find_wav=False).get_toc()
+         toc_str = CueParser(cue_fh, find_wav=False).getToc()
          # write the data
          toc_fh.write( toc_str.read() )
          cue_fh.close()
@@ -137,7 +137,7 @@ class CueParserTests(unittest.TestCase):
       TOC file data."""
       # calculate test data
       cue_fh = open(os.path.join(self._CUE_DIR,self._cue_file))
-      toc_fh = CueParser(cue_fh, find_wav=False).get_toc()
+      toc_fh = CueParser(cue_fh, find_wav=False).getToc()
       cue_fh.close()
       toc = [s for s in toc_fh.readlines()]
       toc_fh.close()

@@ -51,7 +51,7 @@ class Disc( object ):
       """Modify the values in 'disc' dictionary arg, if needed."""
       pass
 
-   def set_multisession(self):
+   def setMultisession(self):
       """Update Disc info for a multi-session CD"""
       self._mode = 'CD_ROM_XA'
 
@@ -93,7 +93,7 @@ class Track( object ):
 
       return '\n'.join(out)
 
-   def append_idx(self,idx):
+   def appendIdx(self,idx):
       """"""
       self.indexes.append(idx)
 

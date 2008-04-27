@@ -112,7 +112,7 @@ class CueParser(object):
       for trk,trk2 in map(None, self._tracks, self._tracks[1:]):
          trk.mung(trk2)   # update value in each track before printing
 
-   def get_toc(self):
+   def getToc(self):
       """"""
       # create TOC file
       buf = StringIO()
@@ -121,7 +121,7 @@ class CueParser(object):
          print >> buf, str(trk)
       return self._strip_buf(buf)
 
-   def mod_wav_offset(self,samples):
+   def modWavOffset(self,samples):
       """"""
       files = list(zip(*self._file_tbl)[1]) # unzip file_tbl[1] to new list
       # create WavOffset object, initialize sample offset and progress output
@@ -203,7 +203,7 @@ class CueParser(object):
             assert trk.num == int(match.group(1))
             if match.group(2) != 'AUDIO':
                trk.is_data = True
-               self._disc.set_multisession()     # disc is multi-session
+               self._disc.setMultisession()     # disc is multi-session
          elif re_key == 'file':
             # update file name
             file_name = match.group(1)
@@ -212,7 +212,7 @@ class CueParser(object):
             idx_num,time = match.groups()
             i = TrackIndex( idx_num, time, file_name, self._wav_files,
                             file_exists = self._find_wav )
-            trk.append_idx( i )
+            trk.appendIdx( i )
          elif re_key == 'quote' or re_key == 'named':
             # track information (PERFORMER, TITLE, ...)
             key,value = match.groups()
