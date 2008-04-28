@@ -44,15 +44,22 @@ class WavFileCache(object):
       if WAV_REGEX.search(tmp_name) and os.path.exists(tmp_name):
          log.debug('-> FOUND\n'+'-'*5)
          return file_       # return match
-      # case 2: file is locatable in path with a little work
+      # case 2: file is locatable in path by stripping directories
       fn = os.path.basename(tmp_name)     # strip leading path
       fn = os.path.splitext(fn)[0]        # strip extension
-      fn = os.sep + fn + '.wav'     # full file name to search
+      fn = os.sep + fn + '.wav'           # full file name to search
       log.debug("-> looking for file '%s'",fn)
       # escape any special characters in the file, and the '$' prevents
       # matching if any extra chars come after the name
-      fn_pat = re.escape(fn)  + '$'
-      file_regex = re.compile( fn_pat, re.IGNORECASE)
+      fn_pat1 = re.escape(fn)  + '$'
+      fn_pats = [fn_pat1]
+      # same as pat1, but replace spaces with underscores
+      fn_us = fn.replace(' ','_')
+      fn_pats.append(re.escape(fn_us) + '$')
+      # same as pat1, but replace underscores with spaces
+      fn_us = fn.replace('_',' ')
+      fn_pats.append(re.escape(fn_us) + '$')
+      file_regex = re.compile( '|'.join(fn_pats), re.IGNORECASE)
       for f in self._get_cache():
          log.debug("--> comparing file '%s'",f)
          if file_regex.search(f):   # if match was found
