@@ -18,12 +18,14 @@ import sys
 import re
 import wave
 import tempfile
+import logging
 
 from mktoc.base import *
 from mktoc.base import __author__, __email__, __copyright__, __license__
 from mktoc.base import __version__
 
 __date__ = '$Date$'
+log = logging.getLogger('mktoc.wav')
 
 WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
 
@@ -31,16 +33,41 @@ class WavFileCache(object):
    """"""
    def __init__(self, _dir='.'):
       self._src_dir = _dir
-      self._data = []
-      self._is_init = False
 
-   def get(self):
-      if not self._is_init:
-         self._init_cache()   # initialize the data on first call
+   def lookup(self, file_):
+      """Search the cache for the specified file name."""
+      log.debug("looking for file '%s'",file_)
+      tmp_name = file_
+      # convert a DOS file path to Linux
+      tmp_name = tmp_name.replace('\\','/')
+      # base case: file exists, and is has a 'WAV' extension
+      if WAV_REGEX.search(tmp_name) and os.path.exists(tmp_name):
+         log.debug('-> FOUND\n'+'-'*5)
+         return file_       # return match
+      # case 2: file is locatable in path with a little work
+      fn = os.path.basename(tmp_name)     # strip leading path
+      fn = os.path.splitext(fn)[0]        # strip extension
+      fn = os.sep + fn + '.wav'     # full file name to search
+      log.debug("-> looking for file '%s'",fn)
+      # escape any special characters in the file, and the '$' prevents
+      # matching if any extra chars come after the name
+      fn_pat = re.escape(fn)  + '$'
+      file_regex = re.compile( fn_pat, re.IGNORECASE)
+      for f in self._get_cache():
+         log.debug("--> comparing file '%s'",f)
+         if file_regex.search(f):   # if match was found
+            log.debug('--> FOUND\n'+'-'*5)
+            return f                # return match
+      raise FileNotFoundError, file_
+
+   def _get_cache(self):
+      if not hasattr(self,'_data'):
+         self._init_cache()
       return self._data
 
    def _init_cache(self):
       """Return a list of files in the vicinity of the current working dir."""
+      self._data = []
       fc = 0
       for root, dirs, files in os.walk(self._src_dir):
          if fc > 1000: break     # only cache first n files

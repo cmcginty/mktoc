@@ -123,17 +123,12 @@ class TrackIndex(object):
    """"""
    PREAUDIO, AUDIO, INDEX, START = range(4)
 
-   def __init__(self, num, time, file_, wav_files, file_exists=True):
+   def __init__(self, num, time, file_):
       """"""
       self.num = int(num)
       self.time = TrackTime(time)
       self.cmd  = self.AUDIO
       self.file_ = file_
-      try:  # attempt to find the WAV file for this index
-         self.file_ = self._mung_file(file_, wav_files)
-      except FileNotFoundError:
-         # file not found, but 'file_exists' indicates that the file must exists
-         if file_exists: raise
       # set length to maximum possible for now (total - start)
       file_len = self._file_len()
       if file_len:
@@ -209,32 +204,6 @@ class TrackIndex(object):
       frames = w.getnframes() / (w.getframerate()/75)
       w.close()
       return TrackTime(frames)
-
-   def _mung_file(self, file_, wav_files):
-      """Mung the file name, to an existing WAV file name"""
-      log.debug("looking for file '%s'",file_)
-      tmp_name = file_
-      # convert a DOS file path to Linux
-      tmp_name = tmp_name.replace('\\','/')
-      # base case: file exists, and is has a 'WAV' extension
-      if WAV_REGEX.search(tmp_name) and os.path.exists(tmp_name):
-         log.debug('-> FOUND\n'+'-'*5)
-         return file_       # return match
-      # case 2: file is locatable in path with a little work
-      fn = os.path.basename(tmp_name)     # strip leading path
-      fn = os.path.splitext(fn)[0]        # strip extension
-      fn = os.sep + fn + '.wav'     # full file name to search
-      log.debug("-> looking for file '%s'",fn)
-      # escape any special characters in the file, and the '$' prevents
-      # matching if any extra chars come after the name
-      fn_pat = re.escape(fn)  + '$'
-      file_regex = re.compile( fn_pat, re.IGNORECASE)
-      for f in wav_files.get():
-         log.debug("--> comparing file '%s'",f)
-         if file_regex.search(f):   # if match was found
-            log.debug('--> FOUND\n'+'-'*5)
-            return f                # return match
-      raise FileNotFoundError, file_
 
 
 ##############################################################################

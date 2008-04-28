@@ -150,7 +150,14 @@ class CueParser(object):
          key,match = self._part_search.match(txt)
          if match is not None:
             if key == 'file':
-               self._file_tbl.append( (i,match.group(1)) )
+               file_ = match.group(1)
+               try:  # attempt to find the WAV file
+                  file_ = self._wav_files.lookup(file_)
+               except FileNotFoundError:
+                  # file not found, but 'file_exists' indicates that the file
+                  # must exists
+                  if self._find_wav: raise
+               self._file_tbl.append( (i,file_) )
             elif key == 'track':
                self._track_tbl.append( i )
 
@@ -210,8 +217,7 @@ class CueParser(object):
          elif re_key == 'index':
             # track INDEX, file_name is associated with the index
             idx_num,time = match.groups()
-            i = TrackIndex( idx_num, time, file_name, self._wav_files,
-                            file_exists = self._find_wav )
+            i = TrackIndex( idx_num, time, file_name )
             trk.appendIdx( i )
          elif re_key == 'quote' or re_key == 'named':
             # track information (PERFORMER, TITLE, ...)
