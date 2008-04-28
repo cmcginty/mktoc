@@ -125,15 +125,19 @@ class TrackIndex(object):
 
    def __init__(self, num, time, file_):
       """"""
-      self.num = int(num)
-      self.time = TrackTime(time)
-      self.cmd  = self.AUDIO
-      self.file_ = file_
+      self.num    = int(num)
+      self.time   = TrackTime(time)
+      self.cmd    = self.AUDIO
+      self.file_  = file_
       # set length to maximum possible for now (total - start)
-      file_len = self._file_len()
+      file_len = self._file_len(self.file_)
       if file_len:
          self.len_ = file_len - self.time
       else: self.len_ = ''
+      log.debug( 'creating index %s' % repr(self) )
+
+   def __repr__(self):
+      return "'%s, %s'" % (self.file_, self.time)
 
    def __str__(self):
       """"""
@@ -196,11 +200,11 @@ class TrackIndex(object):
             idx2.cmd = self.INDEX
             del idx2.len_ # remove for safety, do not use
 
-   def _file_len(self):
+   def _file_len(self,file_):
       """"""
-      if not os.path.exists(self.file_):
+      if not os.path.exists(file_):
          return None
-      w = wave.open( self.file_ )
+      w = wave.open(file_)
       frames = w.getnframes() / (w.getframerate()/75)
       w.close()
       return TrackTime(frames)

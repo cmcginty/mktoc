@@ -15,6 +15,7 @@
 
 import os
 import re
+import logging
 from StringIO import StringIO
 
 from mktoc.base import *
@@ -25,6 +26,7 @@ from mktoc.wav import WavOffsetWriter, WavFileCache
 from mktoc.progress_bar import ProgressBar
 
 __date__ = '$Date$'
+log = logging.getLogger('mktoc.parser')
 
 class CueParser(object):
    """"""
@@ -86,6 +88,7 @@ class CueParser(object):
       self._find_wav    = find_wav
       self._write_tmp   = write_tmp
       self._file_tbl    = []
+      self._file_map    = {}
       self._track_tbl   = []
       self._wav_files   = WavFileCache(cue_dir)
 
@@ -132,6 +135,7 @@ class CueParser(object):
       file_map = dict( zip(files,new_files) )
       for trk in self._tracks:
          for idx in trk.indexes:
+            log.debug( "updating index file '%s'", idx.file_ )
             idx.file_ = file_map[idx.file_]
 
    def _active_file(self,trk_idx):
@@ -144,22 +148,30 @@ class CueParser(object):
 
    def _build_lookup_tbl(self):
       """"""
-      self._track_tbl = []
-      self._file_tbl  = []
       for i,txt in enumerate(self._cue):
          key,match = self._part_search.match(txt)
          if match is not None:
             if key == 'file':
-               file_ = match.group(1)
-               try:  # attempt to find the WAV file
-                  file_ = self._wav_files.lookup(file_)
-               except FileNotFoundError:
-                  # file not found, but 'file_exists' indicates that the file
-                  # must exists
-                  if self._find_wav: raise
+               file_ = self._lookup_file_name( match.group(1) )
                self._file_tbl.append( (i,file_) )
+
             elif key == 'track':
                self._track_tbl.append( i )
+
+   def _lookup_file_name(self,file_):
+      """"""
+      if self._file_map.has_key(file_):
+         return self._file_map[file_]
+      else:
+         try:  # attempt to find the WAV file
+            file_on_disk = self._wav_files.lookup(file_)
+         except FileNotFoundError:
+            # file not found, but 'file_exists' indicates that the file
+            # must exists
+            if self._find_wav: raise
+            else: file_on_disk = file_
+         self._file_map[file_] = file_on_disk
+         return file_on_disk
 
    def _parse_all_tracks(self):
       """"""
@@ -213,7 +225,7 @@ class CueParser(object):
                self._disc.setMultisession()     # disc is multi-session
          elif re_key == 'file':
             # update file name
-            file_name = match.group(1)
+            file_name = self._lookup_file_name(match.group(1))
          elif re_key == 'index':
             # track INDEX, file_name is associated with the index
             idx_num,time = match.groups()
