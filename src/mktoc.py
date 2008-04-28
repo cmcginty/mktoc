@@ -180,7 +180,7 @@ def main():
    # open CUE file
    if opt.cue_file:
       # set the working dir of the input file
-      opt.cue_dir = os.path.dirname( opt.cue_file ) or '.'
+      opt.cue_dir = os.path.dirname( opt.cue_file ) or os.curdir
       try:
          fh_in = open(opt.cue_file)
       except:

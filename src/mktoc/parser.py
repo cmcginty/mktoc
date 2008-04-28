@@ -82,7 +82,8 @@ class CueParser(object):
          \s+(.*)$                # one or more flags
       """)]
 
-   def __init__(self, fh, find_wav=True, cue_dir='.', write_tmp=False, **unk):
+   def __init__(self, fh, find_wav=True, cue_dir=os.curdir,
+                write_tmp=False, **unk):
       """"""
       # init class options
       self._find_wav    = find_wav
