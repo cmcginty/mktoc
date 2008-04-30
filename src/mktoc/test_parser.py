@@ -147,7 +147,7 @@ class CueParserTests(unittest.TestCase):
       toc_good_fh.close()
       # compare data sets
       if toc != toc_good:
-         for a,b in zip(toc,toc_good):
+         for a,b in map(None,toc,toc_good):
             err_str = "strings do not match\n  %s:%s\n  %s:%s" % \
                         (self._cue_file,repr(a),self._toc_file,repr(b))
             self.assertEqual(a,b,err_str)
