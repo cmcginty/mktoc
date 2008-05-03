@@ -83,6 +83,22 @@ class WavFileCacheTests(unittest.TestCase):
       wc = WavFileCache(self._WAV_DIR)
       self.assertTrue( wc.lookup('My Test File-2.wav'))
 
+   def testMatchAsLeadSubstr(self):
+      """A source name matches a substring of a file in the test dir."""
+      wc = WavFileCache(self._WAV_DIR)
+      self.assertTrue( wc.lookup('Text My Test File-3.wav'))
+
+   def testMatchAsTrailSubstr(self):
+      """A source name matches a substring of a file in the test dir."""
+      wc = WavFileCache(self._WAV_DIR)
+      self.assertTrue( wc.lookup('My Test File-3 Trail.wav'))
+
+   def testFailMatchAsNSubstr(self):
+      """A source name matches a substring of multiple files in the test dir
+      should raise an exception."""
+      wc = WavFileCache(self._WAV_DIR)
+      self.assertRaises( FileNotFoundError, wc.lookup, 'My Test File-3.wav')
+
 ##############################################################################
 if __name__ == '__main__':
    """Execute all test cases define in this file."""

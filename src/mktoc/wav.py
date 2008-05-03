@@ -85,24 +85,31 @@ class WavFileCache(object):
       # case 2: file is locatable in path by stripping directories
       fn = os.path.basename(tmp_name)     # strip leading path
       fn = os.path.splitext(fn)[0]        # strip extension
-      fn = os.sep + fn + '.wav'           # full file name to search
-      log.debug("-> looking for file '%s'",fn)
+      log.debug("-> looking for file '%s'", os.sep + fn + '.wav')
       # escape any special characters in the file, and the '$' prevents
       # matching if any extra chars come after the name
-      fn_pat1 = re.escape(fn)  + '$'
-      fn_pats = [fn_pat1]
+      sep = re.escape(os.sep)
+      dot_wav = re.escape('.wav')
+      fn_pat = sep + '.*' + re.escape(fn) + '.*' + dot_wav + '$'
+      fn_pats = [fn_pat]
       # same as pat1, but replace spaces with underscores
       fn_us = fn.replace(' ','_')
-      fn_pats.append(re.escape(fn_us) + '$')
+      fn_pat = sep + '.*' + re.escape(fn_us) + '.*' + dot_wav + '$'
+      fn_pats.append( fn_pat )
       # same as pat1, but replace underscores with spaces
       fn_us = fn.replace('_',' ')
-      fn_pats.append(re.escape(fn_us) + '$')
+      fn_pat = sep + '.*' + re.escape(fn_us) + '.*' + dot_wav + '$'
+      fn_pats.append( fn_pat )
       file_regex = re.compile( '|'.join(fn_pats), re.IGNORECASE)
+      match = None
       for f in self._get_cache():
          log.debug("--> comparing file '%s'",f)
          if file_regex.search(f):   # if match was found
             log.debug('--> FOUND\n'+'-'*5)
-            return f                # return match
+            if match is not None: # exception if there was more than 1 match
+               raise FileNotFoundError, file_
+            match = f               # save match
+      if match is not None: return match
       raise FileNotFoundError, file_
 
    def _get_cache(self):
