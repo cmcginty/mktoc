@@ -123,6 +123,14 @@ class Track( object ):
       four_ch
          True or False, indicates 'Four Channel Audio' flag on the track.
 
+      indexes
+         A list of TrackIndex objects. Every track has at least one TrackIndex
+         and possibly more. The TrackIndex defines a length of audio data or
+         property in the track. The fist TrackIndex can be pre-gap data. Only
+         one audio file can be associated with a TrackIndex, so if a track is
+         composed of multiple audio files, there will be an >= number of
+         TrackIndexes. See the TrackIndex class for more info.
+
       is_data
          True or False, indicates if a track is binary data and not audio. Data
          tracks will not produce any text when printed.
@@ -151,15 +159,6 @@ class Track( object ):
 
       title
          A string representing the title of the track.
-
-   Private Data Members:
-      _indexes
-         A list of TrackIndex objects. Every track has at least one TrackIndex
-         and possibly more. The TrackIndex defines a length of audio data or
-         property in the track. The fist TrackIndex can be pre-gap data. Only
-         one audio file can be associated with a TrackIndex, so if a track is
-         composed of multiple audio files, there will be an >= number of
-         TrackIndexes. See the TrackIndex class for more info.
    """
    def __init__(self,num):
       """Create an empty list of TrackIndex objects, and assign track number.
@@ -169,6 +168,7 @@ class Track( object ):
          num   : Integer of the track index in the audio CD"""
       self.dcp          = False
       self.four_ch      = False
+      self.indexes      = []    # a list of indexes in the track
       self.is_data      = False
       self.isrc         = None
       self.num          = num
@@ -176,8 +176,6 @@ class Track( object ):
       self.pre          = False
       self.pregap       = None
       self.title        = None
-
-      self._indexes     = []    # a list of indexes in the track
 
    def __str__(self):
       """Return the TOC formated representation of the Track object including
@@ -195,7 +193,7 @@ class Track( object ):
       out += ['\t}}']
       if self.pregap:     out += ['\tPREGAP %s' % self.pregap]
 
-      for idx in self._indexes:
+      for idx in self.indexes:
          out.append( str(idx) )
 
       return '\n'.join(out)
@@ -207,7 +205,7 @@ class Track( object ):
       Parameter:
          idx   : A new TrackIndex object that is being added to the Track
                  object."""
-      self._indexes.append(idx)
+      self.indexes.append(idx)
 
    def mung(self,trk2):
       """For use after the Track is updated with all data and indexes, to fix
@@ -220,7 +218,7 @@ class Track( object ):
                  current track is the last one, then this value must be
                  'None'."""
       # current index and "next" index or None
-      for idx,idx2 in map(None, self._indexes, self._indexes[1:]):
+      for idx,idx2 in map(None, self.indexes, self.indexes[1:]):
          #####
          # Set the LENGTH argument on a track that must stop before EOF
          #
@@ -229,8 +227,8 @@ class Track( object ):
          #           end before the next track INDEX starts. Note:
          #           TrackIndex.INDEX cmds do not have 'len' values.
          if trk2 and idx.cmd == TrackIndex.AUDIO and \
-               idx.file_ == trk2._indexes[0].file_:
-            end_time = trk2._indexes[0].time
+               idx.file_ == trk2.indexes[0].file_:
+            end_time = trk2.indexes[0].time
             idx.len_ = end_time - idx.time
 
          # modify index values
