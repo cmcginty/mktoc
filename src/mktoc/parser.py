@@ -13,6 +13,22 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Module for mktoc that provides object(s) to parse text files describing the
+layout of an audio CD. After the parse step is complete, it is possible to
+access the data or convert into any other output format. The following object
+classes are:
+
+   CueParser
+      An audio CUE sheet text file parsing class. After parsing, the CUE file
+      can be re-created or converted into a new format.
+
+   RegexStore
+      A helper class that simplifies the management of regular expressions. The
+      RegexStore class is used to apply a list of regular expressions to a
+      single text stream. The first matching regular expression is returned.
+"""
+
 __date__    = '$Date$'
 __version__ = '$Revision$'
 
@@ -30,9 +46,78 @@ __all__ = ['CueParser']
 
 log = logging.getLogger('mktoc.parser')
 
+
 class CueParser(object):
-   """"""
-   # global search pattern unused in all other searches
+   """An audio CUE sheet text file parsing class. By matching the known format
+   of a CUE file, the relevant text information is extracted and converted to a
+   binary representation. The binary representation is created by using
+   combination of Disc, Track, and TrackIndex objects. With the data, the CUE
+   file can be re-created or converted into a new format.
+
+   Constants:
+      The following constants contain all of the pattern matching expressions
+      for the CUE file parsing steps. The patterns are combined and applied
+      depending on the current step of the scanning process.
+
+      _FILE_REGEX
+         Regex patterns for WAV file names.
+
+      _TRACK_REGEX
+         Regex patterns for Track commands.
+
+      _DISC_REGEX
+         Regex patterns for Disc info.
+
+      _TINFO_REGEX
+         Regex patterns for associated Track info.
+
+   Private Data Members:
+      _cue
+         List of processed CUE text data. The processing step removes text
+         comments and strips white spaces.
+
+      _disc
+         Disc object that store the parsed CUE disc info.
+
+      _tracks
+         Track object that stores the parsed CUE track info.
+
+      _file_map
+         Dictionary to map CUE file names to WAV files on the system. The map
+         is for use in cases where the CUE defined file name does not exactly
+         match the file system WAV name.
+
+      _file_tbl
+         In-order list of tuples containing a WAV files found in the CUE text,
+         and the line number it was found on. The line number is the first
+         element of the tuple.
+
+      _find_wav
+         True or False, when True the WAV file must be found in the FS or an
+         exception is raised.
+
+      _track_tbl
+         List used as a lookup table, indexed by track number, to map each CUE
+         track to its line number in the CUE text.
+
+      _wav_files
+         WavFileCache object that can quickly find WAV files in the local file
+         system.
+
+      _write_tmp
+         True or False, when True any new WAV files will be created in /tmp.
+
+      _part_search
+         RegexStore list of regex searches for first partial scan of the TOC
+         text.
+
+      _disc_search
+         RegexStore list of regex searches for disc info scan of the TOC
+
+      _tinfo_search
+         RegexStore list of regex searches for track info scan of the TOC
+   """
+   # file name search pattern used in all other searches
    _FILE_REGEX  = [
       ('file',  r"""
          ^\s*FILE       # FILE
@@ -86,14 +171,29 @@ class CueParser(object):
 
    def __init__(self, fh, find_wav=True, cue_dir=os.curdir,
                 write_tmp=False, **unk):
-      """"""
+      """Parses CUE file text data and initializes object data. The primary
+      output of this function is to create the '_disc' and '_tracks' objects.
+      All of the processed CUE data is stored in these two structures.
+
+      Parameters:
+         fh          : An open file handle used to read the CUE text data
+
+         find_wav    : True/False, True causes exceptions to be raised if a WAV
+                       file can not be found in the FS.
+
+         cue_dir     : Path location of the CUE file's directory.
+
+         write_tmp   : True/False, True causes corrected WAV files to be
+                       written to /tmp
+
+         unk         : accepts all unknown options to simplify invoke step"""
       # init class options
-      self._find_wav    = find_wav
-      self._write_tmp   = write_tmp
-      self._file_tbl    = []
       self._file_map    = {}
+      self._file_tbl    = []
+      self._find_wav    = find_wav
       self._track_tbl   = []
       self._wav_files   = WavFileCache(cue_dir)
+      self._write_tmp   = write_tmp
 
       self._part_search  = RegexStore( dict(self._FILE_REGEX + \
                                             self._TRACK_REGEX) )
@@ -119,7 +219,8 @@ class CueParser(object):
          trk.mung(trk2)   # update value in each track before printing
 
    def getToc(self):
-      """"""
+      """Access method to return a text stream of the CUE data in TOC
+      format."""
       # create TOC file
       buf = StringIO()
       print >> buf, str(self._disc)
@@ -128,7 +229,14 @@ class CueParser(object):
       return self._strip_buf(buf)
 
    def modWavOffset(self,samples):
-      """"""
+      """Optional method to correct the audio WAV data by shifting the samples
+      by a positive or negative offset. This can be used to compensate for a
+      write offset in a CD/DVD burner. If the '_write_tmp' variable is True,
+      all new WAV files will be created in the /tmp directory.
+
+      Parameters:
+         samples  : the number of samples to shift the audio data by. This
+                    value can be negative or positive."""
       files = list(zip(*self._file_tbl)[1]) # unzip file_tbl[1] to new list
       # create WavOffset object, initialize sample offset and progress output
       wo = WavOffsetWriter( samples, ProgressBar('processing WAV files:') )
@@ -142,7 +250,7 @@ class CueParser(object):
             idx.file_ = file_map[idx.file_]
 
    def _active_file(self,trk_idx):
-      """"""
+      """Returns the previous WAV file used before the start of 'trk_idx'."""
       tline = self._track_tbl[trk_idx]
       for fline,fn in self._file_tbl:
          if fline > tline: break
@@ -150,19 +258,26 @@ class CueParser(object):
       return out_file
 
    def _build_lookup_tbl(self):
-      """"""
+      """Helper function to create the '_file_tbl' and '_track_tbl' referenced
+      in the full class documentation."""
       for i,txt in enumerate(self._cue):
          key,match = self._part_search.match(txt)
          if match is not None:
             if key == 'file':
                file_ = self._lookup_file_name( match.group(1) )
                self._file_tbl.append( (i,file_) )
-
             elif key == 'track':
                self._track_tbl.append( i )
+            else: # catch unhandled patterns
+               raise ParseError, "Unmatched key: '%s'" % key
 
    def _lookup_file_name(self,file_):
-      """"""
+      """Attempts to return the path to a valid WAV file in the files system
+      using the input 'file_' value. If the WAV file can not be found and
+      '_find_wav' is True, then an exception is raised.
+
+      Parameter:
+         file  : audio file name parsed from the CUE text."""
       if self._file_map.has_key(file_):
          return self._file_map[file_]
       else:
@@ -177,11 +292,14 @@ class CueParser(object):
          return file_on_disk
 
    def _parse_all_tracks(self):
-      """"""
+      """Return a list of Track objects that contain the track information
+      from the fully parsed CUE text data."""
       return [self._parse_track(i) for i in range(len(self._track_tbl))]
 
    def _parse_disc(self):
-      """"""
+      """Return a Disc object that contains the disc information from the fully
+      parsed CUE text data. This method implements the 'disc' scanning steps of
+      the parser."""
       disc = Disc()
       # splice the cue list
       data = self._cue[:self._track_tbl[0]]
@@ -202,7 +320,13 @@ class CueParser(object):
       return disc
 
    def _parse_track(self,num):
-      """"""
+      """Return a Track object that contains a single track element from the
+      parsed CUE text data. This method implements the 'track' scanning steps
+      of the parser.
+
+      Parameters:
+         num   : the track index of the track to parse. The first track starts
+                 at 0."""
       # splice track data
       if num+1 < len(self._track_tbl):
          data = self._cue[ self._track_tbl[num]:self._track_tbl[num+1] ]
@@ -251,8 +375,11 @@ class CueParser(object):
             raise ParseError, "Unmatched pattern in stream: '%s'" % txt
       return trk
 
-   def _strip_buf(self,buf):
-      """"""
+   def _strip_buf(self, buf):
+      """Helper function that re-formats a buffer of text data. The processing
+      steps are:
+            a) expand tabs to 4 spaces
+            b) strip trailing white space on each line"""
       # cleanup string data
       buf.seek(0,os.SEEK_SET)
       data = [x.expandtabs(4).rstrip() for x in buf.readlines()]
@@ -267,15 +394,33 @@ class CueParser(object):
 
 ##############################################################################
 class RegexStore(object):
-   """"""
+   """A helper class that simplifies the management of regular expressions. The
+   RegexStore class is used to apply a list of regular expressions to a single
+   text stream. The first matching regular expression is returned.
+
+   Private Data Members:
+      _searches
+         Dictionary of compiled regex's keyed by a user supplied string value.
+   """
    def __init__(self, pat_dict):
-      """"""
+      """Initialize the '_searches' dictionary using the 'pat_dict' parameter.
+
+      Parameters:
+         pat_dict : A dictionary of regular expression strings. The regex value
+                    is compiled and stored in the '_searches' dictionary, keyed
+                    by the original 'pat_dict' key."""
       # build RegEx searches
-      re_searches   = [re.compile(pat, re.VERBOSE) for pat in pat_dict.values()]
+      re_searches = [re.compile(pat, re.VERBOSE) for pat in pat_dict.values()]
       self._searches = dict(zip(pat_dict.keys(),re_searches))
 
    def match( self, text ):
-      """"""
+      """Applies the 'text' parameter to a dictionary of regex searches. The
+      output of the first matching regex is returned along with the matching
+      regex's dictionary key. The return is data is contained in a tuple, with
+      the key as the first element.
+
+      Parameters:
+         text :   text string applied to a list of regex searches."""
       for key,cre in self._searches.items():
          match = cre.search(text)
          if match: break    # break on first match

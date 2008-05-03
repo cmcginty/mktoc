@@ -13,6 +13,25 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Module for mktoc that can holds utility functions for search and modifying WAV
+audio files. The available object classes are:
+
+   WavFileCache
+      Verifies the existence of a WAV file in the local file system. The class
+      provides fuzzy logic name matching of cached results in the case that the
+      specified file can not be found.
+
+   WavOffsetWriter
+      Shift the audio data in a set of WAV files by a desired postive or
+      negative sample offset.
+
+   Constants:
+      WAV_REGEX
+         A complied search object that can be used to match file name strings
+         ending with the '.wav' extension.
+"""
+
 __date__    = '$Date$'
 __version__ = '$Revision$'
 
@@ -30,13 +49,31 @@ __all__ = ['WAV_REGEX', 'WavFileCache', 'WavOffsetWriter']
 log = logging.getLogger('mktoc.wav')
 WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
 
+
 class WavFileCache(object):
-   """"""
+   """Verifies the existence of a WAV file in the local file system. The class
+   provides fuzzy logic name matching of cached results in the case that the
+   specified file can not be found. The files system is only scanned once, and
+   all lookups after the initial test come from the cache. The cache size is
+   limited to prevent over aggressive file system access.
+
+   Private Data Members:
+      _data    : String list of WAV files found in the local file system.
+
+      _src_dir : String that stores the base search path location."""
    def __init__(self, _dir=os.curdir):
+      """Initialize the internal member _src_dir with the input '_dir'
+      argument. If no argument is supplied it defaults to the current working
+      dir."""
       self._src_dir = _dir
 
    def lookup(self, file_):
-      """Search the cache for the specified file name."""
+      """Search the cache for a fuzzy-logic match of the file name in 'file_'
+      parameter. This method will always return the exact file name if it
+      exists before attempting fuzzy matches.
+
+      Parameter:
+         file_    : String of the file name to search for."""
       log.debug("looking for file '%s'",file_)
       tmp_name = file_
       # convert a DOS file path to Linux
@@ -69,12 +106,15 @@ class WavFileCache(object):
       raise FileNotFoundError, file_
 
    def _get_cache(self):
+      """Helper function used to lookup the WAV file cache. The first call to
+      this method will cause the creation of the cache."""
       if not hasattr(self,'_data'):
          self._init_cache()
       return self._data
 
    def _init_cache(self):
-      """Return a list of files in the vicinity of the current working dir."""
+      """Create a list of WAV files in the vicinity of the current working
+      dir. The list is store in the object member '_data'."""
       self._data = []
       fc = 0
       for root, dirs, files in os.walk(self._src_dir):
@@ -88,17 +128,55 @@ class WavFileCache(object):
 
 ##############################################################################
 class WavOffsetWriter(object):
-   """"""
+   """Shift the audio data in a set of WAV files by a desired postive or
+   negative sample offset. The module will never modify the input WAV files,
+   and always write to either a new directory in the 'cwd' or in the '/tmp'
+   directory. The WAV files are treated as a set of data, in that the direction
+   of shift will cause audio sample data to be taken from either a previous or
+   next WAV file. The shift in sample data will cause either the first or last
+   WAV file to contain 'sample count' of NULL samples.
+
+   Constants:
+      _COPY_SIZE
+         Specifies the number of samples to copy for each cycle. This value
+         affects the memory required by this class and the frequency the
+         progress bar is update.
+
+   Private Data Members:
+      _offset
+         The sample shift offset value.
+
+      _pb
+         Reference to a ProgressBar object to provide progress updates.
+
+      _progName
+         String of the program name (i.e. mktoc) used when creating directories
+         in /tmp.
+   """
    _COPY_SIZE = 256*1024
 
    def __init__(self, offset_samples, progress_bar):
-      """"""
+      """Initialize private data members.
+
+      Parameters:
+         offset_samples    : The sample shift value assigned to '_offset'.
+
+         progress_bar      : Reference to a ProgressBar object used to give
+                             status updates to the user."""
       self._offset  = offset_samples
       self._pb = progress_bar
       self._progName = os.path.basename( sys.argv[0] )
 
    def execute(self, files, use_tmp_dir):
-      """"""
+      """Initiate the WAV offsetting algorithm. New output files are written
+      to either 'wav[+,-]n/' or '/tmp/mktoc.[random]/'
+
+      Parameters:
+         files       : A list of WAV files read to apply the sample shifting
+                       process to.
+
+         use_tmp_dir : True/False, True indicates new WAV files are created in
+                       /tmp."""
       # set the maximum progress bar value
       self._pb.max_ = self._get_total_samp( files )
       # positive offset correction, insert silence in first track,
@@ -128,7 +206,22 @@ class WavOffsetWriter(object):
       return out_files
 
    def _append_nxt_start(self, out_fn, fn, nxt_fn):
-      """Negative offset correction"""
+      """Negative offset correction algorithm for a single WAV file. Copies the
+      current WAV file data and then appends start of the next files WAV data
+      into a new WAV file. The basic steps are:
+         1) perform a positive 'n' sample seek into input WAV file.
+         2) copy data from location to start of new WAV file until EOF of
+            input.
+         3) Either,
+            a) open 'nxt_fn' WAV file and finish writing the last 'n' samples.
+            b) pad the new WAV file with n samples of NULL data.
+
+      Parameters:
+         out_fn   : String of output WAV file name.
+
+         fn       : String of intput WAV file name.
+
+         nxt_fn   : String of N+1 input WAV file name."""
       wav_out = wave.open(out_fn, 'w')
       wav_in = wave.open(fn)
       # setup the output parameters
@@ -166,7 +259,7 @@ class WavOffsetWriter(object):
       wav_out.close()
 
    def _get_new_name(self, f):
-      """"""
+      """Generates a new name a location to write 'wav[+,-]n/' WAV files."""
       dir_,name = os.path.split(f)
       new_dir = os.path.join(dir_, 'wav%+d' % self._offset)
       if not os.path.exists(new_dir):
@@ -174,20 +267,41 @@ class WavOffsetWriter(object):
       return os.path.join( new_dir, name)
 
    def _get_total_samp(self, files):
-      """"""
+      """Helper function to return the total sample count of a list of WAV
+      files. Used to set the ProgressBar 'max' value.
+
+      Parameter:
+         files : List of WAV files to read."""
       count = 0
       for f in files:
          count += wave.open(f).getnframes()
       return count
 
    def _get_tmp_name(self, f):
-      """"""
+      """Generates a new name a location to write '/tmp/mktoc.[random]/' WAV
+      files."""
       if not hasattr(self, '_tmp_dir'):
          self._tmp_dir = tempfile.mkdtemp( prefix=self._progName+'.' )
       return os.path.join( self._tmp_dir, os.path.basename(f) )
 
    def _insert_prv_end(self, out_fn, fn, prv_fn):
-      """Positive offset correction"""
+      """Positive offset correction algorithm for a single WAV file. Inserts
+      the end of the previous files WAV data and then copies the current WAV
+      files data into a new WAV file. The basic steps are:
+         1) Either,
+            a) perform a positive (EOF - 'n') sample seek into 'prv_fn' WAV
+               file.
+            b) if no 'prv_fn' use NULL data
+         2) copy n samples of data to start of new WAV file.
+         3) Open 'fn' WAV file and copy the full WAV file - 'n' samples to
+            the output WAV.
+
+      Parameters:
+         out_fn   : String of output WAV file name.
+
+         fn       : String of intput WAV file name.
+
+         prv_fn   : String of N-1 input WAV file name."""
       wav_out = wave.open(out_fn, 'w')
       wav_in = wave.open(fn)
       # setup the output parameters

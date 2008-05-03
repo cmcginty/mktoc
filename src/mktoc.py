@@ -93,7 +93,7 @@ Examples:
 
    4) Adjust WAV files for a CD writer offset value. For example, if your CD
       writer has a -30 sample write offset, it can be corrected by offsetting
-      the input WAV files by +30 samples. New wav files will be placed in the
+      the input WAV files by +30 samples. New WAV files will be placed in the
       working directory in a new dir called 'wav+30':
 
       mktoc -c 30 < cue_file.cue

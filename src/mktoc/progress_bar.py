@@ -13,7 +13,16 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__date__ = '$Date$'
+"""
+Module for mktoc that prints a progress indication. The default usage is to
+prompt the user when an operation is running that the user must wait for. The
+following object classes are:
+
+   ProgressBar
+      Creates a progress bar given program input.
+"""
+
+__date__    = '$Date$'
 __version__ = '$Revision$'
 
 import time
@@ -24,21 +33,45 @@ __all__ = ['ProgressBar']
 
 
 class ProgressBar( object ):
-   """"""
+   """Creates a progress bar string to be printed by the calling function.
+
+   Public Data Members:
+      max_
+         The maximum input input value expected by the progress bar. This value
+         should be set before trying to print the progress bar. All percentage
+         calculations are based from this value. It is OK to update this value
+         as many times as needed, however it might confuse the user.
+
+   Private Data Members:
+      _notice_text
+         String to contain a message printed alongside the progress bar.
+
+      _size
+         The total integer count of the 'progress'. This value is modified by
+         the overloaded '+=' operator. This value can never go above 'max_'.
+   """
    def __init__(self, notice_txt):
+      """Initialize object defaults.
+
+      Parameters:
+         notice_txt  : String assigned to _notice_txt member that is printed
+                       alongside the progress bar.
+      """
       self._notice_txt = notice_txt
       self._size  = 0
       self.max_   = 0           # default max value
 
    def __iadd__(self, other):
-      """"""
+      """+= operator that increments the current state of the progress bar. The
+      input value can be of any range, but the progress bar value will be fixed
+      at 'max_'."""
       self._size += min(other, self.max_ - self._size)
       return self
 
    def __str__(self):
-      """"""
+      """Returns a progress bar string."""
       if not self.max_:
-         raise Exception, "You must initialize ProgressBar.max_ first"
+         raise Exception("You must initialize ProgressBar.max_ first")
       if not hasattr(self,'_start_time'):
          self._start_time = time.time()
          time_dif = 0

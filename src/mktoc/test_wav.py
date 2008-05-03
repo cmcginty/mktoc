@@ -26,7 +26,7 @@ import unittest
 import inspect
 
 from mktoc.base import *
-from mktoc.wav import *
+from mktoc.wav  import *
 
 
 class WavFileCacheTests(unittest.TestCase):

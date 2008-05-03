@@ -32,7 +32,7 @@ from distutils.command.install_scripts import install_scripts
 from mktoc.base import *
 
 class install_scripts_renamed(install_scripts):
-   """Override the stanard install_script class to strip the '.py' extension
+   """Override the standard install_script class to strip the '.py' extension
    from any script files."""
    def run(self):
       curr_scripts = self.get_inputs()
