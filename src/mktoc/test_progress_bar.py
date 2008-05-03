@@ -17,11 +17,12 @@
 Unit testing framework for mktoc_progress_bar module.
 """
 
-import unittest
-from mktoc.base import __author__, __email__, __copyright__, __license__
-from mktoc.base import __version__
+__date__    = '$Date$'
+__version__ = '$Revision$'
 
-__date__ = '$Date$'
+import unittest
+from mktoc.base import *
+
 
 ##############################################################################
 if __name__ == '__main__':

@@ -18,16 +18,18 @@
 """
 Distools setup file for the mktoc application.
 """
+
+__date__    = '$Date$'
+__version__ = '$Revision$'
+
 import sys
 sys.path.insert(0,'src')  # allow setup.py to import mktoc.base
 
 import os
 from distutils.core  import setup
 from distutils.command.install_scripts import install_scripts
-from mktoc.base import __author__, __email__, __copyright__, __license__
-from mktoc.base import __version__
 
-__date__ = '$Date$'
+from mktoc.base import *
 
 class install_scripts_renamed(install_scripts):
    """Override the stanard install_script class to strip the '.py' extension
@@ -39,7 +41,7 @@ class install_scripts_renamed(install_scripts):
                    os.path.join(self.build_dir,os.path.splitext(f)[0]))
       install_scripts.run(self)
 
-setup( name='mktoc', version=__version__,
+setup( name='mktoc', version=VERSION,
        description='CD audio CUE file interpretor for cdrdao',
        author=__author__,
        author_email=__email__,
@@ -49,5 +51,3 @@ setup( name='mktoc', version=__version__,
        scripts=['src/mktoc.py'],
        cmdclass={'install_scripts':install_scripts_renamed},
       )
-
-

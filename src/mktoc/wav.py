@@ -13,6 +13,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+__date__    = '$Date$'
+__version__ = '$Revision$'
+
 import os
 import sys
 import re
@@ -21,12 +24,10 @@ import tempfile
 import logging
 
 from mktoc.base import *
-from mktoc.base import __author__, __email__, __copyright__, __license__
-from mktoc.base import __version__
 
-__date__ = '$Date$'
+__all__ = ['WAV_REGEX', 'WavFileCache', 'WavOffsetWriter']
+
 log = logging.getLogger('mktoc.wav')
-
 WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
 
 class WavFileCache(object):

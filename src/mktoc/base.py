@@ -13,12 +13,19 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+__date__       = '$Date$'
+__version__    = '$Revision$'
+
+__all__        = ['__author__', '__email__', '__copyright__', '__license__', \
+                  'VERSION', 'MkTocError' ,'FileNotFoundError', 'ParseError', \
+                  'UnderflowError', 'EmptyCueData' ]
+
 __author__     = 'Patrick C. McGinty'
 __email__      = 'mktoc[@]tuxcoder[dot]com'
 __copyright__  = 'Copyright (c) 2008'
 __license__    = 'GPL'
-__version__    = '1.0'
-__date__       = '$Date$'
+
+VERSION        = '1.0'
 
 class MkTocError(Exception): pass
 class FileNotFoundError(MkTocError): pass

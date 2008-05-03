@@ -13,19 +13,21 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+__date__    = '$Date$'
+__version__ = '$Revision$'
+
 import os
 import re
 import logging
 from StringIO import StringIO
 
 from mktoc.base import *
-from mktoc.base import __author__, __email__, __copyright__, __license__
-from mktoc.base import __version__
-from mktoc.disc import Disc,Track,TrackIndex
-from mktoc.wav import WavOffsetWriter, WavFileCache
-from mktoc.progress_bar import ProgressBar
+from mktoc.disc import *
+from mktoc.wav  import *
+from mktoc.progress_bar import *
 
-__date__ = '$Date$'
+__all__ = ['CueParser']
+
 log = logging.getLogger('mktoc.parser')
 
 class CueParser(object):

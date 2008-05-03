@@ -17,15 +17,16 @@
 Unit testing framework for mktoc_paraser module.
 """
 
+__date__    = '$Date$'
+__version__ = '$Revision$'
+
 import sys
 import os
 import inspect
 import unittest
-from mktoc.base import __author__, __email__, __copyright__, __license__
-from mktoc.base import __version__
+
 from mktoc.parser import *
 
-__date__ = '$Date$'
 
 class CueParserTests(unittest.TestCase):
    """Unit tests for the external interface of the CueParser class. These test

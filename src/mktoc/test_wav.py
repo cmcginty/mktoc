@@ -17,16 +17,17 @@
 Unit testing framework for mktoc_wav module.
 """
 
+__date__    = '$Date$'
+__version__ = '$Revision$'
+
 import os
 import sys
 import unittest
 import inspect
 
-from mktoc.base import __author__, __email__, __copyright__, __license__
-from mktoc.base import __version__
+from mktoc.base import *
 from mktoc.wav import *
 
-__date__ = '$Date$'
 
 class WavFileCacheTests(unittest.TestCase):
    """Unit tests for the external interface of the WavFileCache class. These

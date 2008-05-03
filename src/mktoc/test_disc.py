@@ -16,12 +16,16 @@
 """
 Unit testing framework for mktoc_disc module.
 """
-import unittest
-from mktoc.base import __author__, __email__, __copyright__, __license__
-from mktoc.base import __version__
-from mktoc.disc import *
 
 __date__ = '$Date$'
+__version__ = '$Revision$'
+
+import unittest
+
+from mktoc.base import *
+from mktoc.disc import *
+from mktoc.disc import TrackTime
+
 
 class TrackTimeTests(unittest.TestCase):
    """Unit tests for the external interface of the TrackTime class."""

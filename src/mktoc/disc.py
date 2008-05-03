@@ -13,17 +13,18 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+__date__    = '$Date$'
+__version__ = '$Revision$'
+
 import os
 import re
 import wave
 import logging
 
 from mktoc.base import *
-from mktoc.base import __author__, __email__, __copyright__, __license__
-from mktoc.base import __version__
-from mktoc.wav import WAV_REGEX
 
-__date__ = '$Date$'
+__all__ = [ 'Disc', 'Track', 'TrackIndex' ]
+
 log = logging.getLogger('mktoc.disc')
 
 class Disc( object ):
