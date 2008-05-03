@@ -19,7 +19,7 @@
 Distools setup file for the mktoc application.
 """
 import sys
-sys.path.append('src')  # allow setup.py to import mktoc.base
+sys.path.insert(0,'src')  # allow setup.py to import mktoc.base
 
 import os
 from distutils.core  import setup
