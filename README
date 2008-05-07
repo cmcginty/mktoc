@@ -40,9 +40,9 @@ Options:
    -a, --allow-missing-wav
          do not abort when WAV file(s) are missing, (experts only). It is
          possible when using this option that a bug in cdrdao will create a CD
-         that ignores the pre gap definitions in the TOC file. Only use this
-         option if the CUE file does not contain pre gaps, or if you do not
-         wish to retain the pre gap information.
+         that ignores the pregap definitions in the TOC file. Only use this
+         option if the CUE file does not contain pregaps, or if you do not
+         wish to retain the pregap information.
 
    -c WAV_OFFSET, --offset-correction=WAV_OFFSET
          correct reader/writer offset by creating WAV file(s) shifted by
@@ -71,8 +71,9 @@ Examples:
       mktoc < cue_file.cue > toc_file.toc
       mktoc -f cue_file.cue -o toc_file.toc
 
-   3) Tell mktoc to ignore missing WAV file errors, possible causing incorrect
-      TOC file results (see above):
+   3) Tell mktoc to ignore missing WAV file errors. There is a potential that
+      the result TOC file will cause cdrdao to loose pregap information during
+      the burn process (see above):
 
       mktoc -a cue_file.cue
 

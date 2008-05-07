@@ -35,7 +35,6 @@ __version__ = '$Revision$'
 import os
 import re
 import logging
-from StringIO import StringIO
 
 from mktoc.base import *
 from mktoc.disc import *
@@ -205,7 +204,7 @@ class CueParser(object):
       # create a list of regular expressions before starting the parse
       rem_regex   = re.compile( r'^\s*REM\s+COMMENT' )
       # parse disc into memory, ignore comments
-      self._cue = [l.strip() for l in fh.readlines() if not rem_regex.search(l)]
+      self._cue = [line.strip() for line in fh if not rem_regex.search(line)]
       if not len(self._cue):
          raise EmptyCueData
       self._build_lookup_tbl()
@@ -221,12 +220,13 @@ class CueParser(object):
    def getToc(self):
       """Access method to return a text stream of the CUE data in TOC
       format."""
-      # create TOC file
-      buf = StringIO()
-      print >> buf, str(self._disc)
+      toc = []
+      toc.extend( str(self._disc).split('\n') )
       for trk in self._tracks:
-         print >> buf, str(trk)
-      return self._strip_buf(buf)
+         toc.extend( str(trk).split('\n') )
+      # expand tabs to 4 spaces, strip trailing white space on each line
+      toc = [line.expandtabs(4).rstrip() for line in toc]
+      return toc
 
    def modWavOffset(self,samples):
       """Optional method to correct the audio WAV data by shifting the samples
@@ -374,22 +374,6 @@ class CueParser(object):
          else: # catch unhandled patterns
             raise ParseError, "Unmatched pattern in stream: '%s'" % txt
       return trk
-
-   def _strip_buf(self, buf):
-      """Helper function that re-formats a buffer of text data. The processing
-      steps are:
-            a) expand tabs to 4 spaces
-            b) strip trailing white space on each line"""
-      # cleanup string data
-      buf.seek(0,os.SEEK_SET)
-      data = [x.expandtabs(4).rstrip() for x in buf.readlines()]
-      data = [x+'\n' for x in data]
-      buf.close()
-      # output to buffer, fix white-space
-      buf = StringIO()
-      buf.writelines( data )
-      buf.seek(0,os.SEEK_SET)
-      return buf
 
 
 ##############################################################################

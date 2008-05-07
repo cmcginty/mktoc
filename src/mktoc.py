@@ -86,8 +86,9 @@ Examples:
       mktoc < cue_file.cue > toc_file.toc
       mktoc -f cue_file.cue -o toc_file.toc
 
-   3) Tell mktoc to ignore missing WAV file errors, possible causing incorrect
-      TOC file results (see above):
+   3) Tell mktoc to ignore missing WAV file errors. There is a potential that
+      the result TOC file will cause cdrdao to loose pregap information during
+      the burn process (see above):
 
       mktoc -a cue_file.cue
 
@@ -175,7 +176,7 @@ def main():
                      (_OPT_ALLOW_WAV_FNF,_OPT_OFFSET_CORRECT) )
    # test "offset correction" and "temp WAV" argument combination
    if opt.write_tmp and not opt.wav_offset:
-      parser.error("Can not use '%s' wihtout '%s' option!" % \
+      parser.error("Can not use '%s' without '%s' option!" % \
                      (_OPT_TEMP_WAV, _OPT_OFFSET_CORRECT) )
    # open CUE file
    if opt.cue_file:
@@ -202,10 +203,9 @@ def main():
    cue_parse = CueParser(fh_in, **opt.__dict__)
    if opt.wav_offset:
       cue_parse.modWavOffset( opt.wav_offset )
-   data = cue_parse.getToc()
+   toc = cue_parse.getToc()
    fh_out.write( banner_msg() )
-   fh_out.write( data.read() )
-   data.close()
+   fh_out.write( '\n'.join(toc) )
 
    fh_in.close()
    fh_out.close()

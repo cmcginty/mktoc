@@ -138,20 +138,17 @@ class CueParserTests(unittest.TestCase):
       TOC file data."""
       # calculate test data
       cue_fh = open(os.path.join(self._CUE_DIR,self._cue_file))
-      toc_fh = CueParser(cue_fh, find_wav=False).getToc()
+      toc = CueParser(cue_fh, find_wav=False).getToc()
       cue_fh.close()
-      toc = [s for s in toc_fh.readlines()]
-      toc_fh.close()
       # read the known good data
-      toc_good_fh = open(os.path.join(self._TOC_DIR,self._toc_file))
-      toc_good = [s for s in toc_good_fh.readlines()]
-      toc_good_fh.close()
+      toc_good = open(os.path.join(self._TOC_DIR,self._toc_file))
       # compare data sets
       if toc != toc_good:
          for a,b in map(None,toc,toc_good):
             err_str = "strings do not match\n  %s:%s\n  %s:%s" % \
                         (self._cue_file,repr(a),self._toc_file,repr(b))
-            self.assertEqual(a,b,err_str)
+            self.assertEqual(a,b[:-1],err_str)
+      toc_good.close()
 
 
 ##############################################################################

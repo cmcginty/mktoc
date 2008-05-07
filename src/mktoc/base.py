@@ -51,7 +51,7 @@ __email__      = 'mktoc[@]tuxcoder[dot]com'
 __copyright__  = 'Copyright (c) 2008'
 __license__    = 'GPL'
 
-VERSION        = '1.0'
+VERSION        = '1.1'
 
 class MkTocError(Exception): pass
 class FileNotFoundError(MkTocError): pass
