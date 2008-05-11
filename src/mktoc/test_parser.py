@@ -152,6 +152,14 @@ class CueParserTests(unittest.TestCase):
 
 
 ##############################################################################
+class WavParserTests(unittest.TestCase):
+   def testWavFiles(self):
+      """WavParser class must instantiate without errors."""
+      wav_list = ['1.wav','2.wav','3.wav']
+      parser = WavParser( wav_list, find_wav=False )
+      self.assertTrue( parser )
+
+##############################################################################
 if __name__ == '__main__':
    """Execute all test cases define in this file."""
    unittest.main()

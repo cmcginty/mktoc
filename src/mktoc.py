@@ -154,7 +154,7 @@ def main():
       # open CUE file
       if opt.cue_file:
          # set the working dir of the input file
-         opt.work_dir = os.path.dirname( opt.cue_file ) or os.curdir
+         cue_dir = os.path.dirname( opt.cue_file ) or os.curdir
          try:
             fh_in = open(opt.cue_file)
          except:
@@ -163,10 +163,12 @@ def main():
       else:
          fh_in = sys.stdin
       # create CUE file parser
-      parser = CueParser( fh_in, **opt.__dict__)
+      parser = CueParser( fh_in, cue_dir, opt.find_wav, opt.write_tmp)
+      fh_in.close()
    else:
+      wav_dir = os.path.dirname( opt.wav_files[0] )
       # create WAV list parser
-      parser = WavParser( opt.wav_files, **opt.__dict__)
+      parser = WavParser( opt.wav_files, wav_dir, opt.find_wav, opt.write_tmp)
 
    if opt.wav_offset:
       parser.modWavOffset( opt.wav_offset )
@@ -185,7 +187,6 @@ def main():
    fh_out.write( banner_msg() )
    fh_out.write( '\n'.join(toc) )
 
-   fh_in.close()
    fh_out.close()
 
 def banner_msg():

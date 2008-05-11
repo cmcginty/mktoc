@@ -41,7 +41,7 @@ from mktoc.disc import *
 from mktoc.wav  import *
 from mktoc.progress_bar import *
 
-__all__ = ['CueParser']
+__all__ = ['CueParser','WavParser']
 
 log = logging.getLogger('mktoc.parser')
 
@@ -250,8 +250,7 @@ class CueParser(Parser):
          \s+(.*)$                # one or more flags
       """)]
 
-   def __init__(self, fh, find_wav=True, cue_dir=os.curdir,
-                write_tmp=False, **unk):
+   def __init__(self, fh, cue_dir=os.curdir, find_wav=True, write_tmp=False):
       """Parses CUE file text data and initializes object data. The primary
       output of this function is to create the '_disc' and '_tracks' objects.
       All of the processed CUE data is stored in these two structures.
@@ -259,15 +258,13 @@ class CueParser(Parser):
       Parameters:
          fh          : An open file handle used to read the CUE text data
 
+         cue_dir     : Path location of the CUE file's directory.
+
          find_wav    : True/False, True causes exceptions to be raised if a WAV
                        file can not be found in the FS.
 
-         cue_dir     : Path location of the CUE file's directory.
-
          write_tmp   : True/False, True causes corrected WAV files to be
-                       written to /tmp
-
-         unk         : accepts all unknown options to simplify invoke step"""
+                       written to /tmp"""
       # init class options
       super(CueParser,self).__init__(cue_dir, find_wav, write_tmp)
       self._wav_line_nums     = []
@@ -403,6 +400,46 @@ class CueParser(Parser):
          else: # catch unhandled patterns
             raise ParseError, "Unmatched pattern in stream: '%s'" % txt
       return trk
+
+
+##############################################################################
+class WavParser(Parser):
+   """A simple parser object that uses a list of WAV files to create a CD TOC.
+   The class assumes that each WAV file is an individual track, in ascending
+   order."""
+   def __init__(self, wav_files, work_dir=os.curdir, find_wav=True,
+                write_tmp=False):
+      """Initialize the parser. The primary output of this function is to
+      create the '_disc' and '_tracks' objects.
+
+      Parameters:
+         wav_files   : A list of WAV files to add to the TOC
+
+         word_dir    : Path location of the CUE file's directory.
+
+         find_wav    : True/False, True causes exceptions to be raised if a WAV
+                       file can not be found in the FS.
+
+         write_tmp   : True/False, True causes corrected WAV files to be
+                       written to /tmp"""
+      # init class options
+      super(WavParser,self).__init__(work_dir, find_wav, write_tmp)
+      self._files = [self._lookup_file_name(f) for f in wav_files]
+      # create Disc and Track objects to represent data
+      self._disc     = Disc()
+      self._tracks   = []
+      for i,file_ in enumerate(self._files):
+         # create a new track for the WAV file
+         trk = Track(i+1)
+         # add the WAV file to the first index in the track
+         trk.appendIdx( TrackIndex(1,0,file_) )
+         # add the new track to the track list
+         self._tracks.append( trk )
+      # modify data to workable formats
+      self._disc.mung()
+      # current track and "next" track or None
+      for trk,trk2 in map(None, self._tracks, self._tracks[1:]):
+         trk.mung(trk2)   # update value in each track before printing
 
 
 ##############################################################################

@@ -1,5 +1,8 @@
 mktoc // (c) 2008, Patrick C. McGinty
 mktoc[@]tuxcoder[dot]com
 
-Ver. 1.0 -- ?/?/2008
+Ver. 1.1 -- 5/10/2008
+   * Added '-w' option to create TOC file from WAV file list
+
+Ver. 1.0 -- 5/3/2008
    * Initial release .. enjoy!

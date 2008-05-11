@@ -392,7 +392,6 @@ class TrackIndex(object):
       Parameters:
          file_    : a file name string relative to the cwd referencing a WAV
                     file."""
-
       if not os.path.exists(file_):
          return None
       w = wave.open(file_)
