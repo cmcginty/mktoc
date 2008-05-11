@@ -9,6 +9,7 @@ Description:
 
 Features:
 
+    * Create a TOC file from a list of WAV files
     * Convert an ExactAudioCopy (EAC) CUE file to the TOC format that is usable
       by cdrdao.
     * Non-compliant CUE sheet support.
@@ -19,11 +20,11 @@ Features:
     * Workaround known TOC file parsing bugs in cdrdao.
 
 Usage:
-   mktoc [OPTIONS] [CUE_FILE]
-   mktoc [OPTIONS] [CUE_FILE] -o [TOC_FILE]
    mktoc [OPTIONS] < CUE_FILE
+   mktoc [OPTIONS] [[-f] CUE_FILE] [[-o] TOC_FILE]
+   mktoc [OPTIONS] -w WAV_FILES [[-o] TOC_FILE]
 
-   CUE_FILE must contain a valid CUE format. When FILE is not provided, the
+   CUE_FILE must contain a valid CUE format. When *_FILE is not provided, the
    program will read from STDIN. All output will be sent to STDOUT.
 
    All attempts will be made to preserve any and all information from the input
@@ -57,34 +58,47 @@ Options:
    -t, --use-temp
         write offset corrected WAV files to /tmp directory
 
+   -w, --wave
+        write a TOC file using list of WAV files
+
 Examples:
 
-   1) Create a TOC file from a valid CUE file:
+   1) Create a TOC file from a set of WAV files:
+
+      mktoc -w *.wav
+
+   2) Write a TOC file to 'toc_file.toc', from a set of WAV files:
+
+      mktoc -w *.wav toc_file.toc
+      mktoc -w *.wav > toc_file.toc
+      mktoc -w *.wav -o toc_file.toc
+
+   2) Create a TOC file from a valid CUE file:
 
       mktoc cue_file.cue
       mktoc < cue_file.cue
       mktoc -f cue_file.cue
 
-   2) Write a TOC file to 'toc_file.toc', given an input CUE file:
+   3) Write a TOC file to 'toc_file.toc', given an input CUE file:
 
       mktoc cue_file.cue toc_file.toc
       mktoc < cue_file.cue > toc_file.toc
       mktoc -f cue_file.cue -o toc_file.toc
 
-   3) Tell mktoc to ignore missing WAV file errors. There is a potential that
+   4) Tell mktoc to ignore missing WAV file errors. There is a potential that
       the result TOC file will cause cdrdao to loose pregap information during
       the burn process (see above):
 
       mktoc -a cue_file.cue
 
-   4) Adjust WAV files for a CD writer offset value. For example, if your CD
+   5) Adjust WAV files for a CD writer offset value. For example, if your CD
       writer has a -30 sample write offset, it can be corrected by offsetting
       the input WAV files by +30 samples. New WAV files will be placed in the
       working directory in a new dir called 'wav+30':
 
       mktoc -c 30 < cue_file.cue
 
-   5) Adjust WAV files for a CD writer offset value, but create new files in
+   6) Adjust WAV files for a CD writer offset value, but create new files in
       the /tmp directory:
 
       mktoc -c 30 -t < cue_file.cue
