@@ -46,7 +46,112 @@ __all__ = ['CueParser']
 log = logging.getLogger('mktoc.parser')
 
 
-class CueParser(object):
+class Parser(object):
+   """A generic CD TOC parsing class. This class provides a foundation of
+   public and private methods to access and modify an audio CD track listing.
+
+   Private Data Members:
+      _disc
+         Disc object that stores global disc info.
+
+      _tracks
+         Track object that stores track info.
+
+      _file_map
+         Dictionary to map input WAV files to actual files on the system. The
+         map is for use in cases where the defined file name does not exactly
+         match the file system WAV name.
+
+      _files
+         In-order list of WAV files that apply to the CD audio.
+
+      _find_wav
+         True or False, when True the WAV file must be found in the FS or an
+         exception is raised.
+
+      _wav_file_cache
+         WavFileCache object that can quickly find WAV files in the local file
+         system.
+
+      _write_tmp
+         True or False, when True any new WAV files will be created in /tmp.
+   """
+
+   def __init__(self, work_dir=os.curdir, find_wav=True, write_tmp=False):
+      """Parses CUE file text data and initializes object data. The primary
+      output of this function is to create the '_disc' and '_tracks' objects.
+      All of the processed CUE data is stored in these two structures.
+
+      Parameters:
+         find_wav    : True/False, True causes exceptions to be raised if a WAV
+                       file can not be found in the FS.
+
+         work_dir    : Path location of the working directory.
+
+         write_tmp   : True/False, True causes corrected WAV files to be
+                       written to /tmp"""
+      # init class options
+      self._disc           = None
+      self._tracks         = None
+      self._file_map       = {}
+      self._files          = []
+      self._find_wav       = find_wav
+      self._wav_file_cache = WavFileCache(work_dir)
+      self._write_tmp      = write_tmp
+
+   def getToc(self):
+      """Access method to return a text stream of the CUE data in TOC
+      format."""
+      toc = []
+      toc.extend( str(self._disc).split('\n') )
+      for trk in self._tracks:
+         toc.extend( str(trk).split('\n') )
+      # expand tabs to 4 spaces, strip trailing white space on each line
+      toc = [line.expandtabs(4).rstrip() for line in toc]
+      return toc
+
+   def modWavOffset(self,samples):
+      """Optional method to correct the audio WAV data by shifting the samples
+      by a positive or negative offset. This can be used to compensate for a
+      write offset in a CD/DVD burner. If the '_write_tmp' variable is True,
+      all new WAV files will be created in the /tmp directory.
+
+      Parameters:
+         samples  : the number of samples to shift the audio data by. This
+                    value can be negative or positive."""
+      # create WavOffset object, initialize sample offset and progress output
+      wo = WavOffsetWriter( samples, ProgressBar('processing WAV files:') )
+      new_files = wo.execute( self._files, self._write_tmp )
+
+      # change all index file names to newly generated files
+      file_map = dict( zip(self._files,new_files) )
+      for trk in self._tracks:
+         for idx in trk.indexes:
+            log.debug( "updating index file '%s'", idx.file_ )
+            idx.file_ = file_map[idx.file_]
+
+   def _lookup_file_name(self,file_):
+      """Attempts to return the path to a valid WAV file in the files system
+      using the input 'file_' value. If the WAV file can not be found and
+      '_find_wav' is True, then an exception is raised.
+
+      Parameter:
+         file  : audio file name parsed from the CUE text."""
+      if self._file_map.has_key(file_):
+         return self._file_map[file_]
+      else:
+         try:  # attempt to find the WAV file
+            file_on_disk = self._wav_file_cache.lookup(file_)
+         except FileNotFoundError:
+            # file not found, but 'file_exists' indicates that the file
+            # must exists
+            if self._find_wav: raise
+            else: file_on_disk = file_
+         self._file_map[file_] = file_on_disk
+         return file_on_disk
+
+
+class CueParser(Parser):
    """An audio CUE sheet text file parsing class. By matching the known format
    of a CUE file, the relevant text information is extracted and converted to a
    binary representation. The binary representation is created by using
@@ -75,36 +180,13 @@ class CueParser(object):
          List of processed CUE text data. The processing step removes text
          comments and strips white spaces.
 
-      _disc
-         Disc object that store the parsed CUE disc info.
+      _wav_line_nums
+         List of CUE file line numbers that correspond to the '_files' list of
+         WAV file.
 
-      _tracks
-         Track object that stores the parsed CUE track info.
-
-      _file_map
-         Dictionary to map CUE file names to WAV files on the system. The map
-         is for use in cases where the CUE defined file name does not exactly
-         match the file system WAV name.
-
-      _file_tbl
-         In-order list of tuples containing a WAV files found in the CUE text,
-         and the line number it was found on. The line number is the first
-         element of the tuple.
-
-      _find_wav
-         True or False, when True the WAV file must be found in the FS or an
-         exception is raised.
-
-      _track_tbl
+      _track_line_nums
          List used as a lookup table, indexed by track number, to map each CUE
          track to its line number in the CUE text.
-
-      _wav_files
-         WavFileCache object that can quickly find WAV files in the local file
-         system.
-
-      _write_tmp
-         True or False, when True any new WAV files will be created in /tmp.
 
       _part_search
          RegexStore list of regex searches for first partial scan of the TOC
@@ -187,12 +269,9 @@ class CueParser(object):
 
          unk         : accepts all unknown options to simplify invoke step"""
       # init class options
-      self._file_map    = {}
-      self._file_tbl    = []
-      self._find_wav    = find_wav
-      self._track_tbl   = []
-      self._wav_files   = WavFileCache(cue_dir)
-      self._write_tmp   = write_tmp
+      super(CueParser,self).__init__(cue_dir, find_wav, write_tmp)
+      self._wav_line_nums     = []
+      self._track_line_nums   = []
 
       self._part_search  = RegexStore( dict(self._FILE_REGEX + \
                                             self._TRACK_REGEX) )
@@ -217,84 +296,33 @@ class CueParser(object):
       for trk,trk2 in map(None, self._tracks, self._tracks[1:]):
          trk.mung(trk2)   # update value in each track before printing
 
-   def getToc(self):
-      """Access method to return a text stream of the CUE data in TOC
-      format."""
-      toc = []
-      toc.extend( str(self._disc).split('\n') )
-      for trk in self._tracks:
-         toc.extend( str(trk).split('\n') )
-      # expand tabs to 4 spaces, strip trailing white space on each line
-      toc = [line.expandtabs(4).rstrip() for line in toc]
-      return toc
-
-   def modWavOffset(self,samples):
-      """Optional method to correct the audio WAV data by shifting the samples
-      by a positive or negative offset. This can be used to compensate for a
-      write offset in a CD/DVD burner. If the '_write_tmp' variable is True,
-      all new WAV files will be created in the /tmp directory.
-
-      Parameters:
-         samples  : the number of samples to shift the audio data by. This
-                    value can be negative or positive."""
-      files = list(zip(*self._file_tbl)[1]) # unzip file_tbl[1] to new list
-      # create WavOffset object, initialize sample offset and progress output
-      wo = WavOffsetWriter( samples, ProgressBar('processing WAV files:') )
-      new_files = wo.execute( files, self._write_tmp )
-
-      # change all index file names to newly generated files
-      file_map = dict( zip(files,new_files) )
-      for trk in self._tracks:
-         for idx in trk.indexes:
-            log.debug( "updating index file '%s'", idx.file_ )
-            idx.file_ = file_map[idx.file_]
-
    def _active_file(self,trk_idx):
       """Returns the previous WAV file used before the start of 'trk_idx'."""
-      tline = self._track_tbl[trk_idx]
-      for fline,fn in self._file_tbl:
+      tline = self._track_line_nums[trk_idx]
+      for i,fline in enumerate(self._wav_line_nums):
          if fline > tline: break
-         out_file = fn
+         out_file = self._files[i]
       return out_file
 
    def _build_lookup_tbl(self):
-      """Helper function to create the '_file_tbl' and '_track_tbl' referenced
-      in the full class documentation."""
+      """Helper function to create the '_wav_line_nums' and '_track_line_nums'
+      referenced in the full class documentation."""
       for i,txt in enumerate(self._cue):
          key,match = self._part_search.match(txt)
          if match is not None:
             if key == 'file':
                file_ = self._lookup_file_name( match.group(1) )
-               self._file_tbl.append( (i,file_) )
+               self._files.append( file_ )
+               self._wav_line_nums.append( i )
             elif key == 'track':
-               self._track_tbl.append( i )
+               self._track_line_nums.append( i )
             else: # catch unhandled patterns
                raise ParseError, "Unmatched key: '%s'" % key
-
-   def _lookup_file_name(self,file_):
-      """Attempts to return the path to a valid WAV file in the files system
-      using the input 'file_' value. If the WAV file can not be found and
-      '_find_wav' is True, then an exception is raised.
-
-      Parameter:
-         file  : audio file name parsed from the CUE text."""
-      if self._file_map.has_key(file_):
-         return self._file_map[file_]
-      else:
-         try:  # attempt to find the WAV file
-            file_on_disk = self._wav_files.lookup(file_)
-         except FileNotFoundError:
-            # file not found, but 'file_exists' indicates that the file
-            # must exists
-            if self._find_wav: raise
-            else: file_on_disk = file_
-         self._file_map[file_] = file_on_disk
-         return file_on_disk
 
    def _parse_all_tracks(self):
       """Return a list of Track objects that contain the track information
       from the fully parsed CUE text data."""
-      return [self._parse_track(i) for i in range(len(self._track_tbl))]
+      return [self._parse_track(i) for i in range(len(self._track_line_nums))]
 
    def _parse_disc(self):
       """Return a Disc object that contains the disc information from the fully
@@ -302,7 +330,7 @@ class CueParser(object):
       the parser."""
       disc = Disc()
       # splice the cue list
-      data = self._cue[:self._track_tbl[0]]
+      data = self._cue[:self._track_line_nums[0]]
       for txt in data:
          re_key,match = self._disc_search.match( txt )
          if match is None:
@@ -328,10 +356,11 @@ class CueParser(object):
          num   : the track index of the track to parse. The first track starts
                  at 0."""
       # splice track data
-      if num+1 < len(self._track_tbl):
-         data = self._cue[ self._track_tbl[num]:self._track_tbl[num+1] ]
+      if num+1 < len(self._track_line_nums):
+         data = self._cue[ self._track_line_nums[num]:\
+                           self._track_line_nums[num+1] ]
       else:
-         data = self._cue[ self._track_tbl[num]: ]
+         data = self._cue[ self._track_line_nums[num]: ]
       # lookup the previous file name
       file_name = self._active_file(num)
 
