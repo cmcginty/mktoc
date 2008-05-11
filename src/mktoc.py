@@ -55,9 +55,9 @@ Options:
    -a, --allow-missing-wav
          do not abort when WAV file(s) are missing, (experts only). It is
          possible when using this option that a bug in cdrdao will create a CD
-         that ignores the pre gap definitions in the TOC file. Only use this
-         option if the CUE file does not contain pre gaps, or if you do not
-         wish to retain the pre gap information.
+         that ignores the pregap definitions in the TOC file. Only use this
+         option if the CUE file does not contain pregaps, or if you do not
+         wish to retain the pregap information.
 
    -c WAV_OFFSET, --offset-correction=WAV_OFFSET
          correct reader/writer offset by creating WAV file(s) shifted by
@@ -119,6 +119,7 @@ import os
 import sys
 import traceback
 import logging
+import re
 from optparse import OptionParser
 
 from mktoc.base import *
@@ -130,65 +131,47 @@ _OPT_ALLOW_WAV_FNF   = '-a'
 # Offset correction command-line switch
 # - enable output of offset corrected WAV files
 _OPT_OFFSET_CORRECT  = '-c'
+# Output CUE file name
+_OPT_CUE_FILE        = '-f'
 # Temp WAV Files
 # - write offset corrected WAV files to /tmp dir
 _OPT_TEMP_WAV        = '-t'
+# WAV File List
+# - create a TOC file using a list of WAV files
+_OPT_WAV_LIST        = '-w'
 
 def main():
    """Starting execution point. Interprets all program arguments and creates a
    CueParser object to generate a final TOC file."""
-   usage = '[OPTIONS] CUE_FILE TOC_FILE'
-   parser = OptionParser( usage='%prog '+usage,
-                          version='%prog '+VERSION )
 
-   parser.add_option( _OPT_ALLOW_WAV_FNF, '--allow-missing-wav',
-         dest='find_wav', action="store_false", default=True,
-         help='do not abort when WAV file(s) are missing, (experts only)')
-   parser.add_option( _OPT_OFFSET_CORRECT, '--offset-correction',
-         dest='wav_offset', type='int',
-         help='correct reader/writer offset by creating WAV file(s) shifted by '\
-         'WAV_OFFSET samples (original data is not modified)' )
-   parser.add_option('-d', '--debug', dest='debug', action="store_true",
-         default=False, help='enable debugging statements' )
-   parser.add_option('-f', '--file', dest='cue_file',
-         help='specify the input CUE file to read')
-   parser.add_option('-o', '--output', dest='toc_file',
-         help='specify the output TOC file to write')
-   parser.add_option(_OPT_TEMP_WAV, '--use-temp', dest='write_tmp',
-         action='store_true', default=False,
-         help='write offset corrected WAV files to /tmp directory' )
-   opt,args = parser.parse_args()
-
+   # parse all command line arguments, exit if there is any error
+   opt,args = parse_args()
    # setup logging
-   if opt.debug:
-      logging.basicConfig(level=logging.DEBUG)
+   if opt.debug: logging.basicConfig(level=logging.DEBUG)
 
-   # verify input arguments
-   if len(args)>2 or \
-         (len(args)>=1 and opt.cue_file) or \
-         (len(args)>=2 and opt.toc_file):
-      parser.error("Ambiguous file arguments!")
-   if len(args)>=1: opt.cue_file = args[0]
-   if len(args)>=2: opt.toc_file = args[1]
-   # test "WAV file not found" and "offset correction" argument combination
-   if opt.wav_offset and not opt.find_wav:
-      parser.error("Can not combine '%s' and '%s' options!" % \
-                     (_OPT_ALLOW_WAV_FNF,_OPT_OFFSET_CORRECT) )
-   # test "offset correction" and "temp WAV" argument combination
-   if opt.write_tmp and not opt.wav_offset:
-      parser.error("Can not use '%s' without '%s' option!" % \
-                     (_OPT_TEMP_WAV, _OPT_OFFSET_CORRECT) )
-   # open CUE file
-   if opt.cue_file:
-      # set the working dir of the input file
-      opt.cue_dir = os.path.dirname( opt.cue_file ) or os.curdir
-      try:
-         fh_in = open(opt.cue_file)
-      except:
-         print >> sys.stderr, sys.exc_value
-         exit(-1)
+   # check if using WAV list or CUE file
+   if opt.wav_files is None:
+      # open CUE file
+      if opt.cue_file:
+         # set the working dir of the input file
+         opt.work_dir = os.path.dirname( opt.cue_file ) or os.curdir
+         try:
+            fh_in = open(opt.cue_file)
+         except:
+            print >> sys.stderr, sys.exc_value
+            exit(-1)
+      else:
+         fh_in = sys.stdin
+      # create CUE file parser
+      parser = CueParser( fh_in, **opt.__dict__)
    else:
-      fh_in = sys.stdin
+      # create WAV list parser
+      parser = WavParser( opt.wav_files, **opt.__dict__)
+
+   if opt.wav_offset:
+      parser.modWavOffset( opt.wav_offset )
+   toc = parser.getToc()
+
    # open TOC file
    if opt.toc_file:
       try:
@@ -199,11 +182,6 @@ def main():
    else:
       fh_out = sys.stdout
 
-   # !! Main program steps begin here !!
-   cue_parse = CueParser(fh_in, **opt.__dict__)
-   if opt.wav_offset:
-      cue_parse.modWavOffset( opt.wav_offset )
-   toc = cue_parse.getToc()
    fh_out.write( banner_msg() )
    fh_out.write( '\n'.join(toc) )
 
@@ -236,6 +214,90 @@ def error_msg_file(e):
    lengths. If you know what you are doing, you can disable this check with
    the '%s' option.
    """ % (e,_OPT_ALLOW_WAV_FNF)
+
+def parse_args():
+   """Use OptionParser object to handle all input arguments and return opt
+   structure and args list as a tuple. All argument error checking is performed
+   in this function."""
+   usage = '[OPTIONS] [CUE_FILE|-w WAV_FILES] TOC_FILE'
+   parser = OptionParser( usage='%prog '+usage,
+                          version='%prog '+VERSION )
+   parser.add_option( _OPT_ALLOW_WAV_FNF, '--allow-missing-wav',
+         dest='find_wav', action="store_false", default=True,
+         help='do not abort when WAV file(s) are missing, (experts only)')
+   parser.add_option( _OPT_OFFSET_CORRECT, '--offset-correction',
+         dest='wav_offset', type='int',
+         help='correct reader/writer offset by creating WAV file(s) shifted by '\
+         'WAV_OFFSET samples (original data is not modified)' )
+   parser.add_option('-d', '--debug', dest='debug', action="store_true",
+         default=False, help='enable debugging statements' )
+   parser.add_option( _OPT_CUE_FILE, '--file', dest='cue_file',
+         help='specify the input CUE file to read')
+   parser.add_option('-o', '--output', dest='toc_file',
+         help='specify the output TOC file to write')
+   parser.add_option( _OPT_TEMP_WAV, '--use-temp', dest='write_tmp',
+         action='store_true', default=False,
+         help='write offset corrected WAV files to /tmp directory' )
+   parser.add_option( _OPT_WAV_LIST, '--wave', dest='wav_files',
+         action="callback", callback=parse_wav,
+         help='write a TOC file using list of WAV files' )
+   # execute parsing step
+   opt,args = parser.parse_args()
+
+   # test "WAV file not found" and "offset correction" argument combination
+   if opt.wav_offset and not opt.find_wav:
+      parser.error("Can not combine '%s' and '%s' options!" % \
+                     (_OPT_ALLOW_WAV_FNF,_OPT_OFFSET_CORRECT) )
+   # test "offset correction" and "temp WAV" argument combination
+   if opt.write_tmp and not opt.wav_offset:
+      parser.error("Can not use '%s' without '%s' option!" % \
+                     (_OPT_TEMP_WAV, _OPT_OFFSET_CORRECT) )
+   # test "CUE File" and "-w" argument combination
+   if opt.cue_file is not None and opt.wav_files is not None:
+      parser.error("Can not combine '%s' and '%s' options!" % \
+                     (_OPT_CUE_FILE, _OPT_WAV_LIST) )
+   # The '-w' option is used to create a TOC file using a list of WAV files.
+   # The default mode is to convert a CUE file. The 'if' checks for the default
+   # mode.
+   if opt.wav_files is None:
+      # the '-w' flag is not set. 1st argument names the input CUE file, 2nd
+      # argument names the output TOC file.
+      if len(args)>2 or \
+            (len(args)>=1 and opt.cue_file) or \
+            (len(args)>=2 and opt.toc_file):
+         parser.error("Ambiguous file arguments!")
+      else:
+         # set file names if 'args' list is not empty
+         if len(args)>=1: opt.cue_file = args[0]
+         if len(args)>=2: opt.toc_file = args[1]
+   else:
+      # the '-w' flag was set. Only 1 argument is allowed to name the output
+      # TOC file.
+      if len(args)>1:
+         parser.error("Ambiguous file arguments!")
+      else:
+         # set file names if 'args' list is not empty
+         if len(args)>=1: opt.toc_file = args[0]
+   return opt,args
+
+def parse_wav(option, opt_str, value, parser):
+   """OptionParser callback function to correctly handle '-w' WAV file input
+   arguments. All trailing WAV files will be placed in the
+   parser.values.wav_files list. The operation will stop at either the first
+   non-WAV file argument or the end of the argument list."""
+   slice_idx = 0
+   for arg in parser.rargs:
+      if re.search( r'\.wav$', arg, re.IGNORECASE):
+         slice_idx += 1
+      else: break
+
+   # if one or more WAV files were found, move them to the parser wav_file list
+   if slice_idx:
+      parser.values.wav_files = parser.rargs[0:slice_idx]
+      del parser.rargs[0:slice_idx]
+   else:
+      parser.error( '%s option requires one or more WAV file arguments' \
+                     % opt_str )
 
 
 ##############################################################################
