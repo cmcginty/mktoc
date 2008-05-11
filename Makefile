@@ -3,7 +3,7 @@
 #
 
 NAME=mktoc
-VER=1.0
+VER=1.1
 DIST_DIR=dist
 TAR=${DIST_DIR}/${NAME}-${VER}.tar.gz
 SRC_DIR=${DIST_DIR}/${NAME}-${VER}
