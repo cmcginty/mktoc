@@ -87,6 +87,7 @@ class WavFileCache(object):
       # case 2: file is locatable in path by stripping directories
       fn = os.path.basename(tmp_name)     # strip leading path
       fn = os.path.splitext(fn)[0]        # strip extension
+      fn = fn.strip()                     # strip any whitespace
       log.debug("-> looking for file '%s'", os.sep + fn + '.wav')
       # escape any special characters in the file, and the '$' prevents
       # matching if any extra chars come after the name

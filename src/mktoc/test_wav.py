@@ -53,6 +53,12 @@ class WavFileCacheTests(unittest.TestCase):
       wc = WavFileCache(self._WAV_DIR)
       self.assertTrue( wc.lookup('My Test File-1.wav'))
 
+   def testWhiteSpaceMatch(self):
+      """A source name with extra white space added to an exact match in the
+      test dir must be found."""
+      wc = WavFileCache(self._WAV_DIR)
+      self.assertTrue( wc.lookup('  My Test File-1.wav  '))
+
    def testSubDirSrcMatch(self):
       """A source name with a pre-appended sub-dir to an exact match in the
       test dir must be found."""
