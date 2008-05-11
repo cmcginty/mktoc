@@ -25,11 +25,6 @@ audio files. The available object classes are:
    WavOffsetWriter
       Shift the audio data in a set of WAV files by a desired postive or
       negative sample offset.
-
-   Constants:
-      WAV_REGEX
-         A complied search object that can be used to match file name strings
-         ending with the '.wav' extension.
 """
 
 __date__    = '$Date$'
@@ -44,10 +39,9 @@ import logging
 
 from mktoc.base import *
 
-__all__ = ['WAV_REGEX', 'WavFileCache', 'WavOffsetWriter']
+__all__ = ['WavFileCache', 'WavOffsetWriter']
 
 log = logging.getLogger('mktoc.wav')
-WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
 
 
 class WavFileCache(object):
@@ -57,10 +51,18 @@ class WavFileCache(object):
    all lookups after the initial test come from the cache. The cache size is
    limited to prevent over aggressive file system access.
 
+   Constants:
+      _WAV_REGEX
+         A complied search object that can be used to match file name strings
+         ending with the '.wav' extension.
+
    Private Data Members:
       _data    : String list of WAV files found in the local file system.
 
       _src_dir : String that stores the base search path location."""
+
+   _WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
+
    def __init__(self, _dir=os.curdir):
       """Initialize the internal member _src_dir with the input '_dir'
       argument. If no argument is supplied it defaults to the current working
@@ -79,7 +81,7 @@ class WavFileCache(object):
       # convert a DOS file path to Linux
       tmp_name = tmp_name.replace('\\','/')
       # base case: file exists, and is has a 'WAV' extension
-      if WAV_REGEX.search(tmp_name) and os.path.exists(tmp_name):
+      if self._WAV_REGEX.search(tmp_name) and os.path.exists(tmp_name):
          log.debug('-> FOUND\n'+'-'*5)
          return file_       # return match
       # case 2: file is locatable in path by stripping directories
@@ -128,7 +130,8 @@ class WavFileCache(object):
          if fc > 1000: break     # only cache first n files
          fc += len(files)
          f_tup = zip( [root]*len(files), files )
-         wav_files = [os.path.join(r,f) for r,f in f_tup if WAV_REGEX.search(f)]
+         wav_files = [os.path.join(r,f) for r,f in f_tup \
+                           if self._WAV_REGEX.search(f)]
          self._data.extend( wav_files )
       self._is_init = True
 
