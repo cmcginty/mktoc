@@ -25,7 +25,11 @@ __date__    = '$Date$'
 __version__ = '$Revision$'
 
 import unittest
+import logging
 import mktoc.test_parser
+
+# enable line below to turn on logging
+# logging.basicConfig(level=logging.DEBUG)
 
 # defines modules to be tested
 mod_to_test = [ 'mktoc.test_disc',

@@ -108,8 +108,9 @@ class WavFileCache(object):
       for f in self._get_cache():
          log.debug("--> comparing file '%s'",f)
          if file_regex.search(f):   # if match was found
-            log.debug('--> FOUND\n'+'-'*5)
+            log.debug('--> FOUND')
             if match is not None: # exception if there was more than 1 match
+               log.debug('--> Multiple matches, RAISING ERROR\n'+'-'*5)
                raise FileNotFoundError, file_
             match = f               # save match
       if match is not None: return match

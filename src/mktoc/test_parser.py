@@ -155,7 +155,7 @@ class CueParserTests(unittest.TestCase):
 class WavParserTests(unittest.TestCase):
    def testWavFiles(self):
       """WavParser class must instantiate without errors."""
-      wav_list = ['1.wav','2.wav','3.wav']
+      wav_list = ['unique-1.wav','unique-2.wav','unique-3.wav']
       parser = WavParser( wav_list, find_wav=False )
       self.assertTrue( parser )
 
