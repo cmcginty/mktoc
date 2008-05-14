@@ -167,14 +167,15 @@ def main():
    if opt.wav_files is None:
       # open CUE file
       if opt.cue_file:
-         # set the working dir of the input file
-         cue_dir = os.path.dirname( opt.cue_file ) or os.curdir
          try:
             fh_in = open(opt.cue_file)
+            # set the working dir of the input file
+            cue_dir = os.path.dirname( fh_in.name )
          except:
             print >> sys.stderr, sys.exc_value
             exit(-1)
       else:
+         cue_dir = os.curdir
          fh_in = sys.stdin
       # create CUE file parser
       parser = CueParser( fh_in, cue_dir, opt.find_wav, opt.write_tmp)
