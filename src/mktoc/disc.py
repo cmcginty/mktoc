@@ -28,11 +28,6 @@ audio CD. The following object classes are:
    TrackIndex
       Holds audio data location and specific TrackTime objects that specify the
       indexs starting and ending time.
-
-   TrackTime
-      A object that represents an audio CD time value in units of frames. Each
-      second of audio data has 75 frames. TrackTime objects can be added and
-      subtracted from each other.
 """
 
 __date__    = '$Date$'
@@ -419,8 +414,7 @@ class TrackTime(object):
       _time
          Tuple that stores the minutes, seconds, and frames values. The
          combination of these values can be used to calculate the total frame
-         count.
-   """
+         count."""
    _FPS = 75            # frames per second
    _SPM = 60            # second per minute
    _FPM = _FPS * _SPM   # frames per minute

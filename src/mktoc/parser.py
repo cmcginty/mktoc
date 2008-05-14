@@ -22,11 +22,6 @@ classes are:
    CueParser
       An audio CUE sheet text file parsing class. After parsing, the CUE file
       can be re-created or converted into a new format.
-
-   RegexStore
-      A helper class that simplifies the management of regular expressions. The
-      RegexStore class is used to apply a list of regular expressions to a
-      single text stream. The first matching regular expression is returned.
 """
 
 __date__    = '$Date$'
