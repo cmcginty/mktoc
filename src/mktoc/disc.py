@@ -37,6 +37,7 @@ import os
 import re
 import wave
 import logging
+from itertools import *
 
 from mktoc.base import *
 
@@ -213,7 +214,7 @@ class Track( object ):
                  current track is the last one, then this value must be
                  'None'."""
       # current index and "next" index or None
-      for idx,idx2 in map(None, self.indexes, self.indexes[1:]):
+      for idx,idx2 in map(None, self.indexes, islice(self.indexes,1,None)):
          #####
          # Set the LENGTH argument on a track that must stop before EOF
          #
@@ -299,9 +300,8 @@ class TrackIndex(object):
       self.time   = TrackTime(time)
       # set length to maximum possible for now (total - start)
       file_len = self._file_len(self.file_)
-      if file_len:
-         self.len_ = file_len - self.time
-      else: self.len_ = ''
+      if file_len: self.len_ = file_len - self.time
+      else:        self.len_ = ''
       log.debug( 'creating index %s' % repr(self) )
 
    def __repr__(self):
@@ -312,8 +312,7 @@ class TrackIndex(object):
       """Return the TOC formated string representation of the TrackIndex
       object."""
       out = []
-      if self.cmd == self.AUDIO or \
-         self.cmd == self.PREAUDIO:
+      if self.cmd in [self.AUDIO, self.PREAUDIO]:
          out += ['\tAUDIOFILE "%(file_)s" %(time)s %(len_)s' % self.__dict__]
       elif self.cmd == self.INDEX:
          out += ['\tINDEX %(time)s' % self.__dict__]
@@ -429,14 +428,14 @@ class TrackTime(object):
                   b) Tuple in the format (M,S,F)
                   c) Integer of the total frame length
                   d) None, object is initialized to 0 length"""
-      if type(arg) is str:
+      if isinstance(arg,str):
          # extract time from string
          val = [int(x) for x in arg.split(':')]
          self._time = tuple(val)
-      elif type(arg) is tuple:
+      elif isinstance(arg,tuple):
          # assume arg is correct format
          self._time = arg
-      elif type(arg) is int:
+      elif isinstance(arg,int):
          # convert frame count to min,sec,frames
          min_,fr = divmod(arg, self._FPM)
          sec,fr = divmod(fr, self._FPS)
