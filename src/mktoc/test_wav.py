@@ -27,7 +27,7 @@ import inspect
 
 from mktoc.base import *
 from mktoc.wav  import *
-
+from mktoc.progress_bar import *
 
 class WavFileCacheTests(unittest.TestCase):
    """Unit tests for the external interface of the WavFileCache class. These
@@ -104,6 +104,16 @@ class WavFileCacheTests(unittest.TestCase):
       should raise an exception."""
       wc = WavFileCache(self._WAV_DIR)
       self.assertRaises( FileNotFoundError, wc.lookup, 'My Test File-3.wav')
+
+
+##############################################################################
+class WavOffsetWriterTest(unittest.TestCase):
+   """Unit tests for the external interface of the WavOffsetWriter class."""
+   def testInitClass(self):
+      """WavOffsetWriter class must initialize correctly."""
+      wow = WavOffsetWriter(10,ProgressBar,('test message',))
+      self.assertTrue(wow)
+
 
 ##############################################################################
 if __name__ == '__main__':

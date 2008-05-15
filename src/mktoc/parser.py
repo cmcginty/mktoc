@@ -115,7 +115,7 @@ class Parser(object):
          samples  : the number of samples to shift the audio data by. This
                     value can be negative or positive."""
       # create WavOffset object, initialize sample offset and progress output
-      wo = WavOffsetWriter( samples, ProgressBar('processing WAV files:') )
+      wo = WavOffsetWriter( samples, ProgressBar, ('processing WAV files:',))
       new_files = wo.execute( self._files, self._write_tmp )
 
       # change all index file names to newly generated files

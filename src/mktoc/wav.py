@@ -167,16 +167,23 @@ class WavOffsetWriter(object):
    """
    _COPY_SIZE = 256*1024
 
-   def __init__(self, offset_samples, progress_bar):
+   def __init__(self, offset_samples, pb_class, pb_args):
       """Initialize private data members.
 
       Parameters:
          offset_samples    : The sample shift value assigned to '_offset'.
 
-         progress_bar      : Reference to a ProgressBar object used to give
-                             status updates to the user."""
+         pb_class          : Reference to a ProgressBar class used to give
+                             status updates to the user. First argument of the
+                             class init routine specifies the maximum value of
+                             the progress bar and is calulated by this class.
+
+         pb_args           : Argument list used to initialize progress bar.
+                             However, the first argument of the progress bar
+                             init routine is calculated by this class."""
       self._offset  = offset_samples
-      self._pb = progress_bar
+      self._pb_class = pb_class
+      self._pb_args  = pb_args
       self._progName = os.path.basename( sys.argv[0] )
 
    def execute(self, files, use_tmp_dir):
@@ -189,8 +196,9 @@ class WavOffsetWriter(object):
 
          use_tmp_dir : True/False, True indicates new WAV files are created in
                        /tmp."""
-      # set the maximum progress bar value
-      self._pb.max_ = self._get_total_samp( files )
+      # initialize the progress bar class, set the maximum progress bar value
+      self._pb = self._pb_class( bar_max=self._get_total_samp(files),
+                                 *self._pb_args)
       # positive offset correction, insert silence in first track,
       # all other tracks insert end data of previous track
       if self._offset > 0:
