@@ -170,7 +170,7 @@ def main():
          try:
             fh_in = open(opt.cue_file)
             # set the working dir of the input file
-            cue_dir = os.path.dirname( fh_in.name )
+            cue_dir = os.path.dirname( fh_in.name ) or os.curdir
          except:
             print >> sys.stderr, sys.exc_value
             exit(-1)
@@ -178,6 +178,7 @@ def main():
          cue_dir = os.curdir
          fh_in = sys.stdin
       # create CUE file parser
+      assert(cue_dir)
       parser = CueParser( fh_in, cue_dir, opt.find_wav, opt.write_tmp)
       fh_in.close()
    else:
