@@ -305,10 +305,10 @@ class CueParser(Parser):
       is complete."""
       # return an iterator of tuples with line nums, re.match name, and
       # re.match data
-      cue_data = itr.starmap( lambda i,line: (i,)+self._part_search.match(line),
-                              enumerate(self._cue) )
+      matchi = itr.chain(*itr.imap( self._part_search.match, self._cue ))
+      num_matchi = itr.izip( itr.count(), matchi, matchi )
       # create two match iterators that filter only valid matches
-      matches = itr.tee(itr.ifilter( lambda (i,key,match): match, cue_data))
+      matches = itr.tee(itr.ifilter( op.itemgetter(2), num_matchi))
       # iterator of 'file' matches
       files = itr.ifilter( lambda (i,key,match): key == 'file', matches[0])
       self._file_lines = map( lambda (i,k,m):
