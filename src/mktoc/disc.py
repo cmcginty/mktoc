@@ -37,7 +37,7 @@ import os
 import re
 import wave
 import logging
-from itertools import *
+import itertools as itr
 
 from mktoc.base import *
 
@@ -214,7 +214,7 @@ class Track( object ):
                  current track is the last one, then this value must be
                  'None'."""
       # current index and "next" index or None
-      for idx,idx2 in map(None, self.indexes, islice(self.indexes,1,None)):
+      for idx,idx2 in map(None, self.indexes, itr.islice(self.indexes,1,None)):
          #####
          # Set the LENGTH argument on a track that must stop before EOF
          #

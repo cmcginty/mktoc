@@ -30,6 +30,8 @@ __version__ = '$Revision$'
 import os
 import re
 import logging
+import itertools as itr
+import operator  as op
 
 from mktoc.base import *
 from mktoc.disc import *
@@ -91,6 +93,7 @@ class Parser(object):
       self._file_map       = {}
       self._files          = []
       self._find_wav       = find_wav
+      assert(work_dir)
       self._wav_file_cache = WavFileCache(work_dir)
       self._write_tmp      = write_tmp
 
@@ -120,10 +123,10 @@ class Parser(object):
 
       # change all index file names to newly generated files
       file_map = dict( zip(self._files,new_files) )
-      for trk in self._tracks:
-         for idx in trk.indexes:
-            log.debug( "updating index file '%s'", idx.file_ )
-            idx.file_ = file_map[idx.file_]
+      indexes = itr.imap(op.attrgetter('indexes'), self._tracks);
+      for idx in itr.chain(*indexes):
+         log.debug( "updating index file '%s'", idx.file_ )
+         idx.file_ = file_map[idx.file_]
 
    def _lookup_file_name(self,file_):
       """Attempts to return the path to a valid WAV file in the files system
@@ -132,7 +135,7 @@ class Parser(object):
 
       Parameter:
          file  : audio file name parsed from the CUE text."""
-      if self._file_map.has_key(file_):
+      if file_ in self._file_map:
          return self._file_map[file_]
       else:
          try:  # attempt to find the WAV file
@@ -175,11 +178,11 @@ class CueParser(Parser):
          List of processed CUE text data. The processing step removes text
          comments and strips white spaces.
 
-      _wav_line_nums
-         List of CUE file line numbers that correspond to the '_files' list of
-         WAV file.
+      _file_lines
+         List of CUE file line numbers and WAV files tuple pairs for each WAV
+         file in the CUE.
 
-      _track_line_nums
+      _track_lines
          List used as a lookup table, indexed by track number, to map each CUE
          track to its line number in the CUE text.
 
@@ -261,16 +264,17 @@ class CueParser(Parser):
          write_tmp   : True/False, True causes corrected WAV files to be
                        written to /tmp"""
       # init class options
+      assert(cue_dir)
       super(CueParser,self).__init__(cue_dir, find_wav, write_tmp)
-      self._wav_line_nums     = []
-      self._track_line_nums   = []
+      self._file_lines  = []
+      self._track_lines = []
 
       self._part_search  = RegexStore( dict(self._FILE_REGEX + \
                                             self._TRACK_REGEX) )
       self._disc_search  = RegexStore( dict(self._FILE_REGEX + \
                                             self._DISC_REGEX) )
       self._tinfo_search = RegexStore( dict(self._FILE_REGEX + \
-                                         self._TINFO_REGEX + self._TRACK_REGEX) )
+                                       self._TINFO_REGEX + self._TRACK_REGEX))
 
       # create a list of regular expressions before starting the parse
       rem_regex   = re.compile( r'^\s*REM\s+COMMENT' )
@@ -285,52 +289,55 @@ class CueParser(Parser):
       # modify data to workable formats
       self._disc.mung()
       # current track and "next" track or None
-      for trk,trk2 in map(None, self._tracks, self._tracks[1:]):
-         trk.mung(trk2)   # update value in each track before printing
+      map(lambda t1,t2: t1.mung(t2), # update values in each track
+          self._tracks, itr.islice(self._tracks, 1, None))
 
    def _active_file(self,trk_idx):
       """Returns the previous WAV file used before the start of 'trk_idx'."""
-      tline = self._track_line_nums[trk_idx]
-      for i,fline in enumerate(self._wav_line_nums):
-         if fline > tline: break
-         out_file = self._files[i]
-      return out_file
+      tline = self._track_lines[trk_idx] # line number track begins at
+      # return the first wav file found that is at a lower line than 'tline'
+      return itr.ifilter(lambda (x,y): x < tline,
+                         reversed(self._file_lines) ).next()[1]
 
    def _build_lookup_tbl(self):
-      """Helper function to create the '_wav_line_nums' and '_track_line_nums'
-      referenced in the full class documentation."""
-      for i,txt in enumerate(self._cue):
-         key,match = self._part_search.match(txt)
-         if match is not None:
-            if key == 'file':
-               file_ = self._lookup_file_name( match.group(1) )
-               self._files.append( file_ )
-               self._wav_line_nums.append( i )
-            elif key == 'track':
-               self._track_line_nums.append( i )
-            else: # catch unhandled patterns
-               raise ParseError, "Unmatched key: '%s'" % key
+      """Helper function to create the '_files', '_file_lines' and
+      '_track_lines' lists structures required before the class initialization
+      is complete."""
+      # return an iterator of tuples with line nums, re.match name, and
+      # re.match data
+      cue_data = itr.starmap( lambda i,line: (i,)+self._part_search.match(line),
+                              enumerate(self._cue) )
+      # create two match iterators that filter only valid matches
+      matches = itr.tee(itr.ifilter( lambda (i,key,match): match, cue_data))
+      # iterator of 'file' matches
+      files = itr.ifilter( lambda (i,key,match): key == 'file', matches[0])
+      self._file_lines = map( lambda (i,k,m):
+                              (i,self._lookup_file_name(m.group(1))), files )
+      self._files = map( op.itemgetter(1), self._file_lines )
+      # iterator of 'track' matches
+      tracks = itr.ifilter( lambda (i,key,match): key == 'track', matches[1])
+      self._track_lines = map(op.itemgetter(0), tracks)
 
    def _parse_all_tracks(self):
       """Return a list of Track objects that contain the track information
       from the fully parsed CUE text data."""
-      return [self._parse_track(i) for i in range(len(self._track_line_nums))]
+      return map( self._parse_track, range(len(self._track_lines)) )
 
    def _parse_disc(self):
       """Return a Disc object that contains the disc information from the fully
       parsed CUE text data. This method implements the 'disc' scanning steps of
       the parser."""
       disc = Disc()
-      # splice the cue list
-      data = self._cue[:self._track_line_nums[0]]
-      for txt in data:
-         re_key,match = self._disc_search.match( txt )
-         if match is None:
-            raise ParseError, "Unmatched pattern in stream: '%s'" % txt
-         # ignore 'file' matches
-         if re_key == 'file': continue
-         # assume all other matches are valid
-         key,value = match.groups()
+      # splice disc data from the cue list, and return an iterator of tuples
+      # returned by re.match
+      cue_data = map( self._disc_search.match,
+                      itr.islice(self._cue, 0, self._track_lines[0]) )
+      # raise error if unkown match is found
+      if filter( lambda (key,match): not match, cue_data):
+         raise ParseError, "Unmatched pattern in stream: '%s'" % txt
+      # ignore 'file' matches
+      for key,value in \
+            [match.groups() for key,match in cue_data if key != 'file']:
          key = key.lower()
          if hasattr(disc,key):
             # add match value to Disc object
@@ -348,11 +355,11 @@ class CueParser(Parser):
          num   : the track index of the track to parse. The first track starts
                  at 0."""
       # splice track data
-      if num+1 < len(self._track_line_nums):
-         data = self._cue[ self._track_line_nums[num]:\
-                           self._track_line_nums[num+1] ]
+      if num+1 < len(self._track_lines):
+         data = itr.islice(self._cue, self._track_lines[num],
+                           self._track_lines[num+1])
       else:
-         data = self._cue[ self._track_line_nums[num]: ]
+         data = itr.islice(self._cue, self._track_lines[num], None)
       # lookup the previous file name
       file_name = self._active_file(num)
 
@@ -362,11 +369,12 @@ class CueParser(Parser):
       # commands specify the active FILE for the following INDEX commands. The
       # TRACK indicate the logical beginning of a new TRACK info list with TITLE
       # and PERFORMER tags.
-      for txt in data:
-         re_key,match = self._tinfo_search.match( txt )
-         if match is None:
-            raise ParseError, "Unmatched pattern in stream: '%s'" % txt
-         elif re_key == 'track':
+      cue_data = map( self._tinfo_search.match, data )
+      # raise error if unkown match is found
+      if filter( lambda (key,match): not match, cue_data):
+         raise ParseError, "Unmatched pattern in stream: '%s'" % txt
+      for re_key,match in cue_data:
+         if re_key == 'track':
             assert trk.num == int(match.group(1))
             if match.group(2) != 'AUDIO':
                trk.is_data = True
@@ -379,7 +387,7 @@ class CueParser(Parser):
             idx_num,time = match.groups()
             i = TrackIndex( idx_num, time, file_name )
             trk.appendIdx( i )
-         elif re_key == 'quote' or re_key == 'named':
+         elif re_key in ['quote','named']:
             # track information (PERFORMER, TITLE, ...)
             key,value = match.groups()
             key = key.lower()
@@ -388,10 +396,10 @@ class CueParser(Parser):
             else:
                raise ParseError, "Unmatched keyword in stream: '%s'" % txt
          elif re_key == 'flag':
-            for f in [f.strip() for f in match.group(1).split()]:
-               if re.search(r'DCP|4CH|PRE',f):     # flag must be known
-                  if f == '4CH': f = 'four_ch'     # change '4CH' flag name
-                  setattr(trk, f.lower(), True)
+            for f in itr.ifilter( lambda x: x in ['DCP','4CH','PRE'],
+                                  match.group(1).split() ):
+               if f == '4CH': f = 'four_ch'     # change '4CH' flag name
+               setattr(trk, f.lower(), True)
          else: # catch unhandled patterns
             raise ParseError, "Unmatched pattern in stream: '%s'" % txt
       return trk
@@ -419,7 +427,7 @@ class WavParser(Parser):
                        written to /tmp"""
       # init class options
       super(WavParser,self).__init__(work_dir, find_wav, write_tmp)
-      self._files = [self._lookup_file_name(f) for f in wav_files]
+      self._files = map(self._lookup_file_name, wav_files)
       # create Disc and Track objects to represent data
       self._disc     = Disc()
       self._tracks   = []
@@ -433,8 +441,8 @@ class WavParser(Parser):
       # modify data to workable formats
       self._disc.mung()
       # current track and "next" track or None
-      for trk,trk2 in map(None, self._tracks, self._tracks[1:]):
-         trk.mung(trk2)   # update value in each track before printing
+      map( lambda t1,t2: t1.mung(t2), # update value in each track
+           self._tracks, itr.islice(self._tracks, 1, None))
 
 
 ##############################################################################
@@ -466,8 +474,10 @@ class RegexStore(object):
 
       Parameters:
          text :   text string applied to a list of regex searches."""
-      for key,cre in self._searches.items():
-         match = cre.search(text)
-         if match: break    # break on first match
-      return key,match
+      match_all = itr.starmap( lambda key,cre: (key,cre.search(text)),
+                               self._searches.items() )
+      try:
+         return itr.ifilter(op.itemgetter(1), match_all).next()
+      except StopIteration, e:
+         return ('',None)
 
