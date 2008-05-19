@@ -36,6 +36,8 @@ import re
 import wave
 import tempfile
 import logging
+import itertools as itr
+import operator as op
 
 from mktoc.base import *
 
@@ -67,6 +69,7 @@ class WavFileCache(object):
       """Initialize the internal member _src_dir with the input '_dir'
       argument. If no argument is supplied it defaults to the current working
       dir."""
+      assert(_dir)
       self._src_dir = _dir
 
    def lookup(self, file_):
@@ -104,17 +107,15 @@ class WavFileCache(object):
       fn_pat = sep + '.*' + re.escape(fn_us) + '.*' + dot_wav + '$'
       fn_pats.append( fn_pat )
       file_regex = re.compile( '|'.join(fn_pats), re.IGNORECASE)
-      match = None
-      for f in self._get_cache():
-         log.debug("--> comparing file '%s'",f)
-         if file_regex.search(f):   # if match was found
-            log.debug('--> FOUND')
-            if match is not None: # exception if there was more than 1 match
-               log.debug('--> Multiple matches, RAISING ERROR\n'+'-'*5)
-               raise FileNotFoundError, file_
-            match = f               # save match
-      if match is not None: return match
-      raise FileNotFoundError, file_
+      # search all WAV files using pattern 'file_regex'
+      matchi = itr.imap( file_regex.search, self._get_cache() )
+      # create tuple with input file and search results
+      matches = itr.izip( self._get_cache(), matchi )
+      matches = filter( op.itemgetter(1), matches )
+      if len(matches) == 1:   # success if ONE match is found
+         log.debug("--> FOUND '%s'" % matches[0][0])
+         return matches[0][0]
+      raise FileNotFoundError, file_ # zero or multiple matches is an error
 
    def _get_cache(self):
       """Helper function used to lookup the WAV file cache. The first call to
@@ -128,6 +129,7 @@ class WavFileCache(object):
       dir. The list is store in the object member '_data'."""
       self._data = []
       fc = 0
+      log.debug("Initializing file cache @ '%s'", self._src_dir)
       for root, dirs, files in os.walk(self._src_dir):
          if fc > 1000: break     # only cache first n files
          fc += len(files)
@@ -136,6 +138,8 @@ class WavFileCache(object):
                            if self._WAV_REGEX.search(f)]
          self._data.extend( wav_files )
       self._is_init = True
+      log.debug('-> Found %d files:' % len(self._data) )
+      map( lambda f: log.debug('--> %s' % f), self._data )
 
 
 ##############################################################################
@@ -199,29 +203,25 @@ class WavOffsetWriter(object):
       # initialize the progress bar class, set the maximum progress bar value
       self._pb = self._pb_class( bar_max=self._get_total_samp(files),
                                  *self._pb_args)
+      # set the dir name generation function, and create out_file list
+      if not use_tmp_dir: outdir = self._get_new_name
+      else              : outdir = self._get_tmp_name
+      out_files = map( outdir, files )
+
       # positive offset correction, insert silence in first track,
       # all other tracks insert end data of previous track
       if self._offset > 0:
+         offsetter_fnct = self._insert_prv_end
          # create a list of 'previous' file names
          f2_list = [None] + files[:-1]
-         offsetter_fnct = self._insert_prv_end
-
       # negative offset correction, append silence to end of last track,
       # all other tracks append start data of next track
       elif self._offset < 0:
+         offsetter_fnct = self._append_nxt_start
          # create a list of 'next' file names
          f2_list = files[1:] + [None]
-         offsetter_fnct = self._append_nxt_start
 
-      out_files = []
-      for f in files:
-         if not use_tmp_dir:
-            out_files.append( self._get_new_name(f) )
-         else:
-            out_files.append( self._get_tmp_name(f) )
-
-      for out_f, f, f2 in zip(out_files, files, f2_list):
-         offsetter_fnct( out_f, f, f2 )
+      map( offsetter_fnct, out_files, files, f2_list )
       # return a list of the new files names
       return out_files
 
@@ -254,10 +254,7 @@ class WavOffsetWriter(object):
       while True:
          data = wav_in.readframes(self._COPY_SIZE)
          if len(data) == 0: break
-         wav_out.writeframes( data )
-         self._pb += len(data) / bytes_p_samp
-         sys.stderr.write(str(self._pb))
-         del data
+         self._write_frames(wav_out, data, bytes_psamp)
       wav_in.close()
       # finally copy the remaining data from the next track, or silence
       if nxt_fn:
@@ -265,16 +262,11 @@ class WavOffsetWriter(object):
          wav_in = wave.open(nxt_fn)
          data = wav_in.readframes( abs(self._offset) )
          assert len(data) == offset_bytes
-         wav_out.writeframes( data )
-         self._pb += len(data) / bytes_p_samp
+         self._write_frames(wav_out, data, bytes_p_samp)
       else:
          # write silence to end of last track
-         data = '\x00' * offset_bytes
-         wav_out.writeframes( data )
-         self._pb += len(data) / bytes_p_samp
+         self._write_frames(wav_out, '\x00'*offset_bytes, bytes_p_samp)
       # print the progress bar
-      sys.stderr.write(str(self._pb))
-      del data
       wav_in.close()
       wav_out.close()
 
@@ -292,10 +284,8 @@ class WavOffsetWriter(object):
 
       Parameter:
          files : List of WAV files to read."""
-      count = 0
-      for f in files:
-         count += wave.open(f).getnframes()
-      return count
+      frames = itr.imap( lambda f: wave.open(f).getnframes(), files )
+      return reduce(op.add,frames)
 
    def _get_tmp_name(self, f):
       """Generates a new name a location to write '/tmp/mktoc.[random]/' WAV
@@ -336,25 +326,24 @@ class WavOffsetWriter(object):
          wav_in.setpos( pos ) # seek to EOF - offset
          data = wav_in.readframes( self._offset )
          assert len(data) == offset_bytes
-         wav_out.writeframes( data )
-         self._pb += len(data) / bytes_p_samp
+         self._write_frames(wav_out, data ,bytes_p_samp)
          wav_in.close()
       else:    # insert silence if no previous file
-         data = '\x00' * offset_bytes
-         wav_out.writeframes( data )
-         self._pb += len(data)/bytes_p_samp
-      # print the progress bar
-      sys.stderr.write(str(self._pb))
+         self._write_frames(wav_out ,'\x00'*offset_bytes, bytes_p_samp)
       # add original file data to output stream
       wav_in = wave.open( fn )
       samples = wav_in.getnframes() - self._offset
       while samples:
          data = wav_in.readframes( min(samples,self._COPY_SIZE) )
          samples -= len(data) / bytes_p_samp
-         wav_out.writeframes( data )
-         self._pb += len(data) / bytes_p_samp
-         sys.stderr.write(str(self._pb))
-         del data
+         self._write_frames(wav_out, data, bytes_p_samp)
       wav_in.close()
       wav_out.close()
+
+   def _write_frames(self, fh, data,bps):
+      """Wrapper for writing data wav files. A secondary side effect is that
+      each call udpates the progress bar."""
+      fh.writeframes(data)
+      self._pb += len(data) / bps      # update progress bar
+      sys.stderr.write(str(self._pb))  # print the progress bar
 
