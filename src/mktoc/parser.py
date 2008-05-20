@@ -297,7 +297,7 @@ class CueParser(Parser):
       tline = self._track_lines[trk_idx] # line number track begins at
       # return the first wav file found that is at a lower line than 'tline'
       return itr.ifilter(lambda (x,y): x < tline,
-                         reversed(self._file_lines) ).next()[1]
+                         reversed(self._file_lines)).next()[1]
 
    def _build_lookup_tbl(self):
       """Helper function to create the '_files', '_file_lines' and
@@ -307,15 +307,17 @@ class CueParser(Parser):
       # re.match data
       matchi = itr.chain(*itr.imap( self._part_search.match, self._cue ))
       num_matchi = itr.izip( itr.count(), matchi, matchi )
-      # create two match iterators that filter only valid matches
-      matches = itr.tee(itr.ifilter( op.itemgetter(2), num_matchi))
+      # create list of valid matches
+      matches = filter(op.itemgetter(2), num_matchi)
       # iterator of 'file' matches
-      files = itr.ifilter( lambda (i,key,match): key == 'file', matches[0])
-      self._file_lines = map( lambda (i,k,m):
-                              (i,self._lookup_file_name(m.group(1))), files )
-      self._files = map( op.itemgetter(1), self._file_lines )
+      files = filter(lambda (i,key,match): key == 'file', matches)
+      # create a list of 'wav file name'
+      self._files = map( lambda m: self._lookup_file_name(m.group(1)),
+                         itr.imap(op.itemgetter(2),files) )
+      # create a tuple of (i,wav file name)
+      self._file_lines = zip( itr.imap(op.itemgetter(0),files), self._files )
       # iterator of 'track' matches
-      tracks = itr.ifilter( lambda (i,key,match): key == 'track', matches[1])
+      tracks = itr.ifilter( lambda (i,key,match): key == 'track', matches)
       self._track_lines = map(op.itemgetter(0), tracks)
 
    def _parse_all_tracks(self):

@@ -284,8 +284,7 @@ class WavOffsetWriter(object):
 
       Parameter:
          files : List of WAV files to read."""
-      frames = itr.imap( lambda f: wave.open(f).getnframes(), files )
-      return reduce(op.add,frames)
+      return sum(itr.imap( lambda f: wave.open(f).getnframes(), files))
 
    def _get_tmp_name(self, f):
       """Generates a new name a location to write '/tmp/mktoc.[random]/' WAV
