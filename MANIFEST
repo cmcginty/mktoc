@@ -4,8 +4,9 @@ INSTALL
 Makefile
 README
 setup.py
-src/mktoc.py
+scripts/mktoc
 src/mktoc/__init__.py
+src/mktoc/_mktoc.py
 src/mktoc/base.py
 src/mktoc/disc.py
 src/mktoc/parser.py

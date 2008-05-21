@@ -31,16 +31,6 @@ from distutils.command.install_scripts import install_scripts
 
 from mktoc.base import *
 
-class install_scripts_renamed(install_scripts):
-   """Override the standard install_script class to strip the '.py' extension
-   from any script files."""
-   def run(self):
-      curr_scripts = self.get_inputs()
-      for f in [os.path.basename(p) for p in curr_scripts]:
-         os.rename(os.path.join(self.build_dir,f), \
-                   os.path.join(self.build_dir,os.path.splitext(f)[0]))
-      install_scripts.run(self)
-
 setup( name='mktoc', version=VERSION,
        description='CD audio CUE file interpretor for cdrdao',
        author=__author__,
@@ -48,6 +38,6 @@ setup( name='mktoc', version=VERSION,
        url='http://mktoc.googlecode.com',
        packages=['mktoc'],
        package_dir = {'':'src'},
-       scripts=['src/mktoc.py'],
-       cmdclass={'install_scripts':install_scripts_renamed},
+       scripts=['scripts/mktoc'],
       )
+
