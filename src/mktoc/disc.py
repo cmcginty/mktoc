@@ -13,21 +13,21 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Module for mktoc that defines data structures to hold information related to an
-audio CD. The following object classes are:
+"""A set of classes used to represent audio CD information.
 
+Classes:
    Disc
-      Holds audio disc metadata values such as album title, performer, genre.
+      Holds audio disc metadata values such as album title, performer,
+      genre.
 
    Track
-      Holds track metadata values such as title and performer. Each track
-      object contains a list of TrackIndexes that specifies the audio data
-      associated with the track.
+      Holds track metadata values such as title and performer. Each
+      track object contains a list of TrackIndexes that specifies the
+      audio data associated with the track.
 
    TrackIndex
-      Holds audio data location and specific TrackTime objects that specify the
-      indexs starting and ending time.
+      Holds audio data location and specific TrackTime objects that
+      specify the indexs starting and ending time.
 """
 
 __date__    = '$Date$'
@@ -46,10 +46,12 @@ __all__ = [ 'Disc', 'Track', 'TrackIndex' ]
 log = logging.getLogger('mktoc.disc')
 
 
+##############################################################################
 class Disc( object ):
-   """Stores audio disc metadata values such as album title, performer, genre.
+   """Stores audio disc metadata values such as album title,
+   performer, genre.
 
-   Public Data Members:
+   Public Members:
       catalog
          A string representing the Catalog Id of a disc.
 
@@ -57,8 +59,9 @@ class Disc( object ):
          A string representing the release year of a disc.
 
       discid
-         A string representing the DiscID value of a disc. This value is
-         assumed to be correct and not verified by any internal logic.
+         A string representing the DiscID value of a disc. This value
+         is assumed to be correct and not verified by any internal
+         logic.
 
       genre
          A string representing the genre of a disc
@@ -69,12 +72,12 @@ class Disc( object ):
       title
          A string representing the album title of a disc.
 
-   Private Data Members:
+   Private Members:
       _mode
-         A string that defines the write mode of disc. The default value is
-         CD_DA which defines a standard audio CD. It is also possible to be
-         changed to define a multi-session audio CD.
-   """
+         A string that defines the write mode of disc. The default
+         value is CD_DA which defines a standard audio CD. It is also
+         possible to be changed to define a multi-session audio CD."""
+
    def __init__(self):
       """Initialize all data members to default values."""
       self.catalog   = None
@@ -97,39 +100,43 @@ class Disc( object ):
       return '\n'.join(out)
 
    def mung(self):
-      """Converts the class data to a corrected and standardized format."""
+      """Convert class data to a corrected and standardized format.
+      Not used at this time."""
       pass
 
    def setMultisession(self):
-      """Updates the class to a multi-session CD mode by changing the output
-      mode value."""
+      """Indicate the current object is a multi-session CD. An Audio
+      only CD is assumed by default."""
       self._mode = 'CD_ROM_XA'
 
 
 ##############################################################################
 class Track( object ):
-   """Holds track metadata values such as title and performer. Each track
-   object contains a list of TrackIndexes that specifies the audio data
-   associated with the track.
+   """Holds track metadata values such as title and performer. Each
+   track object contains a list of TrackIndexes that specifies the
+   audio data associated with the track.
 
-   Public Data Members:
+   Public Members:
       dcp
-         True or False, indicates 'Digital Copy Protection' flag on the track.
+         True or False, indicates 'Digital Copy Protection' flag on
+         the track.
 
       four_ch
-         True or False, indicates 'Four Channel Audio' flag on the track.
+         True or False, indicates 'Four Channel Audio' flag on the
+         track.
 
       indexes
-         A list of TrackIndex objects. Every track has at least one TrackIndex
-         and possibly more. The TrackIndex defines a length of audio data or
-         property in the track. The fist TrackIndex can be pre-gap data. Only
-         one audio file can be associated with a TrackIndex, so if a track is
-         composed of multiple audio files, there will be an >= number of
-         TrackIndexes. See the TrackIndex class for more info.
+         A list of TrackIndex objects. Every track has at least one
+         TrackIndex and possibly more. The TrackIndex defines a length
+         of audio data or property in the track. The fist TrackIndex
+         can be pre-gap data. Only one audio file can be associated
+         with a TrackIndex, so if a track is composed of multiple
+         audio files, there will be an >= number of TrackIndexes. See
+         the TrackIndex class for more info.
 
       is_data
-         True or False, indicates if a track is binary data and not audio. Data
-         tracks will not produce any text when printed.
+         True or False, indicates if a track is binary data and not
+         audio. Data tracks will not produce any text when printed.
 
       isrc
          String representing ISRC value of the track.
@@ -144,21 +151,22 @@ class Track( object ):
          True or False, indicates 'Pre-Emphasis' flag on the track.
 
       pregap
-         A TrackTime value that indicates the pre-gap value of the current
-         track. The pre-gap is a time length at the beginning of a track that
-         will cause a CD player to count up from a negative time value before
-         changing the track index number. The starting pre-gap value of a track
-         is essentially the final audio at the end of the previous track.
-         However, there is more than one way to designate the pregap in a
-         track, therefore this variable is only used if the first TrackIndex
+         A TrackTime value that indicates the pre-gap value of the
+         current track. The pre-gap is a time length at the beginning
+         of a track that will cause a CD player to count up from a
+         negative time value before changing the track index number.
+         The starting pre-gap value of a track is essentially the
+         final audio at the end of the previous track.  However, there
+         is more than one way to designate the pregap in a track,
+         therefore this variable is only used if the first TrackIndex
          in the track contains more than just the pre-gap audio.
 
       title
-         A string representing the title of the track.
-   """
+         A string representing the title of the track."""
+
    def __init__(self,num):
-      """Create an empty list of TrackIndex objects, and assign track number.
-      Initialize all other data members to default values.
+      """Create an empty list of TrackIndex objects, and assign track
+      number.  Initialize all other data members to default values.
 
       Parameters:
          num   : Integer of the track index in the audio CD"""
@@ -174,8 +182,9 @@ class Track( object ):
       self.title        = None
 
    def __str__(self):
-      """Return the TOC formated representation of the Track object including
-      the TrackIndex objects. Data tracks will not generate any output."""
+      """Return the TOC formated representation of the Track object
+      including the TrackIndex objects. Data tracks will not generate
+      any output."""
       if self.is_data: return ''    # do not print data tracks
       out = ['\n//Track %d' % self.num]
       out += ['TRACK AUDIO']
@@ -195,24 +204,25 @@ class Track( object ):
       return '\n'.join(out)
 
    def appendIdx(self, idx):
-      """Append a new TrackIndex object to the end of indexes list. It is
-      assumed that TrackIndexes are added in correct order.
+      """Append a new TrackIndex object to the end of indexes list. It
+      is assumed that TrackIndexes are added in correct order.
 
       Parameter:
-         idx   : A new TrackIndex object that is being added to the Track
-                 object."""
+         idx   : A new TrackIndex object that is being added to the
+                 Track object."""
       self.indexes.append(idx)
 
    def mung(self,trk2):
-      """For use after the Track is updated with all data and indexes, to fix
-      any inconstancies or errors in the Track data.  This method must be
-      called before the Track data is used. That is because before calling this
-      method, the data can be in an inconsistent state.
+      """For use after the Track is updated with all data and indexes,
+      to fix any inconstancies or errors in the Track data.  This
+      method must be called before the Track data is used. That is
+      because before calling this method, the data can be in an
+      inconsistent state.
 
       Parameters:
-         trk2  : A Track object immediately following the current track. If
-                 current track is the last one, then this value must be
-                 'None'."""
+         trk2  : A Track object immediately following the current
+                 track. If current track is the last one, then this
+                 value must be 'None'."""
       # current index and "next" index or None
       for idx,idx2 in map(None, self.indexes, itr.islice(self.indexes,1,None)):
          #####
@@ -233,71 +243,73 @@ class Track( object ):
 
 ##############################################################################
 class TrackIndex(object):
-   """
-   Represent an 'index' of an audio CD track. Specifically, information about a
-   location, length and type of audio data. Track objects can have one or more
-   TrackIndexes to represent the audio data belonging to the track.
+   """Represent an 'index' of an audio CD track. Specifically,
+   information about a location, length and type of audio data. Track
+   objects can have one or more TrackIndexes to represent the audio
+   data belonging to the track.
 
    Constants:
       PREAUDIO
          Indicates a TrackIndex that is pre-gap audio data only.
 
       AUDIO
-         Indicates a TrackIndex of standard audio data or both pre-gap and
-         audio.
+         Indicates a TrackIndex of standard audio data or both pre-gap
+         and audio.
 
       INDEX
-         Indicates a TrackIndex after the start of a time stamp of a previous
-         AUDIO TrackIndex object. There is no audio data associated with
-         'INDEX' TrackIndexes.
+         Indicates a TrackIndex after the start of a time stamp of a
+         previous AUDIO TrackIndex object. There is no audio data
+         associated with 'INDEX' TrackIndexes.
 
       START
-         Same as 'INDEX', but TrackIndex preceding it is was the pre-gap audio
-         of the same Track.
+         Same as 'INDEX', but TrackIndex preceding it is was the
+         pre-gap audio of the same Track.
 
-   Public Data Members:
+   Public Members:
       cmd
-         Integer set to PREAUDIO or AUDIO or INDEX or START. Indicate the mode
-         of TrackIndex object. See above for more details.
+         Integer set to PREAUDIO or AUDIO or INDEX or START. Indicate
+         the mode of TrackIndex object. See above for more details.
 
       file_
-         A string representing a WAV file's path and name. This is used to read
-         the audio data of the TrackIndex.
+         A string representing a WAV file's path and name. This is
+         used to read the audio data of the TrackIndex.
 
       len_
-         Empty string or TrackTime value that specifies the number of audio
-         frames associated with the TrackIndex.  By default, this value will
-         equal the total length of the WAV data, but might be truncated if the
-         track starts after, or ends before the WAV data.
+         Empty string or TrackTime value that specifies the number of
+         audio frames associated with the TrackIndex.  By default,
+         this value will equal the total length of the WAV data, but
+         might be truncated if the track starts after, or ends before
+         the WAV data.
 
       num
-         Integer specifying the location of the TrackIndex in the track. The
-         first index 'num' is always 0.
+         Integer specifying the location of the TrackIndex in the
+         track. The first index 'num' is always 0.
 
       time
          TrackTime value that specifies the starting time index of the
-         TrackIndex object relative to the start of the audio data. Usually
-         this value is '0'.
-   """
+         TrackIndex object relative to the start of the audio data.
+         Usually this value is '0'."""
+
    PREAUDIO, AUDIO, INDEX, START = range(4)
 
    def __init__(self, num, time, file_):
-      """Initializes the TrackIndex data using input args and default values.
-      If possible the sample count of the TrackIndex is calculated by reading
-      the WAV audio data.
+      """Initializes the TrackIndex data using input args and default
+      values.  If possible the sample count of the TrackIndex is
+      calculated by reading the WAV audio data.
 
       Parameters:
-         num      : The index number position in the Track, starting at 0.
+         num      : The index number position in the Track, starting
+                    at 0.
 
-         time     : A TrackTime object that defines the indexes starting offset
-                    in the audio data file.
+         time     : A TrackTime object that defines the indexes
+                    starting offset in the audio data file.
 
-         file_    : A string representing the path location of a WAV file
-                    associated with this index."""
+         file_    : A string representing the path location of a WAV
+                    file associated with this index."""
       self.cmd    = self.AUDIO
       self.file_  = file_
       self.num    = int(num)
-      self.time   = TrackTime(time)
+      self.time   = _TrackTime(time)
       # set length to maximum possible for now (total - start)
       file_len = self._file_len(self.file_)
       if file_len: self.len_ = file_len - self.time
@@ -309,8 +321,8 @@ class TrackIndex(object):
       return "'%s, %s'" % (self.file_, self.time)
 
    def __str__(self):
-      """Return the TOC formated string representation of the TrackIndex
-      object."""
+      """Return the TOC formated string representation of the
+      TrackIndex object."""
       out = []
       if self.cmd in [self.AUDIO, self.PREAUDIO]:
          out += ['\tAUDIOFILE "%(file_)s" %(time)s %(len_)s' % self.__dict__]
@@ -325,17 +337,19 @@ class TrackIndex(object):
       return '\n'.join(out)
 
    def mung(self, idx2):
-      """For use after the TrackIndex is updated with all data, to fix any
-      inconstancies or errors in the TrackIndex data. This method must be
-      called before the TrackIndex data is used. That is because before calling
-      this method, the data can be in an inconsistent state. In some cases a
-      variable will be deleted because it is not required for the future
-      functions of the object.
+      """For use after the TrackIndex is updated with all data, to fix
+      any inconstancies or errors in the TrackIndex data. This method
+      must be called before the TrackIndex data is used. That is
+      because before calling this method, the data can be in an
+      inconsistent state. In some cases a variable will be deleted
+      because it is not required for the future functions of the
+      object.
 
       Parameters:
-         idx2  : TrackIndex object that immediately follows the current object
-                 in a Track object. If this object is the last TrackIndex in
-                 the Track object, then 'idx2' should be None."""
+         idx2  : TrackIndex object that immediately follows the
+                 current object in a Track object. If this object is
+                 the last TrackIndex in the Track object, then 'idx2'
+                 should be None."""
       #####
       # Add 'START' command after pregap audio file
       #
@@ -380,24 +394,26 @@ class TrackIndex(object):
             del idx2.len_ # remove for safety, do not use
 
    def _file_len(self,file_):
-      """Returns the number of audio samples in the WAV file, 'file_'. Called
-      during __init__. If 'file_' can not be opened, None is returned.
+      """Returns the number of audio samples in the WAV file, 'file_'.
+      Called during __init__. If 'file_' can not be opened, None is
+      returned.
 
       Parameters:
-         file_    : a file name string relative to the cwd referencing a WAV
-                    file."""
+         file_    : a file name string relative to the cwd referencing
+                    a WAV file."""
       if not os.path.exists(file_):
          return None
       w = wave.open(file_)
       frames = w.getnframes() / (w.getframerate()/75)
       w.close()
-      return TrackTime(frames)
+      return _TrackTime(frames)
 
 
 ##############################################################################
-class TrackTime(object):
-   """Container class to represent the sample count or position in audio data.
-   Allows mathematical operations to be easily performed on time positions.
+class _TrackTime(object):
+   """Container class to represent the sample count or position in
+   audio data.  Allows mathematical operations to be easily performed
+   on time positions.
 
    Constants:
       _FPS
@@ -409,11 +425,11 @@ class TrackTime(object):
       _FPM
          Defines the number of audio 'Frames Per Minute'
 
-   Private Data Members:
+   Private Members:
       _time
-         Tuple that stores the minutes, seconds, and frames values. The
-         combination of these values can be used to calculate the total frame
-         count."""
+         Tuple that stores the minutes, seconds, and frames values.
+         The combination of these values can be used to calculate the
+         total frame count."""
    _FPS = 75            # frames per second
    _SPM = 60            # second per minute
    _FPM = _FPS * _SPM   # frames per minute
@@ -422,8 +438,8 @@ class TrackTime(object):
       """Initializes the TrackTime object, normalizing the input data.
 
       Parameters:
-         arg   : Variable representation of the value of the TrackTime object.
-                 The allowed formats are:
+         arg   : Variable representation of the value of the TrackTime
+                 object. The allowed formats are:
                   a) String in the format 'MM:SS:FF'
                   b) Tuple in the format (M,S,F)
                   c) Integer of the total frame length
@@ -463,5 +479,5 @@ class TrackTime(object):
       if sc<0: mn-=1; sc+=self._SPM
       if mn<0: raise UnderflowError, \
          'Track time calculation resulted in a negative value'
-      return TrackTime((mn,sc,fr))
+      return _TrackTime((mn,sc,fr))
 

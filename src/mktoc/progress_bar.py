@@ -14,12 +14,12 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module for mktoc that prints a progress indication. The default usage is to
-prompt the user when an operation is running that the user must wait for. The
-following object classes are:
+Module for mktoc that prints a progress indication. The default usage
+is to prompt the user when an operation is running that the user must
+wait for. The following object classes are:
 
    ProgressBar
-      Creates a progress bar given program input.
+      Prints an ASCII progress bar using numeric input.
 """
 
 __date__    = '$Date$'
@@ -32,42 +32,47 @@ from mktoc.base import *
 __all__ = ['ProgressBar']
 
 
+##############################################################################
 class ProgressBar( object ):
-   """Creates a progress bar string to be printed by the calling function.
+   """Creates a progress bar string to be printed by the calling
+   function.
 
-   Public Data Members:
+   Public Members:
       bar_max
-         The maximum input input value expected by the progress bar. This value
-         should be set before trying to print the progress bar. All percentage
-         calculations are based from this value. It is OK to update this value
-         as many times as needed, however it might confuse the user.
+         The maximum input input value expected by the progress bar.
+         This value should be set before trying to print the progress
+         bar. All percentage calculations are based from this value.
+         It is OK to update this value as many times as needed,
+         however it might confuse the user.
 
-   Private Data Members:
+   Private Members:
       _notice_text
-         String to contain a message printed alongside the progress bar.
+         String to contain a message printed alongside the progress
+         bar.
 
       _size
-         The total integer count of the 'progress'. This value is modified by
-         the overloaded '+=' operator. This value can never go above 'bar_max'.
+         The total integer count of the 'progress'. This value is
+         modified by the overloaded '+=' operator. This value can
+         never go above 'bar_max'.
    """
    def __init__(self, notice_txt, bar_max=0):
       """Initialize object defaults.
 
       Parameters:
-         notice_txt  : String assigned to _notice_txt member that is printed
-                       alongside the progress bar.
+         notice_txt  : String assigned to _notice_txt member that is
+                       printed alongside the progress bar.
 
-         bar_max     : Integer to intialize the maximum size of the progress
-                       bar class.
+         bar_max     : Integer to intialize the maximum size of the
+                       progress bar class.
       """
       self._notice_txt = notice_txt
       self._size = 0
       self.bar_max = bar_max
 
    def __iadd__(self, other):
-      """+= operator that increments the current state of the progress bar. The
-      input value can be of any range, but the progress bar value will be fixed
-      at 'bar_max'."""
+      """+= operator that increments the current state of the progress
+      bar. The input value can be of any range, but the progress bar
+      value will be fixed at 'bar_max'."""
       self._size += min(other, self.bar_max - self._size)
       return self
 

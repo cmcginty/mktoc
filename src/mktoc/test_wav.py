@@ -27,8 +27,10 @@ import inspect
 
 from mktoc.base import *
 from mktoc.wav  import *
-from mktoc.progress_bar import *
+from mktoc import progress_bar as mt_pb
 
+
+##############################################################################
 class WavFileCacheTests(unittest.TestCase):
    """Unit tests for the external interface of the WavFileCache class. These
    test rely on predifined file names in test directory."""
@@ -111,7 +113,7 @@ class WavOffsetWriterTest(unittest.TestCase):
    """Unit tests for the external interface of the WavOffsetWriter class."""
    def testInitClass(self):
       """WavOffsetWriter class must initialize correctly."""
-      wow = WavOffsetWriter(10,ProgressBar,('test message',))
+      wow = WavOffsetWriter(10, mt_pb.ProgressBar, ('test message',))
       self.assertTrue(wow)
 
 

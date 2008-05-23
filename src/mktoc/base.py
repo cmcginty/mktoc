@@ -13,42 +13,51 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-This module contains all global classes and defines for the mktoc application.
-The current class objects are:
+"""Standard defines for the mktoc package.
 
-   MkTocError:
+All modules in this package import this file into the its root
+namespace.
+
+Constants:
+   VERSION        - external mktoc version number (e.g. '1.0')
+   __author__
+   __copyright__
+   __email__
+   __license__
+
+Exceptions:
+   MkTocError
       A base exception class for all mktoc exceptions classes.
 
-   FileNotFoundError:
-      Exception class used whenever a file can not be located and is required by
-      the system.
+   FileNotFoundError
+      Exception class used whenever a file can not be located and is
+      required by the system.
 
-   ParseError:
-      Exception class indicates that a CUE file could not be parsed do to
-      unknown data.
+   ParseError
+      Exception class indicates that a CUE file could not be parsed do
+      to unknown data.
 
-   UnderflowError:
-      Exception class used by the disc module to indicate that a track time
-      subtraction has caused and underflow.
+   UnderflowError
+      Exception class used by the disc module to indicate that a track
+      time subtraction has caused and underflow.
 
-   EmptyCueData:
-      Exception class indicates that the input CUE file or STDIN data was
-      empty. The mktoc application interprets this as a normal condition and
-      does not raise an error to the user other than returning a non-zero exit
-      code.
+   EmptyCueData
+      Exception class indicates that the input CUE file or STDIN data
+      was empty. The mktoc application interprets this as a normal
+      condition and does not raise an error to the user other than
+      returning a non-zero exit code.
 """
 
 __date__       = '$Date$'
 __version__    = '$Revision$'
 
-__all__        = ['__author__', '__email__', '__copyright__', '__license__', \
+__all__        = ['__author__', '__copyright__', '__email__', '__license__', \
                   'VERSION', 'MkTocError' ,'FileNotFoundError', 'ParseError', \
                   'UnderflowError', 'EmptyCueData' ]
 
 __author__     = 'Patrick C. McGinty'
-__email__      = 'mktoc[@]tuxcoder[dot]com'
 __copyright__  = 'Copyright (c) 2008'
+__email__      = 'mktoc[@]tuxcoder[dot]com'
 __license__    = 'GPL'
 
 VERSION        = '1.1.2'

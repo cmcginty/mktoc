@@ -24,28 +24,29 @@ import unittest
 
 from mktoc.base import *
 from mktoc.disc import *
-from mktoc.disc import TrackTime
+from mktoc.disc import _TrackTime
 
 
+##############################################################################
 class TrackTimeTests(unittest.TestCase):
    """Unit tests for the external interface of the TrackTime class."""
    def testIndex(self):
       """Time object string output must be equal to the input string."""
       tlist = ['00:01:02','99:98:97']
       for i in tlist:
-         val = str(TrackTime(i))
+         val = str(_TrackTime(i))
          self.assertEqual(val,i)
 
    def testEquals(self):
       """Time object must be equal to each other."""
-      a = TrackTime('01:02:03')
-      b = TrackTime('01:02:03')
+      a = _TrackTime('01:02:03')
+      b = _TrackTime('01:02:03')
       self.assertEqual( a, b )
 
    def testNotEquals(self):
       """Time object must not be equal to each other."""
-      a = TrackTime('01:20:03')
-      b = TrackTime('01:02:03')
+      a = _TrackTime('01:20:03')
+      b = _TrackTime('01:02:03')
       self.failIfEqual( a, b )
 
    def testSubtractionOfSelf(self):
@@ -74,14 +75,14 @@ class TrackTimeTests(unittest.TestCase):
 
    def testSubtractionUF(self):
       """Time object must raise exception if subtract underflows."""
-      a = TrackTime('00:00:00')
-      b = TrackTime('00:00:01')
-      self.assertRaises( UnderflowError, TrackTime.__sub__, a, b )
+      a = _TrackTime('00:00:00')
+      b = _TrackTime('00:00:01')
+      self.assertRaises( UnderflowError, _TrackTime.__sub__, a, b )
 
    def time_sub(self,s):
       """Helper function for test cases above."""
-      self.assertEqual( str(TrackTime(s[0]) - TrackTime(s[1])), \
-                        str(TrackTime(s[2])) )
+      self.assertEqual( str(_TrackTime(s[0]) - _TrackTime(s[1])), \
+                        str(_TrackTime(s[2])) )
 
 
 ##############################################################################

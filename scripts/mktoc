@@ -34,5 +34,6 @@ Info:
 
 # import the mktoc python package and run
 import mktoc._mktoc as mktoc
-mktoc.main()
+err = mktoc.main()
+exit(err)
 

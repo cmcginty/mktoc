@@ -28,6 +28,7 @@ import unittest
 from mktoc.parser import *
 
 
+##############################################################################
 class CueParserTests(unittest.TestCase):
    """Unit tests for the external interface of the CueParser class. These test
    rely on predefined input and output files. If the input CUE file does not
@@ -158,6 +159,7 @@ class WavParserTests(unittest.TestCase):
       wav_list = ['unique-1.wav','unique-2.wav','unique-3.wav']
       parser = WavParser( wav_list, find_wav=False )
       self.assertTrue( parser )
+
 
 ##############################################################################
 if __name__ == '__main__':
