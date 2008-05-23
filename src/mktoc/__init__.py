@@ -33,8 +33,11 @@ Options:
    --version
          show program's version number and exit
 
-   -h, --help
+   -h
          show help message and exit
+
+   --help
+         show detailed usage instructions and exit
 
    -a, --allow-missing-wav
          do not abort when WAV file(s) are missing, (experts only). It

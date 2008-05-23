@@ -20,7 +20,8 @@ simpliest way to run this module is with the following statements:
    import mktoc._mktoc as mktoc
    mktoc.main()
 
-For detailed application usage information, run 'pydoc mktoc'.
+For detailed application usage information, run 'mktoc --help' or
+'pydoc mktoc'.
 """
 
 __date__    = '$Date$'
@@ -127,8 +128,11 @@ class _Mktoc(object):
       return opt structure and args list as a tuple. All argument
       error checking is performed in this function."""
       usage = '[OPTIONS] [[-f] CUE_FILE|-w WAV_FILES] [[-o] TOC_FILE]'
-      parser = OptionParser( usage='%prog '+usage,
-                             version='%prog '+VERSION )
+      parser = OptionParser( usage='%prog '+usage, version='%prog '+VERSION,
+                             conflict_handler='resolve')
+      parser.add_option('--help', action='callback',
+            callback=self._parse_full_help,
+            help='show detailed usage instructions and exit' )
       parser.add_option( _OPT_ALLOW_WAV_FNF, '--allow-missing-wav',
             dest='find_wav', action="store_false", default=True,
             help='do not abort when WAV file(s) are missing, (experts only)')
@@ -147,7 +151,7 @@ class _Mktoc(object):
             action='store_true', default=False,
             help='write offset corrected WAV files to /tmp directory' )
       parser.add_option( _OPT_WAV_LIST, '--wave', dest='wav_files',
-            action="callback", callback=self._parse_wav,
+            action='callback', callback=self._parse_wav,
             help='write a TOC file using list of WAV files' )
       # execute parsing step
       opt,args = parser.parse_args()
@@ -187,6 +191,11 @@ class _Mktoc(object):
             # set file names if 'args' list is not empty
             if len(args)>=1: opt.toc_file = args[0]
       return opt,args
+
+   def _parse_full_help(self, option, opt_str, value, parser):
+      """Callback to print a detailed help output page."""
+      import mktoc
+      parser.exit( msg=mktoc.__doc__)
 
    def _parse_wav(self, option, opt_str, value, parser):
       """OptionParser callback function to correctly handle '-w' WAV

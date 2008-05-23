@@ -21,7 +21,7 @@ For more information about this program, run either:
    'mktoc -h'
       Basic usage information.
 
-   'pydoc mktoc'
+   'mktoc --help'
       Detailed usage information.
 
 E-mail:
