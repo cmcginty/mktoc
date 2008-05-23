@@ -34,7 +34,7 @@ import re
 from optparse import OptionParser
 
 from mktoc.base import *
-from mktoc import mt_parser
+from mktoc import parser as mt_parser
 
 __all__ = ['main']
 
