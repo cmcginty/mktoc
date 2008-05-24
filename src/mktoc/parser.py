@@ -474,6 +474,7 @@ class WavParser(_Parser):
                        if a WAV file can not be found in the FS.
       """
       # init class options
+      assert( work_dir )
       super(WavParser,self).__init__(work_dir, find_wav)
 
    def parse( self, wav_files):

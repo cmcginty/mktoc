@@ -90,8 +90,9 @@ class _Mktoc(object):
          cd_data = p.parse( fh_in)
          fh_in.close()
       else:
-         wav_dir = os.path.dirname( opt.wav_files[0] )
+         wav_dir = os.path.dirname( opt.wav_files[0] ) or os.curdir
          # create WAV list parser
+         assert( wav_dir)
          p = mt_parser.WavParser( wav_dir, opt.find_wav)
          cd_data = p.parse( opt.wav_files)
       if opt.wav_offset:
