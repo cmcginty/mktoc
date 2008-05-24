@@ -66,12 +66,10 @@ class _Mktoc(object):
    def _main(self):
       """Starting execution point. Interprets all program arguments
       and creates a CueParser object to generate a final TOC file."""
-
       # parse all command line arguments, exit if there is any error
       opt,args = self._parse_args()
       # setup logging
       if opt.debug: logging.basicConfig(level=logging.DEBUG)
-
       # check if using WAV list or CUE file
       if opt.wav_files is None:
          # open CUE file
@@ -88,19 +86,17 @@ class _Mktoc(object):
             fh_in = sys.stdin
          # create CUE file parser
          assert(cue_dir)
-         cd_data = mt_parser.CueParser( fh_in, cue_dir, opt.find_wav,
-                                        opt.write_tmp)
+         p = mt_parser.CueParser( cue_dir, opt.find_wav)
+         cd_data = p.parse( fh_in)
          fh_in.close()
       else:
          wav_dir = os.path.dirname( opt.wav_files[0] )
          # create WAV list parser
-         cd_data = mt_parser.WavParser( opt.wav_files, wav_dir, opt.find_wav,
-                                        opt.write_tmp)
-
+         p = mt_parser.WavParser( wav_dir, opt.find_wav)
+         cd_data = p.parse( opt.wav_files)
       if opt.wav_offset:
-         cd_data.modWavOffset( opt.wav_offset )
+         cd_data.modWavOffset( opt.wav_offset, opt.write_tmp )
       toc = cd_data.getToc()
-
       # open TOC file
       if opt.toc_file:
          try:
@@ -110,10 +106,8 @@ class _Mktoc(object):
             exit(-1)
       else:
          fh_out = sys.stdout
-
       fh_out.write( self._banner_msg() )
       fh_out.write( '\n'.join(toc) )
-
       fh_out.close()
 
    def _banner_msg(self):

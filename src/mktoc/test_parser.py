@@ -127,7 +127,7 @@ class CueParserTests(unittest.TestCase):
       if not os.path.exists(toc_path):
          cue_fh = open(os.path.join(self._CUE_DIR,self._cue_file))
          toc_fh = open(toc_path,'w')
-         toc_str = CueParser(cue_fh, find_wav=False).getToc()
+         toc_str = CueParser( find_wav=False).parse( cue_fh).getToc()
          # write the data
          toc_fh.write( toc_str.read() )
          cue_fh.close()
@@ -139,7 +139,7 @@ class CueParserTests(unittest.TestCase):
       TOC file data."""
       # calculate test data
       cue_fh = open(os.path.join(self._CUE_DIR,self._cue_file))
-      toc = CueParser(cue_fh, find_wav=False).getToc()
+      toc = CueParser( find_wav=False).parse( cue_fh).getToc()
       cue_fh.close()
       # read the known good data
       toc_good = open(os.path.join(self._TOC_DIR,self._toc_file))
@@ -157,8 +157,10 @@ class WavParserTests(unittest.TestCase):
    def testWavFiles(self):
       """WavParser class must instantiate without errors."""
       wav_list = ['unique-1.wav','unique-2.wav','unique-3.wav']
-      parser = WavParser( wav_list, find_wav=False )
+      parser = WavParser( find_wav=False)
+      data = parser.parse( wav_list )
       self.assertTrue( parser )
+      self.assertTrue( data )
 
 
 ##############################################################################
