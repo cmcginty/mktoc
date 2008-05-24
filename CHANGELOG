@@ -3,6 +3,7 @@ mktoc[@]tuxcoder[dot]com
 
 Ver. 1.1.2  --
    * Added command switch to output full help instructions.
+   * Fixed empty 'working dir' value from hitting assert with '-w' option.
 
 Ver. 1.1.1  -- 5/18/2008
    * Fixed runtime error when inputing CUE file using STDIN.
