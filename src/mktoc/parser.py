@@ -64,19 +64,25 @@ class ParseData(object):
 
       _tracks
          Track object that stores track info.
+
+      _files
+         In-order list of WAV files that apply to the CD audio.
    """
-   def __init__(self, disc, tracks):
-      """Initialize data structures. The input data is post processed by call
-      the 'mung' method on each object.
+   def __init__(self, disc, tracks, files):
+      """Initialize data structures. The input data is post processed
+      by call the 'mung' method on each object.
 
       Parameters:
          disc     : disc.Disc() object with CD info
 
          tracks   : a list of disc.Track() objects with track info and
                     indexes for each portion of the track.
+
+         files    : in-order list of WAV files associated with 'tracks'
       """
-      self._disc = disc
-      self._tracks = tracks
+      self._disc     = disc
+      self._tracks   = tracks
+      self._files    = files
       # modify data to workable formats
       self._disc.mung()
       # current track and "next" track or None
@@ -110,7 +116,7 @@ class ParseData(object):
       """
       # create WavOffset object, initialize sample offset and progress output
       wo = mt_wav.WavOffsetWriter( samples, mt_pb.ProgressBar,
-                                ('processing WAV files:',))
+                                   ('processing WAV files:',))
       new_files = wo.execute( self._files, tmp )
 
       # change all index file names to newly generated files
@@ -332,7 +338,7 @@ class CueParser(_Parser):
       self._build_lookup_tbl()
       # create data objects for CUE info
       disc = self._parse_disc()
-      return ParseData( disc, self._parse_all_tracks(disc) )
+      return ParseData( disc, self._parse_all_tracks(disc), self._files )
 
    def _active_file(self,trk_idx):
       """Returns the previous WAV file used before the start of
@@ -489,7 +495,8 @@ class WavParser(_Parser):
          return trk
       # return a new ParseData object with empy Disc and complete Track list
       return ParseData( mt_disc.Disc(),
-                        map( mk_track, enumerate(self._files)) )
+                        map( mk_track, enumerate(self._files)),
+                        self._files )
 
 
 ##############################################################################
