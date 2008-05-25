@@ -26,7 +26,6 @@ __version__ = '$Revision$'
 
 import unittest
 import logging
-import mktoc.test_parser
 
 # enable line below to turn on logging
 # logging.basicConfig(level=logging.DEBUG)
