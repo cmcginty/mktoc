@@ -132,6 +132,9 @@ Info:
 __date__       = '$Date$'
 __version__    = '$Revision$'
 
+import os,sys,traceback,logging,re
+from optparse import OptionParser
+
 from mktoc.base import *
 from mktoc.parser import *
 
