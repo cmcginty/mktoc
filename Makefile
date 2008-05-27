@@ -13,6 +13,7 @@ install:
 
 pydist: Makefile
 	python setup.py sdist
+	rm -rf build
 
 pydist-test:
 	tar xzf ${TAR} -C ${DIST_DIR}
