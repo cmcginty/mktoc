@@ -29,15 +29,32 @@ import os
 from distutils.core  import setup
 from distutils.command.install_scripts import install_scripts
 
+import mktoc
 from mktoc.base import *
 
-setup( name='mktoc', version=VERSION,
-       description='CD audio CUE file interpretor for cdrdao',
+setup( name='mktoc',
+       version=VERSION,
+       description="""\
+          Simple command line tool to create TOC files for CD burning with
+          cdrdao.""",
+       long_description=mktoc.__doc__,
        author=__author__,
        author_email=__email__,
        url='http://mktoc.googlecode.com',
+       download_url=(
+          'http://mktoc.googlecode.com/files/mktoc-%s.tar.gz' % (VERSION,)),
        packages=['mktoc'],
        package_dir = {'':'src'},
        scripts=['scripts/mktoc'],
+       classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Environment :: Console',
+          'Intended Audience :: End Users/Desktop',
+          'License :: OSI Approved :: GNU General Public License (GPL)',
+          'Operating System :: OS Independent',
+          'Operating System :: POSIX :: Linux',
+          'Topic :: Multimedia :: Sound/Audio :: Conversion',
+          'Topic :: Multimedia :: Sound/Audio :: CD Audio :: CD Writing',
+         ]
       )
 

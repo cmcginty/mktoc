@@ -11,6 +11,9 @@ SRC_DIR=${DIST_DIR}/${NAME}-${VER}
 install:
 	python setup.py install
 
+register:
+	python setup.py register
+
 pydist: Makefile
 	python setup.py sdist
 	rm -rf build
