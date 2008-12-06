@@ -15,7 +15,7 @@ register:
 	python setup.py register
 
 pydist: Makefile
-	python setup.py sdist
+	python setup.py sdist --force-manifest
 	rm -rf build
 
 pydist-test:

@@ -26,8 +26,7 @@ import sys
 sys.path.insert(0,'src')  # allow setup.py to import mktoc.base
 
 import os
-from distutils.core  import setup
-from distutils.command.install_scripts import install_scripts
+from distutils.core import setup
 
 import mktoc
 from mktoc.base import *

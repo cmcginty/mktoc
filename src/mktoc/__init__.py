@@ -20,16 +20,31 @@ CdrWin, TOC files are synonymous with CUE sheets. The primary goal of
 mktoc is to create TOC files using a previously generated CUE sheet.
 
 Features:
-    * Create a TOC file from a list of WAV files
-    * Convert an ExactAudioCopy (EAC) CUE file to the TOC format that
-      is usable by cdrdao.
-    * Non-compliant CUE sheet support.
-    * Support for various pregap methods.
-    * Can create offset corrected WAV files for true 'bit-for-bit'
-      accurate copies.
-    * Fuzzy file name logic can correct common file name spelling
-      variations.
-    * Workaround known TOC file parsing bugs in cdrdao.
+   * Create a TOC file from a list of WAV files
+   * Convert an ExactAudioCopy (EAC) CUE file to the TOC format that
+     is usable by cdrdao.
+   * Non-compliant CUE sheet support.
+   * Support for various pregap methods.
+   * Can create offset corrected WAV files for true 'bit-for-bit'
+     accurate copies.
+   * Fuzzy file name logic can correct common file name spelling
+     variations.
+   * Workaround known TOC file parsing bugs in cdrdao.
+
+Installation:
+   * Use 'easy_install' from the setuptools package
+     [http://peak.telecommunity.com/DevCenter/EasyInstall].
+
+   easy_install mktoc
+
+   __OR__
+
+   * Download the source distribution file and install from the
+     command line.
+
+   tar xzf mktoc-*.tar.gz
+   cd mktoc-*
+   sudo make install
 
 Usage:
    mktoc [OPTIONS] < CUE_FILE
