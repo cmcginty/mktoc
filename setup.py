@@ -52,8 +52,9 @@ setup( name='mktoc',
           'License :: OSI Approved :: GNU General Public License (GPL)',
           'Operating System :: OS Independent',
           'Operating System :: POSIX :: Linux',
-          'Topic :: Multimedia :: Sound/Audio :: Conversion',
+          'Programming Language :: Python',
           'Topic :: Multimedia :: Sound/Audio :: CD Audio :: CD Writing',
+          'Topic :: Multimedia :: Sound/Audio :: Conversion',
          ]
       )
 
