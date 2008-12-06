@@ -35,7 +35,7 @@ Installation:
    * Use 'easy_install' from the setuptools package
      [http://peak.telecommunity.com/DevCenter/EasyInstall].
 
-   easy_install mktoc
+   sudo easy_install mktoc
 
    __OR__
 
