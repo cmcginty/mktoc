@@ -13,7 +13,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
+"""mktoc // (c) 2008, Patrick C. McGinty
+mktoc[@]tuxcoder[dot]com
+
 mktoc simplifies the steps needed to create audio CD TOC files for the
 cdrdao CD burning program. For users familiar with ExactAudioCopy or
 CdrWin, TOC files are synonymous with CUE sheets. The primary goal of
