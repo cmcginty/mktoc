@@ -18,21 +18,6 @@ Features:
      variations.
    * Workaround known TOC file parsing bugs in cdrdao.
 
-Installation:
-   * Use 'easy_install' from the setuptools package
-     [http://peak.telecommunity.com/DevCenter/EasyInstall].
-
-   sudo easy_install mktoc
-
-   __OR__
-
-   * Download the source distribution file and install from the
-     command line.
-
-   tar xzf mktoc-*.tar.gz
-   cd mktoc-*
-   sudo make install
-
 Usage:
    mktoc [OPTIONS] < CUE_FILE
    mktoc [OPTIONS] [[-f] CUE_FILE] [[-o] TOC_FILE]

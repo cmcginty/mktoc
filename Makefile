@@ -15,7 +15,7 @@ help:
 	@echo "  test        to run all unit-tests"
 	@echo "  install     to install teh applicataion"
 	@echo "  clean       to remove tmp files"
-	@echo "  readme      to generate the README file"
+	@echo "  readme      to generate the README.txt file"
 	@echo "  dist        to generate a complete source archive"
 	@echo "  release     to perform a full test/dist/install"
 	@echo "  register    to update the PyPI registration"
@@ -38,7 +38,7 @@ readme:
 		"import sys; \
 	 	sys.path.insert(0,'src'); \
 	 	import mktoc; \
-	 	print mktoc.__doc__" > README
+	 	print mktoc.__doc__" > README.txt
 
 .PHONY: dist
 dist:

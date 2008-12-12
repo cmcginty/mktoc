@@ -1,8 +1,6 @@
-CHANGELOG
 COPYING.txt
-INSTALL
 Makefile
-README
+README.txt
 setup.py
 scripts/mktoc
 src/mktoc/__init__.py

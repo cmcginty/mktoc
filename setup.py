@@ -31,12 +31,17 @@ from distutils.core import setup
 import mktoc
 from mktoc.base import *
 
+def _read( *path_name ):
+   return open( os.path.join(os.path.dirname(__file__), *path_name)).read()
+
+long_doc = mktoc.__doc__ + '\n' + _read('INSTALL.txt')
+
 setup( name='mktoc',
        version=VERSION,
        description="""\
           Simple command line tool to create TOC files for CD burning with
           cdrdao.""",
-       long_description=mktoc.__doc__,
+       long_description=long_doc,
        author=__author__,
        author_email=__email__,
        url='http://mktoc.googlecode.com',
