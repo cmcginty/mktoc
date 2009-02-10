@@ -10,6 +10,12 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   overview
+   install
+   developers
+   changelog
+   license
+
 Indices and Tables
 ==================
 

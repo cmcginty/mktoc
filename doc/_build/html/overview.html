@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Overview &mdash; Mktoc v1.1.2 Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.1.2',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Mktoc v1.1.2 Documentation" href="index.html" />
+    <link rel="next" title="Install Steps" href="install.html" />
+    <link rel="prev" title="Contents" href="contents.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Install Steps"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="contents.html" title="Contents"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://mktoc.googlecode.com" target="_blank">
+   Mktoc Home </a> |&nbsp;</li>
+<li><a href=index.html>Docs Home </a> |&nbsp;</li>
+<li><a href=contents.html>TOC </a> |&nbsp;</li>
+<li><a href=search.html>Search </a></li>
+ 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<table><tbody><tr>
+   <td> <b>Release:<br/>Date:</b></td>
+   <td> 1.1.2<br/>Feb 09, 2009</td>
+</tr></tbody></table>
+
+            <h3><a href="contents.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Overview</a><ul>
+<li><a class="reference external" href="#features">Features</a></li>
+<li><a class="reference external" href="#usage">Usage</a></li>
+<li><a class="reference external" href="#options">Options</a></li>
+<li><a class="reference external" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="contents.html" title="previous chapter">Contents</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="install.html" title="next chapter">Install Steps</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/overview.txt">Show Source</a></li>
+            </ul>
+          <h3>Download</h3>
+
+<p>Get latest source archive,<br>
+<a href="http://mktoc.googlecode.com/files/mktoc-1.1.2.tar.gz">
+   mktoc-1.1.2.tar.gz</a>, or install with:</p>
+<pre>easy_install mktoc</pre>
+
+<h3>Found a Bug?</h3>
+
+<p>Fill out a report on the
+<a href="http://code.google.com/p/mktoc/issues/list" target="_blank">
+   issue tracker</a>.
+</p>
+          <h3>Quick search</h3>
+            <form class="search" action="search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="id1">
+<span id="overview"></span><h1>Overview<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>Mktoc simplifies the steps needed to create audio CD TOC files for the
+cdrdao CD burning program. For users familiar with ExactAudioCopy or
+CdrWin, TOC files are synonymous with CUE sheets. The primary goal of
+mktoc is to create TOC files using a previously generated CUE sheet.</p>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Create a TOC file from a list of WAV files</li>
+<li>Convert an ExactAudioCopy (EAC) CUE file to the TOC format that
+is usable by cdrdao.</li>
+<li>Non-compliant CUE sheet support.</li>
+<li>Support for various pregap methods.</li>
+<li>Can create offset corrected WAV files for true &#8216;bit-for-bit&#8217;
+accurate copies.</li>
+<li>Fuzzy file name logic can correct common file name spelling
+variations.</li>
+<li>Workaround known TOC file parsing bugs in cdrdao.</li>
+</ul>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre>mktoc [OPTIONS] &lt; CUE_FILE
+mktoc [OPTIONS] [[-f] CUE_FILE] [[-o] TOC_FILE]
+mktoc [OPTIONS] -w WAV_FILES [[-o] TOC_FILE]</pre>
+</div>
+<p><tt class="docutils literal"><span class="pre">CUE_FILE</span></tt> must contain a valid CUE format. When <tt class="docutils literal"><span class="pre">*_FILE</span></tt> is not
+provided, the program will read from <tt class="docutils literal"><span class="pre">STDIN</span></tt>. All output will be sent
+to <tt class="docutils literal"><span class="pre">STDOUT</span></tt>.</p>
+<p>All attempts will be made to preserve any and all information from
+the input file. For any case where the CUE file contains unknown or
+bad values, the user will be notified on <tt class="docutils literal"><span class="pre">STDERR</span></tt>.</p>
+</div>
+<div class="section" id="options">
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--version</span></kbd></td>
+<td>show program&#8217;s version number and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span></kbd></td>
+<td>show help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--help</span></kbd></td>
+<td>show detailed usage instructions and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-a</span>, <span class="option">--allow-missing-wav</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>do not abort when WAV file(s) are missing, (experts only). It
+is possible when using this option that a bug in cdrdao will
+create a CD that ignores the pregap definitions in the TOC
+file. Only use this option if the CUE file does not contain
+pregaps, or if you do not wish to retain the pregap
+information.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-c <var>WAV_OFFSET</var></span>, <span class="option">--offset-correction=<var>WAV_OFFSET</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>correct reader/writer offset by creating WAV file(s) shifted
+by WAV_OFFSET samples (original data is not modified)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-f <var>CUE_FILE</var></span>, <span class="option">--file=<var>CUE_FILE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>specify the input CUE file to read</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o <var>TOC_FILE</var></span>, <span class="option">--output=<var>TOC_FILE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>specify the output TOC file to write</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-t</span>, <span class="option">--use-temp</span></kbd></td>
+<td>write offset corrected WAV files to /tmp directory</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-w</span>, <span class="option">--wave</span></kbd></td>
+<td>write a TOC file using list of WAV files</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Create a TOC file from a set of WAV files:</p>
+<div class="highlight-python"><pre>mktoc -w *.wav</pre>
+</div>
+</li>
+<li><p class="first">Write a TOC file to <tt class="docutils literal"><span class="pre">toc_file.toc</span></tt>, from a set of WAV files:</p>
+<div class="highlight-python"><pre>mktoc -w *.wav toc_file.toc
+mktoc -w *.wav &gt; toc_file.toc
+mktoc -w *.wav -o toc_file.toc</pre>
+</div>
+</li>
+<li><p class="first">Create a TOC file from a valid CUE file:</p>
+<div class="highlight-python"><pre>mktoc cue_file.cue
+mktoc &lt; cue_file.cue
+mktoc -f cue_file.cue</pre>
+</div>
+</li>
+<li><p class="first">Write a TOC file to <tt class="docutils literal"><span class="pre">toc_file.toc</span></tt>, given an input CUE file:</p>
+<div class="highlight-python"><pre>mktoc cue_file.cue toc_file.toc
+mktoc &lt; cue_file.cue &gt; toc_file.toc
+mktoc -f cue_file.cue -o toc_file.toc</pre>
+</div>
+</li>
+<li><p class="first">Tell mktoc to ignore missing WAV file errors. There is a
+potential that the result TOC file will cause cdrdao to loose
+pregap information during the burn process (see above):</p>
+<div class="highlight-python"><pre>mktoc -a cue_file.cue</pre>
+</div>
+</li>
+<li><p class="first">Adjust WAV files for a CD writer offset value. For example, if
+your CD writer has a -30 sample write offset, it can be
+corrected by offsetting the input WAV files by +30 samples. New
+WAV files will be placed in the working directory in a new dir
+called <tt class="docutils literal"><span class="pre">wav+30</span></tt>:</p>
+<div class="highlight-python"><pre>mktoc -c 30 &lt; cue_file.cue</pre>
+</div>
+</li>
+<li><p class="first">Adjust WAV files for a CD writer offset value, but create new
+files in the <tt class="docutils literal"><span class="pre">/tmp</span> <span class="pre">directory</span></tt>:</p>
+<div class="highlight-python"><pre>mktoc -c 30 -t &lt; cue_file.cue</pre>
+</div>
+</li>
+</ol>
+<dl class="docutils">
+<dt>E-mail:</dt>
+<dd>mktoc[&#64;]tuxcoder[dot]com</dd>
+<dt>Info:</dt>
+<dd><a class="reference external" href="http://mktoc.googlecode.com">http://mktoc.googlecode.com</a>
+<a class="reference external" href="http://blog.tuxcoder.com">http://blog.tuxcoder.com</a></dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Install Steps"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="contents.html" title="Contents"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://mktoc.googlecode.com" target="_blank">
+   Mktoc Home </a> |&nbsp;</li>
+<li><a href=index.html>Docs Home </a> |&nbsp;</li>
+<li><a href=contents.html>TOC </a> |&nbsp;</li>
+<li><a href=search.html>Search </a></li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Patrick C. McGinty.
+      Last updated on Feb 09, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+    </div>
+  </body>
+</html>
