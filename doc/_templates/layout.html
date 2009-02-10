@@ -1,0 +1,24 @@
+{% extends "!layout.html" %}
+
+{# put the sidebar before the body #}
+{% block sidebar1 %}{{ sidebar() }}{% endblock %}
+{% block sidebar2 %}{% endblock %}
+
+{# add custom text to the sidebar #}
+{% set customsidebar = 'sidebar.html' %}
+
+{% block sidebarlogo %}
+<table><tbody><tr>
+   <td> <b>Release:<br/>Date:</b></td>
+   <td> {{ release }}<br/>{{ last_updated }}</td>
+</tr></tbody></table>
+{% endblock %}
+
+{# update static links in the relbar #}
+{% block rootrellink %}
+<li><a href="http://mktoc.googlecode.com" target="_blank">
+   Mktoc Home </a> |&nbsp;</li>
+<li><a href={{ pathto('index') }}>Docs Home </a> |&nbsp;</li>
+<li><a href={{ pathto(master_doc) }}>TOC </a> |&nbsp;</li>
+<li><a href={{ pathto('search') }}>Search </a></li>
+{% endblock %}
