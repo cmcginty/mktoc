@@ -1,5 +1,6 @@
-include CHANGELOG
+include CHANGELOG.txt
 include COPYING.txt
-include INSTALL
+include INSTALL.txt
+include README.txt
 include Makefile
 recursive-exclude src test*.py
