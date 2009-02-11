@@ -113,10 +113,14 @@ Examples
 
       mktoc -c 30 -t < cue_file.cue
 
-E-mail:
-   mktoc[@]tuxcoder[dot]com
+Contact
+=======
+E-mail
+-------
+|  mktoc[@]tuxcoder[dot]com
 
-Info:
-   http://mktoc.googlecode.com
-   http://blog.tuxcoder.com
+Info
+----
+|  http://mktoc.googlecode.com
+|  http://blog.tuxcoder.com
 
