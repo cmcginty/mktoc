@@ -1,17 +1,16 @@
-Install:
-   1) Any one of the following command will install the program. Make sure to
-      run as root user:
+1. Any one of the following command will install Mktoc. Make sure to run as
+   ``root`` user:
 
-      a) Use 'easy_install' from the setuptools package
-         [http://peak.telecommunity.com/DevCenter/EasyInstall].
+   a. Use :command:`easy_install` from the `setuptools package
+      <http://peak.telecommunity.com/DevCenter/EasyInstall]>`_::
 
          sudo easy_install mktoc
 
-      b) Download the source distribution file and install from the
-         command line.
+   b. Download the source distribution file and install from the
+      command line::
 
          tar xzf mktoc-*.tar.gz
          cd mktoc-*
          sudo make install
 
-   2) View README for usage instructions.
+2. View online docs or :file:`README.txt` for usage instructions.
