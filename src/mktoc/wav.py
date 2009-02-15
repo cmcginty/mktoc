@@ -264,7 +264,7 @@ class WavOffsetWriter(object):
       while True:
          data = wav_in.readframes(self._COPY_SIZE)
          if len(data) == 0: break
-         self._write_frames(wav_out, data, bytes_psamp)
+         self._write_frames(wav_out, data, bytes_p_samp)
       wav_in.close()
       # finally copy the remaining data from the next track, or silence
       if nxt_fn:

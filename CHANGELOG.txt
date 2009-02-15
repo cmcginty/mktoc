@@ -1,6 +1,12 @@
 .. mktoc // (c) 2008, Patrick C. McGinty
    mktoc[@]tuxcoder[dot]com
 
+v1.1.3
+==========
+:Release Date: 2/12/2009
+
+* Fixed incorrect variable name in negative sample offset correction function.
+
 v1.1.2
 ==========
 :Release Date: 6/1/2008
