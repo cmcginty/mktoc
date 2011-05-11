@@ -1,11 +1,10 @@
 {% extends "!layout.html" %}
 
-{# put the sidebar before the body #}
-{% block sidebar1 %}{{ sidebar() }}{% endblock %}
-{% block sidebar2 %}{% endblock %}
-
 {# add custom text to the sidebar #}
 {% set customsidebar = 'sidebar.html' %}
+{# disable next/prev links #}
+{% set next = 0 %}
+{% set prev = 0 %}
 
 {% block sidebarlogo %}
 <table><tbody><tr>
@@ -14,11 +13,15 @@
 </tr></tbody></table>
 {% endblock %}
 
+{%- block sidebartoc %}
+   <h3><a href="{{ pathto(master_doc) }}">{{ _('Contents') }}</a></h3>
+   {{ toctree() }}
+{%- endblock %}
+
 {# update static links in the relbar #}
 {% block rootrellink %}
-<li><a href="http://mktoc.googlecode.com">
-   Mktoc Home </a> |&nbsp;</li>
-<li><a href={{ pathto('index') }}>Docs Home </a> |&nbsp;</li>
-<li><a href={{ pathto(master_doc) }}>TOC </a> |&nbsp;</li>
+<li><a href="http://mktoc.googlecode.com"> Mktoc Home </a> |&nbsp;</li>
+<li><a href={{ pathto('index') }}>Top </a> |&nbsp;</li>
+<li><a href={{ pathto(master_doc) }}>Contents </a> |&nbsp;</li>
 <li><a href={{ pathto('search') }}>Search </a></li>
 {% endblock %}

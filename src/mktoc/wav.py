@@ -14,17 +14,13 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module for mktoc that can holds utility functions for search and
-modifying WAV audio files. The available object classes are:
+   Module for mktoc that can holds utility functions for search and modifying
+   WAV audio files.
 
-   WavFileCache
-      Verifies the existence of a WAV file in the local file system.
-      The class provides fuzzy logic name matching of cached results
-      in the case that the specified file can not be found.
+   The following are a list of the classes provided in this module:
 
-   WavOffsetWriter
-      Shift the audio data in a set of WAV files by a desired postive
-      or negative sample offset.
+   * :class:`WavFileCache`
+   * :class:`WavOffsetWriter`
 """
 
 __date__    = '$Date$'
@@ -48,40 +44,45 @@ log = logging.getLogger('mktoc.wav')
 
 ##############################################################################
 class WavFileCache(object):
-   """Verifies the existence of a WAV file in the local file system.
-   The class provides fuzzy logic name matching of cached results in
-   the case that the specified file can not be found. The files system
-   is only scanned once, and all lookups after the initial test come
-   from the cache. The cache size is limited to prevent over
-   aggressive file system access.
+   """
+   Verifies the existence of a WAV file in the local file system.
 
-   Constants:
-      _WAV_REGEX
-         A complied search object that can be used to match file name
-         strings ending with the '.wav' extension.
+   The class provides fuzzy logic name matching of cached results in the case
+   that the specified file can not be found. The files system is only scanned
+   once, and all lookups after the initial test come from the cache. The cache
+   size is limited to prevent over aggressive file system access.
+   """
 
-   Private Members:
-      _data    : String list of WAV files found in the local file
-                 system.
+   # list of WAV files found in the local file system.
+   _data = None
 
-      _src_dir : String that stores the base search path location."""
+   # base search path location.
+   _src_dir = None
 
+   # complied search object that can be used to match file name strings ending
+   # with the '.wav' extension.
    _WAV_REGEX = re.compile(r'\.wav$', re.IGNORECASE)
 
    def __init__(self, _dir=os.curdir):
-      """Initialize the internal member _src_dir with the input '_dir'
-      argument. If no argument is supplied it defaults to the current
-      working dir."""
+      """
+      Initialize the class instance with the input :attr:`_dir` argument. If no
+      argument is supplied it defaults to the current working dir.
+
+      :param _dir:   Base path location to perform the WAV file search.
+      :type _dir:    :func:`str`
+      """
       assert(_dir)
       self._src_dir = _dir
 
    def lookup(self, file_):
-      """Search the cache for a fuzzy-logic match of the file name in
-      'file_' parameter. This method will always return the exact file
+      """
+      Search the cache for a fuzzy-logic match of the file name in
+      :attr:`file_` parameter. This method will always return the exact file
       name if it exists before attempting fuzzy matches.
 
-      Parameter:
-         file_    : String of the file name to search for."""
+      :param file_:  File name to search for.
+      :type file_:   :func:`str`
+      """
       log.debug("looking for file '%s'",file_)
       tmp_name = file_
       # convert a DOS file path to Linux
@@ -121,15 +122,19 @@ class WavFileCache(object):
       raise FileNotFoundError, file_ # zero or multiple matches is an error
 
    def _get_cache(self):
-      """Helper function used to lookup the WAV file cache. The first
-      call to this method will cause the creation of the cache."""
-      if not hasattr(self,'_data'):
+      """
+      Helper function used to lookup the WAV file cache. The first call to this
+      method will cause the creation of the cache.
+      """
+      if self._data is None:
          self._init_cache()
       return self._data
 
    def _init_cache(self):
-      """Create a list of WAV files in the vicinity of the current
-      working dir. The list is store in the object member '_data'."""
+      """
+      Create a list of WAV files in the vicinity of the current working dir.
+      The list is store in the object member '_data'.
+      """
       self._data = []
       fc = 0
       log.debug("Initializing file cache @ '%s'", self._src_dir)
@@ -147,68 +152,66 @@ class WavFileCache(object):
 
 ##############################################################################
 class WavOffsetWriter(object):
-   """Shift the audio data in a set of WAV files by a desired postive
-   or negative sample offset. The module will never modify the input
-   WAV files, and always write to either a new directory in the 'cwd'
-   or in the '/tmp' directory. The WAV files are treated as a set of
-   data, in that the direction of shift will cause audio sample data
-   to be taken from either a previous or next WAV file. The shift in
-   sample data will cause either the first or last WAV file to contain
-   'sample count' of NULL samples.
-
-   Constants:
-      _COPY_SIZE
-         Specifies the number of samples to copy for each cycle. This
-         value affects the memory required by this class and the
-         frequency the progress bar is update.
-
-   Private Members:
-      _offset
-         The sample shift offset value.
-
-      _pb
-         Reference to a ProgressBar object to provide progress
-         updates.
-
-      _progName
-         String of the program name (i.e. mktoc) used when creating
-         directories in /tmp.
    """
+   Shift the audio data in a set of WAV files by a desired postive or negative
+   sample offset.
+
+   The module will never modify the input WAV files, and always write to either
+   a new directory in the 'cwd' or in the :file:`/tmp` directory. The WAV files
+   are treated as a set of data, in that, the direction of shift will cause
+   audio sample data to be taken from either a previous or next WAV file. The
+   shift in sample data will cause either the first or last WAV file to contain
+   'sample count' of NULL samples.
+   """
+
+   # number of samples to copy for each cycle. This value affects the memory
+   # required by this class and the frequency the progress bar is update.
    _COPY_SIZE = 256*1024
 
+   # sample shift offset value.
+   _offset = None
+
+   # reference to a :class:`ProgressBar` instance to provide progress updates.
+   _pb = None
+
+   # string of the program name (i.e. mktoc) used when creating directories in
+   # /tm.
+   _progName = None
+
    def __init__(self, offset_samples, pb_class, pb_args):
-      """Initialize private data members.
+      """
+      :param offset_samples:  Sample shift value
+      :type offset_samples:   :func:`int`
 
-      Parameters:
-         offset_samples    : The sample shift value assigned to
-                             '_offset'.
+      :param pb_class:  outputs status updates to the user. First argument of
+                        the class init routine specifies the maximum value of
+                        the progress bar and is calulated by this class.
+      :type pb_class:   :class:`ProgressBar`
 
-         pb_class          : Reference to a ProgressBar class used to
-                             give status updates to the user. First
-                             argument of the class init routine
-                             specifies the maximum value of the
-                             progress bar and is calulated by this
-                             class.
-
-         pb_args           : Argument list used to initialize progress
-                             bar. However, the first argument of the
-                             progress bar init routine is calculated
-                             by this class."""
+      :param pb_args:   Argument list used to initialize progress bar. However,
+                        the first argument of the progress bar init routine is
+                        calculated by this class.
+      :type pb_args:    :func:`list`
+      """
       self._offset  = offset_samples
       self._pb_class = pb_class
       self._pb_args  = pb_args
       self._progName = os.path.basename( sys.argv[0] )
 
    def execute(self, files, use_tmp_dir):
-      """Initiate the WAV offsetting algorithm. New output files are
-      written to either 'wav[+,-]n/' or '/tmp/mktoc.[random]/'
+      """
+      Initiate the WAV offsetting algorithm.
 
-      Parameters:
-         files       : A list of WAV files read to apply the sample
-                       shifting process to.
+      New output files are written to either :file:`wav[+,-]n/` or
+      :file:`/tmp/mktoc.[random]/`
 
-         use_tmp_dir : True/False, True indicates new WAV files are
-                       created in /tmp."""
+      :param files:  WAV files read to apply the sample shifting process to.
+      :type files:   :func:`list`
+
+      :param use_tmp_dir:  :data:`True` indicates new WAV files are created in
+                           :file:`/tmp`.
+      :type use_tmp_dir:   :func:`bool`
+      """
       # initialize the progress bar class, set the maximum progress bar value
       self._pb = self._pb_class( bar_max=self._get_total_samp(files),
                                  *self._pb_args)

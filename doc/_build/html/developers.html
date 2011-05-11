@@ -1,0 +1,814 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. Developer Reference &mdash; Mktoc v1.1.3 Documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.1.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Mktoc v1.1.3 Documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="changelog.html" title="4. Change Log"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="2. Install Steps"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://mktoc.googlecode.com"> Mktoc Home </a> |&nbsp;</li>
+<li><a href=index.html>Top </a> |&nbsp;</li>
+<li><a href=contents.html>Contents </a> |&nbsp;</li>
+<li><a href=search.html>Search </a></li>
+ 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<table><tbody><tr>
+   <td> <b>Release:<br/>Date:</b></td>
+   <td> 1.1.3<br/>May 10, 2011</td>
+</tr></tbody></table>
+
+   <h3><a href="contents.html">Contents</a></h3>
+   <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">2. Install Steps</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">3. Developer Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mktoc-init">3.1. mktoc.__init__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mktoc.base">3.2. mktoc.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mktoc.disc">3.3. mktoc.disc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mktoc.parser">3.4. mktoc.parser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mktoc.progress_bar">3.5. mktoc.progress_bar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mktoc.wav">3.6. mktoc.wav</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">4. Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">5. License</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">2. Install Steps</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="changelog.html"
+                        title="next chapter">4. Change Log</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/developers.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul><hr \>
+<h3>Download</h3>
+
+<p>Get latest source archive,<br>
+<a href="http://mktoc.googlecode.com/files/mktoc-1.1.3.tar.gz">
+   mktoc-1.1.3.tar.gz</a>, or install with:</p>
+<pre>easy_install mktoc</pre>
+
+<h3>Found a Bug?</h3>
+
+<p>Fill out a report on the
+<a href="http://code.google.com/p/mktoc/issues/list">
+   issue tracker</a>.
+</p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="developer-reference">
+<span id="developers"></span><h1>3. Developer Reference<a class="headerlink" href="#developer-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="mktoc-init">
+<h2>3.1. mktoc.__init__<a class="headerlink" href="#mktoc-init" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mktoc.__init__.main">
+<tt class="descclassname">mktoc.__init__.</tt><tt class="descname">main</tt><big>(</big><big>)</big><a class="headerlink" href="#mktoc.__init__.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Primary entry point for the mktoc command line application.  Creates a
+<a class="reference internal" href="#mktoc.__init__._Mktoc" title="mktoc.__init__._Mktoc"><tt class="xref py py-class docutils literal"><span class="pre">_Mktoc</span></tt></a> object and catches any exceptions. Returns 0
+to indicate success, or any other value for failure.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="mktoc.__init__._Mktoc">
+<em class="property">class </em><tt class="descclassname">mktoc.__init__.</tt><tt class="descname">_Mktoc</tt><a class="headerlink" href="#mktoc.__init__._Mktoc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Container class for Mktoc&#8217;s primary execution code.</p>
+<p>Starting execution point. Interprets all program arguments
+and creates a CueParser object to generate a final TOC file.</p>
+<dl class="method">
+<dt id="mktoc.__init__._Mktoc.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="headerlink" href="#mktoc.__init__._Mktoc.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starting execution point. Interprets all program arguments
+and creates a CueParser object to generate a final TOC file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mktoc.base">
+<span id="mktoc-base"></span><h2>3.2. mktoc.base<a class="headerlink" href="#module-mktoc.base" title="Permalink to this headline">¶</a></h2>
+<p>Standard defines used by all modules.</p>
+<p>All modules in this package import this file into its root namespace.</p>
+<dl class="exception">
+<dt id="mktoc.base.MkTocError">
+<em class="property">exception </em><tt class="descclassname">mktoc.base.</tt><tt class="descname">MkTocError</tt><a class="headerlink" href="#mktoc.base.MkTocError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>A base exception class for all mktoc exceptions classes.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mktoc.base.FileNotFoundError">
+<em class="property">exception </em><tt class="descclassname">mktoc.base.</tt><tt class="descname">FileNotFoundError</tt><a class="headerlink" href="#mktoc.base.FileNotFoundError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mktoc.base.MkTocError" title="mktoc.base.MkTocError"><tt class="xref py py-class docutils literal"><span class="pre">mktoc.base.MkTocError</span></tt></a></p>
+<p>Exception class used whenever a file can not be located and is
+required by the system.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mktoc.base.ParseError">
+<em class="property">exception </em><tt class="descclassname">mktoc.base.</tt><tt class="descname">ParseError</tt><a class="headerlink" href="#mktoc.base.ParseError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mktoc.base.MkTocError" title="mktoc.base.MkTocError"><tt class="xref py py-class docutils literal"><span class="pre">mktoc.base.MkTocError</span></tt></a></p>
+<p>Exception class indicates that a CUE file could not be parsed do to
+unknown data.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mktoc.base.UnderflowError">
+<em class="property">exception </em><tt class="descclassname">mktoc.base.</tt><tt class="descname">UnderflowError</tt><a class="headerlink" href="#mktoc.base.UnderflowError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mktoc.base.MkTocError" title="mktoc.base.MkTocError"><tt class="xref py py-class docutils literal"><span class="pre">mktoc.base.MkTocError</span></tt></a></p>
+<p>Exception class used by the disc module to indicate that a track
+time subtraction has caused and underflow.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mktoc.base.EmptyCueData">
+<em class="property">exception </em><tt class="descclassname">mktoc.base.</tt><tt class="descname">EmptyCueData</tt><a class="headerlink" href="#mktoc.base.EmptyCueData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mktoc.base.MkTocError" title="mktoc.base.MkTocError"><tt class="xref py py-class docutils literal"><span class="pre">mktoc.base.MkTocError</span></tt></a></p>
+<p>Exception class indicates that the input CUE file or STDIN data was
+empty.  The mktoc application interprets this as a normal condition and
+does not raise an error to the user other than returning a non-zero
+exit code.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="mktoc.base.VERSION">
+<tt class="descclassname">mktoc.base.</tt><tt class="descname">VERSION</tt><a class="headerlink" href="#mktoc.base.VERSION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project version number string.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mktoc.disc">
+<span id="mktoc-disc"></span><h2>3.3. mktoc.disc<a class="headerlink" href="#module-mktoc.disc" title="Permalink to this headline">¶</a></h2>
+<p>A set of classes for representation of audio CD information.</p>
+<p>The following are a list of the classes provided in this module:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#mktoc.disc.Disc" title="mktoc.disc.Disc"><tt class="xref py py-class docutils literal"><span class="pre">Disc</span></tt></a></li>
+<li><a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a></li>
+<li><a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a></li>
+</ul>
+<dl class="class">
+<dt id="mktoc.disc.Disc">
+<em class="property">class </em><tt class="descclassname">mktoc.disc.</tt><tt class="descname">Disc</tt><a class="headerlink" href="#mktoc.disc.Disc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Stores audio disc metadata values such as album title, performer,
+genre.</p>
+<dl class="method">
+<dt id="mktoc.disc.Disc.mung">
+<tt class="descname">mung</tt><big>(</big><big>)</big><a class="headerlink" href="#mktoc.disc.Disc.mung" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert class data to a corrected and standardized format. Not
+used at this time.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mktoc.disc.Disc.setMultisession">
+<tt class="descname">setMultisession</tt><big>(</big><big>)</big><a class="headerlink" href="#mktoc.disc.Disc.setMultisession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate the current object is a multi-session CD. An Audio only
+CD is assumed by default.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Disc.catalog">
+<tt class="descname">catalog</tt><a class="headerlink" href="#mktoc.disc.Disc.catalog" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing the Catalog Id of a disc.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Disc.date">
+<tt class="descname">date</tt><a class="headerlink" href="#mktoc.disc.Disc.date" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing the release year of a disc.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Disc.discid">
+<tt class="descname">discid</tt><a class="headerlink" href="#mktoc.disc.Disc.discid" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing the DiscID value of a disc. This value
+is assumed to be correct and not verified by any internal logic.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Disc.genre">
+<tt class="descname">genre</tt><a class="headerlink" href="#mktoc.disc.Disc.genre" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing the genre of a disc</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Disc.performer">
+<tt class="descname">performer</tt><a class="headerlink" href="#mktoc.disc.Disc.performer" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing the performer or artist of a disc.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Disc.title">
+<tt class="descname">title</tt><a class="headerlink" href="#mktoc.disc.Disc.title" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing the album title of a disc.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mktoc.disc.Track">
+<em class="property">class </em><tt class="descclassname">mktoc.disc.</tt><tt class="descname">Track</tt><big>(</big><em>num</em><big>)</big><a class="headerlink" href="#mktoc.disc.Track" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Holds track metadata values such as title and performer. Each
+<a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a> object contains a <a class="reference external" href="http://docs.python.org/dev/library/functions.html#list" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">list</span></tt></a> of <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a>s
+that specifies the audio data associated with the track.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#int" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">int</span></tt></a>) &#8211; integer of the track index in the audio CD</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mktoc.disc.Track.appendIdx">
+<tt class="descname">appendIdx</tt><big>(</big><em>idx</em><big>)</big><a class="headerlink" href="#mktoc.disc.Track.appendIdx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a new <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> object to the end of
+<a class="reference internal" href="#mktoc.disc.Track.indexes" title="mktoc.disc.Track.indexes"><tt class="xref py py-data docutils literal"><span class="pre">indexes</span></tt></a>. It is assumed that <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a>s are added
+in correct order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>idx</strong> (<a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a>) &#8211; a new index appended to the <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a> object.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mktoc.disc.Track.mung">
+<tt class="descname">mung</tt><big>(</big><em>trk2</em><big>)</big><a class="headerlink" href="#mktoc.disc.Track.mung" title="Permalink to this definition">¶</a></dt>
+<dd><p>For use after the <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a> is updated with all data and
+indexes, to fix any inconstancies or errors in the <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a>
+data.  This method must be called before the <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a> data is
+used. That is because before calling this method, the data can be in
+an inconsistent state.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>trk2</strong> (<a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a> or <a class="reference external" href="http://docs.python.org/dev/library/constants.html#None" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">None</span></tt></a>) &#8211; track immediately following the current <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a>.
+If current <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a> is the last one, then this value
+must be <a class="reference external" href="http://docs.python.org/dev/library/constants.html#None" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">None</span></tt></a>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.dcp">
+<tt class="descname">dcp</tt><a class="headerlink" href="#mktoc.disc.Track.dcp" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/constants.html#True" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">True</span></tt></a> or <a class="reference external" href="http://docs.python.org/dev/library/constants.html#False" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">False</span></tt></a>, indicates <em>Digital Copy Protection</em>
+flag on  the track.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.four_ch">
+<tt class="descname">four_ch</tt><a class="headerlink" href="#mktoc.disc.Track.four_ch" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/constants.html#True" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">True</span></tt></a> or <a class="reference external" href="http://docs.python.org/dev/library/constants.html#False" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">False</span></tt></a>, indicates <em>Four Channel Audio</em> flag
+on the track.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.indexes">
+<tt class="descname">indexes</tt><a class="headerlink" href="#mktoc.disc.Track.indexes" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#list" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">list</span></tt></a> of <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> objects. Every track has at
+least one <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> and possibly more. The
+<a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> defines a length of audio data or property in
+the track. The fist <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> can be pre-gap data. Only
+one audio file can be associated with a <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a>, so if a
+track is composed of multiple audio files, there will be an &gt;=
+number of <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a>s.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.is_data">
+<tt class="descname">is_data</tt><a class="headerlink" href="#mktoc.disc.Track.is_data" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/constants.html#True" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">True</span></tt></a> or <a class="reference external" href="http://docs.python.org/dev/library/constants.html#False" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">False</span></tt></a>, indicates if a track is binary data
+and not audio. Data tracks will not produce any text when printed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.isrc">
+<tt class="descname">isrc</tt><a class="headerlink" href="#mktoc.disc.Track.isrc" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing ISRC value of the track.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.num">
+<tt class="descname">num</tt><a class="headerlink" href="#mktoc.disc.Track.num" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#int" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">int</span></tt></a> initialized to the value of the track number.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.performer">
+<tt class="descname">performer</tt><a class="headerlink" href="#mktoc.disc.Track.performer" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing the track artist.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.pre">
+<tt class="descname">pre</tt><a class="headerlink" href="#mktoc.disc.Track.pre" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/constants.html#True" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">True</span></tt></a> or <a class="reference external" href="http://docs.python.org/dev/library/constants.html#False" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">False</span></tt></a>, indicates <em>Pre-Emphasis</em> flag on the
+track.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.pregap">
+<tt class="descname">pregap</tt><a class="headerlink" href="#mktoc.disc.Track.pregap" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="xref py py-class docutils literal"><span class="pre">_TrackTime</span></tt> value that indicates the pre-gap value of the
+current track. The pre-gap is a time length at the beginning of a
+track that will cause a CD player to count up from a negative time
+value before changing the track index number.  The starting pre-gap
+value of a track is essentially the final audio at the end of the
+previous track.  However, there is more than one way to designate
+the pregap in a track, therefore this variable is only used if the
+first <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> in the track contains more than just the
+pre-gap audio.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.Track.title">
+<tt class="descname">title</tt><a class="headerlink" href="#mktoc.disc.Track.title" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing the title of the track.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mktoc.disc.TrackIndex">
+<em class="property">class </em><tt class="descclassname">mktoc.disc.</tt><tt class="descname">TrackIndex</tt><big>(</big><em>num</em>, <em>time</em>, <em>file_</em><big>)</big><a class="headerlink" href="#mktoc.disc.TrackIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Represent an <em>index</em> of an audio CD track. Specifically, information
+about a location, length and type of audio data. <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a> objects
+can have one or more <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a>s to represent the audio data
+belonging to the track.</p>
+<p><em>Constants:</em></p>
+<dl class="data">
+<dt id="mktoc.disc.TrackIndex.PREAUDIO">
+<tt class="descname">PREAUDIO</tt><a class="headerlink" href="#mktoc.disc.TrackIndex.PREAUDIO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates a <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> that is pre-gap audio data only.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="mktoc.disc.TrackIndex.AUDIO">
+<tt class="descname">AUDIO</tt><a class="headerlink" href="#mktoc.disc.TrackIndex.AUDIO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates a <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> of standard audio data or both
+pre-gap and audio.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="mktoc.disc.TrackIndex.INDEX">
+<tt class="descname">INDEX</tt><a class="headerlink" href="#mktoc.disc.TrackIndex.INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates a <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> after the start of a time stamp of a
+previous <a class="reference internal" href="#mktoc.disc.TrackIndex.AUDIO" title="mktoc.disc.TrackIndex.AUDIO"><tt class="xref py py-const docutils literal"><span class="pre">AUDIO</span></tt></a> <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> object. There is no
+audio data associated with <em>INDEX</em> <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a>s.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="mktoc.disc.TrackIndex.START">
+<tt class="descname">START</tt><a class="headerlink" href="#mktoc.disc.TrackIndex.START" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as <a class="reference internal" href="#mktoc.disc.TrackIndex.INDEX" title="mktoc.disc.TrackIndex.INDEX"><tt class="xref py py-const docutils literal"><span class="pre">INDEX</span></tt></a>, but <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> preceding it is was
+the pre-gap audio of the same <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a>.</p>
+</dd></dl>
+
+<p>If possible the sample count of the <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> is
+calculated by reading the WAV audio data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#int" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">int</span></tt></a>) &#8211; index number position in the <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a>, starting
+at 0.</li>
+<li><strong>time</strong> (<tt class="xref py py-class docutils literal"><span class="pre">_TrackTime</span></tt>) &#8211; the indexes starting offset in the audio data file.</li>
+<li><strong>file</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a>) &#8211; string representing the path location of a WAV file
+associated with this index.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mktoc.disc.TrackIndex.mung">
+<tt class="descname">mung</tt><big>(</big><em>idx2</em><big>)</big><a class="headerlink" href="#mktoc.disc.TrackIndex.mung" title="Permalink to this definition">¶</a></dt>
+<dd><p>For use after the <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> is updated with all data,
+to fix any inconstancies or errors in the <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> data.
+This method must be called before the <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> data is
+used. That is because before calling this method, the data can be in
+an inconsistent state. In some cases a variable will be deleted
+because it is not required for the future functions of the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>idx2</strong> (<a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> or <a class="reference external" href="http://docs.python.org/dev/library/constants.html#None" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">None</span></tt></a>) &#8211; the track index that immediately follows the
+current object in a <a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a> object. If this
+object is the last <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> in the
+<a class="reference internal" href="#mktoc.disc.Track" title="mktoc.disc.Track"><tt class="xref py py-class docutils literal"><span class="pre">Track</span></tt></a> object, then <em>idx2</em> should be
+<a class="reference external" href="http://docs.python.org/dev/library/constants.html#None" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">None</span></tt></a>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.TrackIndex.cmd">
+<tt class="descname">cmd</tt><a class="headerlink" href="#mktoc.disc.TrackIndex.cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#int" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">int</span></tt></a> set to <a class="reference internal" href="#mktoc.disc.TrackIndex.PREAUDIO" title="mktoc.disc.TrackIndex.PREAUDIO"><tt class="xref py py-const docutils literal"><span class="pre">PREAUDIO</span></tt></a> or <a class="reference internal" href="#mktoc.disc.TrackIndex.AUDIO" title="mktoc.disc.TrackIndex.AUDIO"><tt class="xref py py-const docutils literal"><span class="pre">AUDIO</span></tt></a> or
+<a class="reference internal" href="#mktoc.disc.TrackIndex.INDEX" title="mktoc.disc.TrackIndex.INDEX"><tt class="xref py py-const docutils literal"><span class="pre">INDEX</span></tt></a> or <a class="reference internal" href="#mktoc.disc.TrackIndex.START" title="mktoc.disc.TrackIndex.START"><tt class="xref py py-const docutils literal"><span class="pre">START</span></tt></a>. Indicate the mode of
+<a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.TrackIndex.file_">
+<tt class="descname">file_</tt><a class="headerlink" href="#mktoc.disc.TrackIndex.file_" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> representing a WAV file&#8217;s path and name. This is used
+to read the audio data of the <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.TrackIndex.len_">
+<tt class="descname">len_</tt><a class="headerlink" href="#mktoc.disc.TrackIndex.len_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empty <a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a> or <tt class="xref py py-class docutils literal"><span class="pre">_TrackTime</span></tt> value that specifies the
+number of audio frames associated with the <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a>. By
+default, this value will equal the total length of the WAV data, but
+might be truncated if the track starts after, or ends before the WAV
+data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.TrackIndex.num">
+<tt class="descname">num</tt><a class="headerlink" href="#mktoc.disc.TrackIndex.num" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/dev/library/functions.html#int" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">int</span></tt></a> specifying the location of the <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> in
+the track. The first index <em>num</em> is always 0.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mktoc.disc.TrackIndex.time">
+<tt class="descname">time</tt><a class="headerlink" href="#mktoc.disc.TrackIndex.time" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="xref py py-class docutils literal"><span class="pre">_TrackTime</span></tt> value that specifies the starting time index of
+the <a class="reference internal" href="#mktoc.disc.TrackIndex" title="mktoc.disc.TrackIndex"><tt class="xref py py-class docutils literal"><span class="pre">TrackIndex</span></tt></a> object relative to the start of the audio
+data. Usually this value is <tt class="docutils literal"><span class="pre">0</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mktoc.parser">
+<span id="mktoc-parser"></span><h2>3.4. mktoc.parser<a class="headerlink" href="#module-mktoc.parser" title="Permalink to this headline">¶</a></h2>
+<p>This module provides object(s) to parse text files describing the layout of
+an audio CD. After the parse step is complete, it is possible to access the
+data or convert into any other output format.</p>
+<p>The following are a list of the classes provided in this module:</p>
+<ul class="simple">
+<li><tt class="xref py py-class docutils literal"><span class="pre">ParseData</span></tt></li>
+<li><a class="reference internal" href="#mktoc.parser.CueParser" title="mktoc.parser.CueParser"><tt class="xref py py-class docutils literal"><span class="pre">CueParser</span></tt></a></li>
+<li><a class="reference internal" href="#mktoc.parser.WavParser" title="mktoc.parser.WavParser"><tt class="xref py py-class docutils literal"><span class="pre">WavParser</span></tt></a></li>
+</ul>
+<dl class="class">
+<dt id="mktoc.parser.CueParser">
+<em class="property">class </em><tt class="descclassname">mktoc.parser.</tt><tt class="descname">CueParser</tt><big>(</big><em>cue_dir='.'</em>, <em>find_wav=True</em><big>)</big><a class="headerlink" href="#mktoc.parser.CueParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">mktoc.parser._Parser</span></tt></p>
+<p>An audio CUE sheet text file parsing class.</p>
+<p>By matching the known format of a CUE file, the relevant text information is
+extracted and converted to a binary representation. The binary
+representation is created by using combination of Disc, Track, and
+TrackIndex objects. With the data, the CUE file can be re-created or
+converted into a new format.</p>
+<p>Initializes object data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cue_dir</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a>) &#8211; Path location of the CUE file&#8217;s directory.</li>
+<li><strong>find_wav</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">bool</span></tt></a>) &#8211; <a class="reference external" href="http://docs.python.org/dev/library/constants.html#True" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">True</span></tt></a>/<a class="reference external" href="http://docs.python.org/dev/library/constants.html#False" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">False</span></tt></a>, <a class="reference external" href="http://docs.python.org/dev/library/constants.html#True" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">True</span></tt></a> causes
+exceptions to be raised if a WAV file can not be found
+in the FS.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mktoc.parser.CueParser.parse">
+<tt class="descname">parse</tt><big>(</big><em>fh</em><big>)</big><a class="headerlink" href="#mktoc.parser.CueParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses CUE file text data and return a <tt class="xref py py-class docutils literal"><span class="pre">ParseData</span></tt> object.</p>
+<p>The primary output of this function is to initialize the &#8216;disc&#8217; and
+&#8216;tracks&#8217; member variables of <tt class="xref py py-class docutils literal"><span class="pre">ParseData</span></tt>. All of the processed
+CUE data is stored in these two structures.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>fh</strong> (<em class="xref std std-ref">_bltin-file-objects</em>) &#8211; An open file handle used to read the CUE text data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mktoc.parser.WavParser">
+<em class="property">class </em><tt class="descclassname">mktoc.parser.</tt><tt class="descname">WavParser</tt><big>(</big><em>work_dir='.'</em>, <em>find_wav=True</em><big>)</big><a class="headerlink" href="#mktoc.parser.WavParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">mktoc.parser._Parser</span></tt></p>
+<p>A simple parser object that uses a list of WAV files to create a CD TOC.</p>
+<p>The class assumes that each WAV file is an individual track, in ascending
+order.</p>
+<p>Initialize the parser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>work_dir</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a>) &#8211; Path location of the CUE file&#8217;s directory.</li>
+<li><strong>find_wav</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">bool</span></tt></a>) &#8211; <a class="reference external" href="http://docs.python.org/dev/library/constants.html#True" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">True</span></tt></a>/<a class="reference external" href="http://docs.python.org/dev/library/constants.html#False" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">False</span></tt></a>, <a class="reference external" href="http://docs.python.org/dev/library/constants.html#True" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">True</span></tt></a> causes
+exceptions to be raised if a WAV file can not be found
+in the FS.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mktoc.parser.WavParser.parse">
+<tt class="descname">parse</tt><big>(</big><em>wav_files</em><big>)</big><a class="headerlink" href="#mktoc.parser.WavParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses a list of WAV files and return a ParseData object.</p>
+<p>The primary output of this function is to initialize the &#8216;disc&#8217; and
+&#8216;tracks&#8217; member variables of ParseData.  All of the processed CUE data is
+stored in these two structures.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>wav_files</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#list" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">list</span></tt></a>) &#8211; WAV files to add to the TOC</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mktoc.progress_bar">
+<span id="mktoc-progress-bar"></span><h2>3.5. mktoc.progress_bar<a class="headerlink" href="#module-mktoc.progress_bar" title="Permalink to this headline">¶</a></h2>
+<p>Module for mktoc that prints a progress indication. The default usage
+is to prompt the user when an operation is running that the user must
+wait for. The following object classes are:</p>
+<p>The following are a list of the classes provided in this module:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#mktoc.progress_bar.ProgressBar" title="mktoc.progress_bar.ProgressBar"><tt class="xref py py-class docutils literal"><span class="pre">ProgressBar</span></tt></a></li>
+</ul>
+<dl class="class">
+<dt id="mktoc.progress_bar.ProgressBar">
+<em class="property">class </em><tt class="descclassname">mktoc.progress_bar.</tt><tt class="descname">ProgressBar</tt><big>(</big><em>notice_txt</em>, <em>bar_max=0</em><big>)</big><a class="headerlink" href="#mktoc.progress_bar.ProgressBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Creates a progress bar string to be printed by the calling function.</p>
+<p>Initialize object defaults.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>notice_txt</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a>) &#8211; Message printed alongside the progress bar.</li>
+<li><strong>bar_max</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#int" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">int</span></tt></a>) &#8211; Maximum size of the progress bar class.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="mktoc.progress_bar.ProgressBar.bar_max">
+<tt class="descname">bar_max</tt><a class="headerlink" href="#mktoc.progress_bar.ProgressBar.bar_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum input input value expected by the progress bar. This value
+should be set before trying to print the progress bar. All percentage
+calculations are based from this value. It is OK to update this value as
+many times as needed, however it might confuse the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mktoc.wav">
+<span id="mktoc-wav"></span><h2>3.6. mktoc.wav<a class="headerlink" href="#module-mktoc.wav" title="Permalink to this headline">¶</a></h2>
+<p>Module for mktoc that can holds utility functions for search and modifying
+WAV audio files.</p>
+<p>The following are a list of the classes provided in this module:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#mktoc.wav.WavFileCache" title="mktoc.wav.WavFileCache"><tt class="xref py py-class docutils literal"><span class="pre">WavFileCache</span></tt></a></li>
+<li><a class="reference internal" href="#mktoc.wav.WavOffsetWriter" title="mktoc.wav.WavOffsetWriter"><tt class="xref py py-class docutils literal"><span class="pre">WavOffsetWriter</span></tt></a></li>
+</ul>
+<dl class="class">
+<dt id="mktoc.wav.WavFileCache">
+<em class="property">class </em><tt class="descclassname">mktoc.wav.</tt><tt class="descname">WavFileCache</tt><big>(</big><em>_dir='.'</em><big>)</big><a class="headerlink" href="#mktoc.wav.WavFileCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Verifies the existence of a WAV file in the local file system.</p>
+<p>The class provides fuzzy logic name matching of cached results in the case
+that the specified file can not be found. The files system is only scanned
+once, and all lookups after the initial test come from the cache. The cache
+size is limited to prevent over aggressive file system access.</p>
+<p>Initialize the class instance with the input <tt class="xref py py-attr docutils literal"><span class="pre">_dir</span></tt> argument. If no
+argument is supplied it defaults to the current working dir.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>_dir</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a>) &#8211; Base path location to perform the WAV file search.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mktoc.wav.WavFileCache.lookup">
+<tt class="descname">lookup</tt><big>(</big><em>file_</em><big>)</big><a class="headerlink" href="#mktoc.wav.WavFileCache.lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search the cache for a fuzzy-logic match of the file name in
+<tt class="xref py py-attr docutils literal"><span class="pre">file_</span></tt> parameter. This method will always return the exact file
+name if it exists before attempting fuzzy matches.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">str</span></tt></a>) &#8211; File name to search for.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mktoc.wav.WavOffsetWriter">
+<em class="property">class </em><tt class="descclassname">mktoc.wav.</tt><tt class="descname">WavOffsetWriter</tt><big>(</big><em>offset_samples</em>, <em>pb_class</em>, <em>pb_args</em><big>)</big><a class="headerlink" href="#mktoc.wav.WavOffsetWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Shift the audio data in a set of WAV files by a desired postive or negative
+sample offset.</p>
+<p>The module will never modify the input WAV files, and always write to either
+a new directory in the &#8216;cwd&#8217; or in the <tt class="file docutils literal"><span class="pre">/tmp</span></tt> directory. The WAV files
+are treated as a set of data, in that, the direction of shift will cause
+audio sample data to be taken from either a previous or next WAV file. The
+shift in sample data will cause either the first or last WAV file to contain
+&#8216;sample count&#8217; of NULL samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>offset_samples</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#int" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">int</span></tt></a>) &#8211; Sample shift value</li>
+<li><strong>pb_class</strong> (<tt class="xref py py-class docutils literal"><span class="pre">ProgressBar</span></tt>) &#8211; outputs status updates to the user. First argument of
+the class init routine specifies the maximum value of
+the progress bar and is calulated by this class.</li>
+<li><strong>pb_args</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#list" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">list</span></tt></a>) &#8211; Argument list used to initialize progress bar. However,
+the first argument of the progress bar init routine is
+calculated by this class.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mktoc.wav.WavOffsetWriter.execute">
+<tt class="descname">execute</tt><big>(</big><em>files</em>, <em>use_tmp_dir</em><big>)</big><a class="headerlink" href="#mktoc.wav.WavOffsetWriter.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initiate the WAV offsetting algorithm.</p>
+<p>New output files are written to either <tt class="file docutils literal"><span class="pre">wav[+,-]n/</span></tt> or
+<tt class="file docutils literal"><span class="pre">/tmp/mktoc.[random]/</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>files</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#list" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">list</span></tt></a>) &#8211; WAV files read to apply the sample shifting process to.</li>
+<li><strong>use_tmp_dir</strong> (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.3)"><tt class="docutils literal"><span class="pre">bool</span></tt></a>) &#8211; <a class="reference external" href="http://docs.python.org/dev/library/constants.html#True" title="(in Python v3.3)"><tt class="xref docutils literal"><span class="pre">True</span></tt></a> indicates new WAV files are created in
+<tt class="file docutils literal"><span class="pre">/tmp</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="changelog.html" title="4. Change Log"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="2. Install Steps"
+             >previous</a> |</li>
+<li><a href="http://mktoc.googlecode.com"> Mktoc Home </a> |&nbsp;</li>
+<li><a href=index.html>Top </a> |&nbsp;</li>
+<li><a href=contents.html>Contents </a> |&nbsp;</li>
+<li><a href=search.html>Search </a></li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Patrick C. McGinty.
+      Last updated on May 10, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+    </div>
+  </body>
+</html>

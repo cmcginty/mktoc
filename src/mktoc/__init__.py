@@ -166,10 +166,9 @@ _OPT_TEMP_WAV        = '-t'
 # - create a TOC file using a list of WAV files
 _OPT_WAV_LIST        = '-w'
 
-
 ##############################################################################
 class _Mktoc(object):
-   """Container class for mktoc's primary execution code."""
+   """Container class for Mktoc's primary execution code."""
 
    def __init__(self):
       """Starting execution point. Interprets all program arguments
@@ -345,9 +344,9 @@ def _error_msg_file(e):
    """ % (e,_OPT_ALLOW_WAV_FNF)
 
 def main():
-   """Primary entry point for the mktoc command line application.
-   Creates a _Mktoc object and catches any exceptions. Returns 0 to
-   indicate success, or any other value for failure."""
+   """Primary entry point for the mktoc command line application.  Creates a
+   :class:`~mktoc.__init__._Mktoc` object and catches any exceptions. Returns 0
+   to indicate success, or any other value for failure."""
    global progName
    progName = os.path.basename(sys.argv[0])
    try:

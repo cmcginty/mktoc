@@ -6,4 +6,4 @@
 Overview
 ########
 
-.. include:: ../README.txt
+.. automodule:: mktoc.__init__
