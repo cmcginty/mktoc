@@ -11,6 +11,6 @@
 
          tar xzf mktoc-*.tar.gz
          cd mktoc-*
-         sudo make install
+         python setup.py install --user
 
 2. View online docs or :file:`README.txt` for usage instructions.

@@ -28,7 +28,7 @@ test:
 
 .PHONY: install
 install:
-	python setup.py install
+	python setup.py install --user
 
 .PHONY: clean
 clean:
