@@ -1,10 +1,10 @@
 1. Any one of the following command will install Mktoc. Make sure to run as
    ``root`` user:
 
-   a. Use :command:`easy_install` from the `setuptools package
-      <http://peak.telecommunity.com/DevCenter/EasyInstall]>`_::
+   a. Use :command:`pip` from the `pip package
+      <http://pypi.python.org/pypi/pip>`_::
 
-         sudo easy_install mktoc
+         pip install mktoc --upgrade --user
 
    b. Download the source distribution file and install from the
       command line::
