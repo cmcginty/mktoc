@@ -40,7 +40,7 @@ readme:
 
 .PHONY: doc
 doc: readme
-	make -C doc html
+	make -C doc clean html
 
 .PHONY: doc-svnprop
 doc-svnprop:
@@ -57,8 +57,8 @@ dist:
 .PHONY: dist-test
 dist-test:
 	tar xzf ${TAR} -C ${DIST_DIR}
-	sudo make -C ${SRC_DIR} install
-	sudo rm -rf ${SRC_DIR}
+	make -C ${SRC_DIR} install
+	rm -rf ${SRC_DIR}
 
 .PHONY: release
 release: test readme dist dist-test
