@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Mktoc documentation build configuration file, created by
-# sphinx-quickstart on Wed May  4 22:30:28 2011.
+# sphinx-quickstart on Wed May 11 22:02:36 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -28,12 +28,15 @@ from mktoc.base import *
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
    'sphinx.ext.autodoc',
-   'sphinx.ext.todo',
-   'sphinx.ext.coverage',
-   'sphinx.ext.ifconfig',
    'sphinx.ext.autosummary',
+   'sphinx.ext.coverage',
+   'sphinx.ext.doctest',
+   'sphinx.ext.ifconfig',
    'sphinx.ext.intersphinx',
-   ]
+   'sphinx.ext.pngmath',
+   'sphinx.ext.todo',
+   'sphinx.ext.viewcode',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -72,7 +75,7 @@ release = VERSION
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_*',]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None
@@ -128,7 +131,7 @@ html_title = "%s v%s Documentation" % (project,release)
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ['_static']
+html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -219,11 +222,15 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('contents', 'mktoc', u'mktoc Documentation',
+    ('contents', 'mktoc', u'Mktoc Documentation',
      [u'Patrick C. McGinty'], 1)
 ]
 
+# autodoc settings
 autoclass_content = 'both'
 autodoc_member_order = 'groupwise'
+autodoc_default_flags = ['members','undoc-members','show-inheritance']
+# autosummary_generate = True
 
-intersphinx_mapping = { 'python': ('http://docs.python.org/dev', None) }
+# intersphinx settings
+intersphinx_mapping = { 'python': ('http://docs.python.org/3.2', None) }

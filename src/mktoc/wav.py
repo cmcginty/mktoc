@@ -69,7 +69,7 @@ class WavFileCache(object):
       argument is supplied it defaults to the current working dir.
 
       :param _dir:   Base path location to perform the WAV file search.
-      :type _dir:    :func:`str`
+      :type _dir:    str
       """
       assert(_dir)
       self._src_dir = _dir
@@ -81,7 +81,7 @@ class WavFileCache(object):
       name if it exists before attempting fuzzy matches.
 
       :param file_:  File name to search for.
-      :type file_:   :func:`str`
+      :type file_:   str
       """
       log.debug("looking for file '%s'",file_)
       tmp_name = file_
@@ -181,7 +181,7 @@ class WavOffsetWriter(object):
    def __init__(self, offset_samples, pb_class, pb_args):
       """
       :param offset_samples:  Sample shift value
-      :type offset_samples:   :func:`int`
+      :type offset_samples:   int
 
       :param pb_class:  outputs status updates to the user. First argument of
                         the class init routine specifies the maximum value of
@@ -191,7 +191,7 @@ class WavOffsetWriter(object):
       :param pb_args:   Argument list used to initialize progress bar. However,
                         the first argument of the progress bar init routine is
                         calculated by this class.
-      :type pb_args:    :func:`list`
+      :type pb_args:    list
       """
       self._offset  = offset_samples
       self._pb_class = pb_class
@@ -206,11 +206,11 @@ class WavOffsetWriter(object):
       :file:`/tmp/mktoc.[random]/`
 
       :param files:  WAV files read to apply the sample shifting process to.
-      :type files:   :func:`list`
+      :type files:   list
 
       :param use_tmp_dir:  :data:`True` indicates new WAV files are created in
                            :file:`/tmp`.
-      :type use_tmp_dir:   :func:`bool`
+      :type use_tmp_dir:   bool
       """
       # initialize the progress bar class, set the maximum progress bar value
       self._pb = self._pb_class( bar_max=self._get_total_samp(files),

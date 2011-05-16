@@ -41,24 +41,24 @@ log = logging.getLogger('mktoc.disc')
 
 ##############################################################################
 class Disc( object ):
-   """Stores audio disc metadata values such as album title, performer,
-   genre."""
-
-   #: :func:`str` representing the Catalog Id of a disc.
+   """
+   Stores audio disc metadata values such as album title, performer, genre.
+   """
+   #: String representing the Catalog Id of a disc.
    catalog   = None
-   #: :func:`str` representing the release year of a disc.
+   #: String representing the release year of a disc.
    date      = None
-   #: :func:`str` representing the DiscID value of a disc. This value
-   #: is assumed to be correct and not verified by any internal logic.
+   #: String representing the DiscID value of a disc. This value is assumed to
+   #: be correct and not verified by any internal logic.
    discid    = None
-   #: :func:`str` representing the genre of a disc
+   #: String representing the genre of a disc
    genre     = None
-   #: :func:`str` representing the performer or artist of a disc.
+   #: String representing the performer or artist of a disc.
    performer = None
-   #: :func:`str` representing the album title of a disc.
+   #: String representing the album title of a disc.
    title     = None
 
-   # string that defines the write mode of disc. The default value is CD_DA
+   # String that defines the write mode of disc. The default value is CD_DA
    # which defines a standard audio CD. It is also possible to be changed to
    # define a multi-session audio CD.
    _mode     = 'CD_DA'
@@ -75,21 +75,27 @@ class Disc( object ):
       return '\n'.join(out)
 
    def mung(self):
-      """Convert class data to a corrected and standardized format. Not
-      used at this time."""
+      """
+      Convert class data to a corrected and standardized format. Not used at
+      this time.
+      """
       pass
 
    def setMultisession(self):
-      """Indicate the current object is a multi-session CD. An Audio only
-      CD is assumed by default."""
+      """
+      Indicate the current object is a multi-session CD. An Audio only CD is
+      assumed by default.
+      """
       self._mode = 'CD_ROM_XA'
 
 
 ##############################################################################
 class Track( object ):
-   """Holds track metadata values such as title and performer. Each
-   :class:`Track` object contains a :func:`list` of :class:`TrackIndex`\s
-   that specifies the audio data associated with the track."""
+   """
+   Holds track metadata values such as title and performer. Each :class:`Track`
+   object contains a list of :class:`TrackIndex`\s that specifies the
+   audio data associated with the track.
+   """
 
    #: :data:`True` or :data:`False`, indicates *Digital Copy Protection*
    #: flag on  the track.
@@ -97,7 +103,7 @@ class Track( object ):
    #: :data:`True` or :data:`False`, indicates *Four Channel Audio* flag
    #: on the track.
    four_ch      = False
-   #: :func:`list` of :class:`TrackIndex` objects. Every track has at
+   #: list of :class:`TrackIndex` objects. Every track has at
    #: least one :class:`TrackIndex` and possibly more. The
    #: :class:`TrackIndex` defines a length of audio data or property in
    #: the track. The fist :class:`TrackIndex` can be pre-gap data. Only
@@ -108,11 +114,11 @@ class Track( object ):
    #: :data:`True` or :data:`False`, indicates if a track is binary data
    #: and not audio. Data tracks will not produce any text when printed.
    is_data      = False
-   #: :func:`str` representing ISRC value of the track.
+   #: String representing ISRC value of the track.
    isrc         = None
-   #: :func:`int` initialized to the value of the track number.
+   #: Integer initialized to the value of the track number.
    num          = None
-   #: :func:`str` representing the track artist.
+   #: String representing the track artist.
    performer    = None
    #: :data:`True` or :data:`False`, indicates *Pre-Emphasis* flag on the
    #: track.
@@ -127,15 +133,17 @@ class Track( object ):
    #: first :class:`TrackIndex` in the track contains more than just the
    #: pre-gap audio.
    pregap       = None
-   #: :func:`str` representing the title of the track.
+   #: String representing the title of the track.
    title        = None
 
    def __init__(self,num):
-      """:param num: integer of the track index in the audio CD
-      :type num: :func:`int`"""
-      # create an empty :func:`list` of :class:`TrackIndex` objects, and
+      """
+      :param num: Track index in the audio CD.
+      :type num:  int
+      """
+      # create an empty list of :class:`TrackIndex` objects, and
       # assign track number.
-      self.indexes   = []    # :func:`list` of indexes in the track
+      self.indexes   = []    # list of indexes in the track
       self.num       = num
 
    def __str__(self):
@@ -161,25 +169,29 @@ class Track( object ):
       return '\n'.join(out)
 
    def appendIdx(self, idx):
-      """Append a new :class:`TrackIndex` object to the end of
-      :data:`indexes`. It is assumed that :class:`TrackIndex`\s are added
-      in correct order.
+      """
+      Append a new :class:`TrackIndex` object to the end of :data:`indexes`. It
+      is assumed that :class:`TrackIndex`\s are added in correct order.
 
       :param idx: a new index appended to the :class:`Track` object.
-      :type idx: :class:`TrackIndex`"""
+      :type idx: :class:`TrackIndex`
+      """
       self.indexes.append(idx)
 
    def mung(self,trk2):
-      """For use after the :class:`Track` is updated with all data and
-      indexes, to fix any inconstancies or errors in the :class:`Track`
-      data.  This method must be called before the :class:`Track` data is
-      used. That is because before calling this method, the data can be in
-      an inconsistent state.
+      """
+      For use after the :class:`Track` is updated with all data and indexes, to
+      fix any inconstancies or errors in the :class:`Track` data.
+
+      This method must be called before the :class:`Track` data is used. That
+      is because before calling this method, the data can be in an inconsistent
+      state.
 
       :param trk2: track immediately following the current :class:`Track`.
                If current :class:`Track` is the last one, then this value
                must be :data:`None`.
-      :type trk2: :class:`Track` or :data:`None`"""
+      :type trk2: :class:`Track` or :data:`None`
+      """
 
       # current index and "next" index or None
       for idx,idx2 in map(None, self.indexes, itr.islice(self.indexes,1,None)):
@@ -201,12 +213,14 @@ class Track( object ):
 
 ##############################################################################
 class TrackIndex(object):
-   """Represent an *index* of an audio CD track. Specifically, information
-   about a location, length and type of audio data. :class:`Track` objects
-   can have one or more :class:`TrackIndex`\s to represent the audio data
-   belonging to the track.
+   """
+   Represent an *index* of an audio CD track.
 
-   *Constants:*
+   Specifically, information about a location, length and type of audio data.
+   :class:`Track` objects can have one or more :class:`TrackIndex`\s to
+   represent the audio data belonging to the track.
+
+   .. rubric:: Constants
 
    .. data:: PREAUDIO
 
@@ -214,37 +228,38 @@ class TrackIndex(object):
 
    .. data:: AUDIO
 
-      Indicates a :class:`TrackIndex` of standard audio data or both
-      pre-gap and audio.
+      Indicates a :class:`TrackIndex` of standard audio data or both pre-gap
+      and audio.
 
    .. data:: INDEX
 
       Indicates a :class:`TrackIndex` after the start of a time stamp of a
-      previous :const:`AUDIO` :class:`TrackIndex` object. There is no
-      audio data associated with *INDEX* :class:`TrackIndex`\s.
+      previous :const:`AUDIO` :class:`TrackIndex` object. There is no audio
+      data associated with *INDEX* :class:`TrackIndex`\s.
 
    .. data:: START
 
-      Same as :const:`INDEX`, but :class:`TrackIndex` preceding it is was
-      the pre-gap audio of the same :class:`Track`."""
+      Same as :const:`INDEX`, but :class:`TrackIndex` preceding it is was the
+      pre-gap audio of the same :class:`Track`.
+   """
 
    #: Enum of valid :class:`TrackIndex` types.
    PREAUDIO, AUDIO, INDEX, START = range(4)
 
-   #: :func:`int` set to :const:`PREAUDIO` or :const:`AUDIO` or
+   #: Integer set to :const:`PREAUDIO` or :const:`AUDIO` or
    #: :const:`INDEX` or :const:`START`. Indicate the mode of
    #: :class:`TrackIndex` object.
    cmd    = AUDIO
-   #: :func:`str` representing a WAV file's path and name. This is used
+   #: String representing a WAV file's path and name. This is used
    #: to read the audio data of the :class:`TrackIndex`.
    file_  = None
-   #: Empty :func:`str` or :class:`_TrackTime` value that specifies the
+   #: Empty string or :class:`_TrackTime` value that specifies the
    #: number of audio frames associated with the :class:`TrackIndex`. By
    #: default, this value will equal the total length of the WAV data, but
    #: might be truncated if the track starts after, or ends before the WAV
    #: data.
    len_   = None
-   #: :func:`int` specifying the location of the :class:`TrackIndex` in
+   #: Integer specifying the location of the :class:`TrackIndex` in
    #: the track. The first index *num* is always 0.
    num    = None
    #: :class:`_TrackTime` value that specifies the starting time index of
@@ -253,20 +268,21 @@ class TrackIndex(object):
    time   = None
 
    def __init__(self, num, time, file_):
-      """If possible the sample count of the :class:`TrackIndex` is
-      calculated by reading the WAV audio data.
+      """
+      If possible the sample count of the :class:`TrackIndex` is calculated by
+      reading the WAV audio data.
 
       :param num:    index number position in the :class:`Track`, starting
                      at 0.
-      :type num:     :func:`int`
+      :type num:     int
 
       :param time:   the indexes starting offset in the audio data file.
       :type time:    :class:`_TrackTime`
 
       :param file_:  string representing the path location of a WAV file
                      associated with this index.
-      :type file_:   :func:`str`"""
-
+      :type file_:   str
+      """
       self.file_  = file_
       self.num    = int(num)
       self.time   = _TrackTime(time)
@@ -297,20 +313,22 @@ class TrackIndex(object):
       return '\n'.join(out)
 
    def mung(self, idx2):
-      """For use after the :class:`TrackIndex` is updated with all data,
-      to fix any inconstancies or errors in the :class:`TrackIndex` data.
-      This method must be called before the :class:`TrackIndex` data is
-      used. That is because before calling this method, the data can be in
-      an inconsistent state. In some cases a variable will be deleted
-      because it is not required for the future functions of the object.
+      """
+      For use after the :class:`TrackIndex` is updated with all data, to fix
+      any inconstancies or errors in the :class:`TrackIndex` data.
+
+      This method must be called before the :class:`TrackIndex` data is used.
+      That is because before calling this method, the data can be in an
+      inconsistent state. In some cases a variable will be deleted because it
+      is not required for the future functions of the object.
 
       :param idx2:   the track index that immediately follows the
                      current object in a :class:`Track` object. If this
                      object is the last :class:`TrackIndex` in the
                      :class:`Track` object, then *idx2* should be
                      :data:`None`.
-      :type idx2:    :class:`TrackIndex` or :data:`None`"""
-
+      :type idx2:    :class:`TrackIndex` or :data:`None`
+      """
       #####
       # Add 'START' command after pregap audio file
       #
@@ -362,7 +380,7 @@ class TrackIndex(object):
 
       :param file_:  a file name string relative to the cwd referencing
                      a WAV file.
-      :type file_:   :func:`str`
+      :type file_:   str
 
       :rtype:        :class:`_TrackTime` of audio samples or
                      :data:`None`"""
@@ -403,7 +421,7 @@ class _TrackTime(object):
                      b. Tuple in the format (M,S,F)
                      c. Integer of the total frame length
                      d. :data:`None`, object is initialized to 0 length
-      :type arg: :func:`str`, :class:`tuple`, :func:`int`, :data:`None`"""
+      :type arg: str, :class:`tuple`, int, :data:`None`"""
       if isinstance(arg,str):
          # extract time from string
          val = [int(x) for x in arg.split(':')]

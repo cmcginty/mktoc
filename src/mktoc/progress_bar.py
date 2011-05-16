@@ -14,13 +14,10 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-   Module for mktoc that prints a progress indication. The default usage
-   is to prompt the user when an operation is running that the user must
-   wait for. The following object classes are:
+   Module for mktoc that prints a progress indication.
 
-   The following are a list of the classes provided in this module:
-
-   * :class:`ProgressBar`
+   The default usage is to prompt the user when an operation is running that
+   the user must wait for. The following object classes are:
 """
 
 __date__    = '$Date$'
@@ -57,10 +54,10 @@ class ProgressBar( object ):
       Initialize object defaults.
 
       :param notice_txt:   Message printed alongside the progress bar.
-      :type notice_txt:    :func:`str`
+      :type notice_txt:    str
 
       :param bar_max:   Maximum size of the progress bar class.
-      :type bar_max:    :func:`int`
+      :type bar_max:    int
       """
       self._notice_txt = notice_txt
       self._size = 0

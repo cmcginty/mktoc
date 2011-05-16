@@ -75,7 +75,7 @@ class ParseData(object):
       :type  tracks: :func:`list` of class:`disc.Track`
 
       :param files:  in-order list of WAV files associated with 'tracks'
-      :type  files:  :func:`list` of file name :func:`str`\s
+      :type  files:  :func:`list` of file name str\s
       """
       self._disc     = disc
       self._tracks   = tracks
@@ -107,13 +107,13 @@ class ParseData(object):
       the `tmp` variable is :data:`True`, all new WAV files will be created in
       the :file;`/tmp` directory.
 
-      :param samples:   Number of samples to shift the audio data by.  This
+      :param samples:   Number of samples to shift the audio data by. This
                         value can be negative or positive.
-      :type  samples;   :func:`int`
+      :type  samples:   int
 
       :param tmp:    :data:`True` or :data:`False`; when :data:`True` any
                      new WAV files will be created in :file:`/tmp`.
-      :type tmp:     :func:`bool`
+      :type tmp:     bool
       """
       # create WavOffset object, initialize sample offset and progress output
       wo = mt_wav.WavOffsetWriter( samples, mt_pb.ProgressBar,
@@ -178,7 +178,7 @@ class _Parser(object):
       Execute parsing steps on the input data. Must be implemented by all
       subclasses.
 
-      Returns a correctly formed ParseData object.
+      Returns a correctly formed :class:`ParseData` instance.
       """
       abstract
 
@@ -301,12 +301,12 @@ class CueParser(_Parser):
       Initializes object data.
 
       :param cue_dir:   Path location of the CUE file's directory.
-      :type cue_dir:    :func:`str`
+      :type cue_dir:    str
 
       :param find_wav:  :data:`True`/:data:`False`, :data:`True` causes
                         exceptions to be raised if a WAV file can not be found
                         in the FS.
-      :type find_wav:   :func:`bool`
+      :type find_wav:   bool
       """
       assert(cue_dir)
       super(CueParser,self).__init__(cue_dir, find_wav)
@@ -319,14 +319,14 @@ class CueParser(_Parser):
 
    def parse(self, fh):
       """
-      Parses CUE file text data and return a :class:`ParseData` object.
+      Parses CUE file text data and return a :class:`ParseData` instance.
 
       The primary output of this function is to initialize the 'disc' and
       'tracks' member variables of :class:`ParseData`. All of the processed
       CUE data is stored in these two structures.
 
       :param fh:  An open file handle used to read the CUE text data
-      :type fh:   :ref:`_bltin-file-objects`
+      :type fh:   :data:`file`
       """
       # create a list of regular expressions before starting the parse
       rem_regex   = re.compile( r'^\s*REM\s+COMMENT' )
@@ -470,12 +470,12 @@ class WavParser(_Parser):
 
 
       :param work_dir:  Path location of the CUE file's directory.
-      :type work_dir:   :func:`str`
+      :type work_dir:   str
 
       :param find_wav:  :data:`True`/:data:`False`, :data:`True` causes
                         exceptions to be raised if a WAV file can not be found
                         in the FS.
-      :type find_wav: :func:`bool`
+      :type find_wav: bool
       """
       # init class options
       assert( work_dir )
@@ -483,14 +483,14 @@ class WavParser(_Parser):
 
    def parse( self, wav_files):
       """
-      Parses a list of WAV files and return a ParseData object.
+      Parses a list of WAV files and return a :class:`ParseData` instance.
 
       The primary output of this function is to initialize the 'disc' and
-      'tracks' member variables of ParseData.  All of the processed CUE data is
-      stored in these two structures.
+      'tracks' member variables of :class:`ParseData`.  All of the processed
+      CUE data is stored in these two structures.
 
       :param wav_files: WAV files to add to the TOC
-      :type wav_files: :func:`list`
+      :type wav_files:  list
       """
       self._files = map(self._lookup_file_name, wav_files)
       # return a new Track object with a single Index using 'file_'

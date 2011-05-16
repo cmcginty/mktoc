@@ -1,5 +1,3 @@
-:tocdepth: 2
-
 .. _overview:
 
 ########
@@ -7,3 +5,5 @@ Overview
 ########
 
 .. automodule:: mktoc.__init__
+   :no-members:
+   :noindex:
