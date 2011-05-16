@@ -429,7 +429,7 @@ class _TrackTime(object):
       elif isinstance(arg,tuple):
          # assume arg is correct format
          self._time = arg
-      elif isinstance(arg,int):
+      elif isinstance(arg,(int,long)):
          # convert frame count to min,sec,frames
          min_,fr = divmod(arg, self._FPM)
          sec,fr = divmod(fr, self._FPS)
