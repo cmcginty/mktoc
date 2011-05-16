@@ -22,9 +22,6 @@ Distools setup file for the mktoc application.
 __date__    = '$Date$'
 __version__ = '$Revision$'
 
-import sys
-sys.path.insert(0,'src')  # allow setup.py to import mktoc.base
-
 import os
 from distutils.core import setup
 
@@ -38,9 +35,9 @@ long_doc = mktoc.__doc__ + '\n' + _read('INSTALL.txt')
 
 setup( name='mktoc',
        version=VERSION,
-       description="""\
-          Simple command line tool to create TOC files for CD burning with
-          cdrdao.""",
+       description=
+         """Simple command line tool generates TOC files for audio CD burning
+         with cdrdao.""",
        long_description=long_doc,
        author=__author__,
        author_email=__email__,
@@ -48,8 +45,7 @@ setup( name='mktoc',
        download_url=(
           'http://mktoc.googlecode.com/files/mktoc-%s.tar.gz' % (VERSION,)),
        packages=['mktoc'],
-       package_dir = {'':'src'},
-       scripts=['scripts/mktoc'],
+       scripts=['bin/mktoc'],
        classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Environment :: Console',

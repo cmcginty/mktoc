@@ -13,7 +13,7 @@ help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  help           to print his output message"
 	@echo "  test           to run all unit-tests"
-	@echo "  install        to install teh applicataion"
+	@echo "  install        to install the applicataion"
 	@echo "  clean          to remove tmp files"
 	@echo "  readme         to generate the README.txt file"
 	@echo "  doc            to genearte Sphinx html documents"
@@ -24,7 +24,7 @@ help:
 
 .PHONY: test
 test:
-	src/alltests.py
+	python -m unittest discover mktoc/test
 
 .PHONY: install
 install:
@@ -36,11 +36,7 @@ clean:
 
 .PHONY: readme
 readme:
-	python -c \
-		"import sys; \
-	 	sys.path.insert(0,'src'); \
-	 	import mktoc; \
-	 	print mktoc.__doc__" > README.txt
+	python -c "import mktoc; print mktoc.__doc__" > README.txt
 
 .PHONY: doc
 doc: readme

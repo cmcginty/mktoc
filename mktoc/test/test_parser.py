@@ -33,8 +33,8 @@ class CueParserTests(unittest.TestCase):
    """Unit tests for the external interface of the CueParser class. These test
    rely on predefined input and output files. If the input CUE file does not
    match the expected output TOC file, the test will fail."""
-   _CUE_DIR = 'test_data/cue'
-   _TOC_DIR = 'test_data/toc'
+   _CUE_DIR = 'data/cue'
+   _TOC_DIR = 'data/toc'
    _cue_list   = []
    _toc_list   = []
 

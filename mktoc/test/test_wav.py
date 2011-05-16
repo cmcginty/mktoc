@@ -34,7 +34,7 @@ from mktoc import progress_bar as mt_pb
 class WavFileCacheTests(unittest.TestCase):
    """Unit tests for the external interface of the WavFileCache class. These
    test rely on predifined file names in test directory."""
-   _WAV_DIR = 'test_data/wav_names'
+   _WAV_DIR = 'data/wav_names'
 
    def __init__(self, *args, **kwargs):
       """Initialize the test case data directory."""

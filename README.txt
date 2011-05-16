@@ -115,8 +115,9 @@ Examples
 
 Contact
 =======
+
 E-mail
--------
+------
 |  mktoc[@]tuxcoder[dot]com
 
 Info
