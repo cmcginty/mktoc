@@ -24,7 +24,7 @@ help:
 
 .PHONY: test
 test:
-	python -m unittest discover mktoc/test
+	python -m unittest discover
 
 .PHONY: install
 install:

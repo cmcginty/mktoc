@@ -3,4 +3,3 @@ include COPYING.txt
 include INSTALL.txt
 include README.txt
 include Makefile
-recursive-exclude mktoc test*.py
