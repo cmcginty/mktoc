@@ -25,11 +25,12 @@ import os
 import inspect
 import unittest
 
+from mktoc.base import *
 from mktoc.parser import *
+from mktoc.disc import *
 
 
-##############################################################################
-class CueParserTests(unittest.TestCase):
+class CueParserFileTests(unittest.TestCase):
    """Unit tests for the external interface of the CueParser class. These test
    rely on predefined input and output files. If the input CUE file does not
    match the expected output TOC file, the test will fail."""
@@ -42,7 +43,7 @@ class CueParserTests(unittest.TestCase):
       """Initialize the test case by creating any missing sub-dirs and
       generating the starting list of CUE and TOC files to use for the test
       cases."""
-      super(CueParserTests,self).__init__(*args, **kwargs)
+      super(CueParserFileTests,self).__init__(*args, **kwargs)
 
       # get the directory location of this module, and update the
       # location of the test data dirs
@@ -152,7 +153,25 @@ class CueParserTests(unittest.TestCase):
       toc_good.close()
 
 
-##############################################################################
+class CueParserTests(unittest.TestCase):
+   """Basic unit test for CueParser class."""
+   def testParseDisc_BadLine(self):
+     cp = CueParser()
+     cp._cue = ['BAD MATCH LINE']
+     cp._track_lines = [1]    # ignore lines after _cue[1]
+     self.assertRaisesRegexp(
+           ParseError, ".+: '%s'" % (cp._cue[0]), cp._parse_disc )
+
+   def testParseTrack_BadLine(self):
+     cp = CueParser()
+     cp._cue = ['SKIP','BAD MATCH LINE']
+     cp._track_lines = [1]    # ignore lines before _cue[0]
+     cp._file_lines = [(0,'file1')]  # cached file lines/names
+     self.assertRaisesRegexp(
+           ParseError, ".+: '%s'" % (cp._cue[1],),
+           cp._parse_track, 0, Disc())
+
+
 class WavParserTests(unittest.TestCase):
    def testWavFiles(self):
       """WavParser class must instantiate without errors."""
@@ -163,7 +182,6 @@ class WavParserTests(unittest.TestCase):
       self.assertTrue( data )
 
 
-##############################################################################
 if __name__ == '__main__':
    """Execute all test cases define in this file."""
    unittest.main()

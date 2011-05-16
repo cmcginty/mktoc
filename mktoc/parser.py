@@ -242,12 +242,12 @@ class CueParser(_Parser):
    # regex pattern for disc info
    _DISC_REGEX = [
       ('rem' , r"""
-         ^\s*REM           # match 'REM'
-         \s+(\w+)          # match 'key'
-         \s+(.*)$          # match 'value'
+         ^\s*REM                 # match 'REM'
+         \s+(GENRE|DATE|DISCID)  # match 'key'
+         \s+(.*)$                # match 'value'
       """),
       ('quote', r"""
-         ^\s*(\w+)         # match 'key'
+         ^\s*(CATALOG|PERFORMER|TITLE) # match 'key'
          \s+"(.*)"$        # match 'value' surrounded with double quotes
       """),
       ('catalog', r"""
@@ -284,17 +284,8 @@ class CueParser(_Parser):
    _file_lines = None
 
    # list used as a lookup table, indexed by track number, to map each CUE
-   # track to its line number in the CUE text.
+   # track to the index in the processed :data:`_cue` list.
    _track_lines = None
-
-   # RegexStore list of regex searches for first partial scan of the TOC text.
-   _part_search = None
-
-   # RegexStore list of regex searches for disc info scan of the TOC.
-   _disc_search = None
-
-   # RegexStore list of regex searches for track info scan of the TOC.
-   _tinfo_search = None
 
    def __init__(self, cue_dir=os.curdir, find_wav=True):
       """
@@ -310,12 +301,6 @@ class CueParser(_Parser):
       """
       assert(cue_dir)
       super(CueParser,self).__init__(cue_dir, find_wav)
-      self._part_search  = _RegexStore( dict(self._FILE_REGEX + \
-                                            self._TRACK_REGEX) )
-      self._disc_search  = _RegexStore( dict(self._FILE_REGEX + \
-                                            self._DISC_REGEX) )
-      self._tinfo_search = _RegexStore( dict(self._FILE_REGEX + \
-                                        self._TINFO_REGEX + self._TRACK_REGEX))
 
    def parse(self, fh):
       """
@@ -352,7 +337,8 @@ class CueParser(_Parser):
       is complete."""
       # return an iterator of tuples with line nums, re.match name, and
       # re.match data
-      matchi = itr.chain(*itr.imap( self._part_search.match, self._cue ))
+      regex = _RegexStore( dict(self._FILE_REGEX +  self._TRACK_REGEX) )
+      matchi = itr.chain(*itr.imap( regex.match, self._cue ))
       num_matchi = itr.izip( itr.count(), matchi, matchi )
       # create list of valid matches
       matches = filter(op.itemgetter(2), num_matchi)
@@ -380,20 +366,17 @@ class CueParser(_Parser):
       disc_ = mt_disc.Disc()
       # splice disc data from the cue list, and return an iterator of tuples
       # returned by re.match
-      cue_data = map( self._disc_search.match,
+      regex = _RegexStore( dict(self._FILE_REGEX + self._DISC_REGEX) )
+      cue_data = map( regex.match,
                       itr.islice(self._cue, 0, self._track_lines[0]) )
       # raise error if unkown match is found
-      if filter( lambda (key,match): not match, cue_data):
-         raise ParseError, "Unmatched pattern in stream: '%s'" % txt
+      for key,match in filter( lambda (key,match): not match, cue_data):
+         raise ParseError, "Unmatched pattern in stream: '%s'" % key
       # ignore 'file' matches
-      for key,value in \
-            [match.groups() for key,match in cue_data if key != 'file']:
+      for key,value in (match.groups()
+            for key,match in cue_data if key != 'file'):
          key = key.lower()
-         if hasattr(disc_,key):
-            # add match value to Disc object
-            setattr(disc_, key, value.strip())
-         else:
-            raise ParseError, "Unmatched keyword in stream: '%s'" % txt
+         setattr(disc_, key, value.strip())
       return disc_
 
    def _parse_track(self, num, disc):
@@ -420,10 +403,12 @@ class CueParser(_Parser):
       # commands specify the active FILE for the following INDEX commands. The
       # TRACK indicate the logical beginning of a new TRACK info list with TITLE
       # and PERFORMER tags.
-      cue_data = map( self._tinfo_search.match, data )
+      regex = _RegexStore(
+            dict(self._FILE_REGEX + self._TINFO_REGEX + self._TRACK_REGEX))
+      cue_data = map( regex.match, data )
       # raise error if unkown match is found
-      if filter( lambda (key,match): not match, cue_data):
-         raise ParseError, "Unmatched pattern in stream: '%s'" % txt
+      for key,match in filter( lambda (key,match): not match, cue_data):
+         raise ParseError, "Unmatched pattern in stream: '%s'" % key
       for re_key,match in cue_data:
          if re_key == 'track':
             assert trk.num == int(match.group(1))
@@ -442,17 +427,14 @@ class CueParser(_Parser):
             # track information (PERFORMER, TITLE, ...)
             key,value = match.groups()
             key = key.lower()
-            if hasattr(trk,key):    # add match value to Disc object
-               setattr(trk, key, value.strip())
-            else:
-               raise ParseError, "Unmatched keyword in stream: '%s'" % txt
+            setattr(trk, key, value.strip())
          elif re_key == 'flag':
             for f in itr.ifilter( lambda x: x in ['DCP','4CH','PRE'],
                                   match.group(1).split() ):
                if f == '4CH': f = 'four_ch'     # change '4CH' flag name
                setattr(trk, f.lower(), True)
-         else: # catch unhandled patterns
-            raise ParseError, "Unmatched pattern in stream: '%s'" % txt
+         else:
+            raise RuntimeError("unexpected key: %s" % (re_key,))
       return trk
 
 
@@ -546,5 +528,6 @@ class _RegexStore(object):
       try:
          return itr.ifilter(op.itemgetter(1), match_all).next()
       except StopIteration, e:
-         return ('',None)
+         # instead of key, in first arg, return bad 'text' line
+         return (text,None)
 
