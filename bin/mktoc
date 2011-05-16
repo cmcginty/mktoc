@@ -33,7 +33,6 @@ Info:
 """
 
 # import the mktoc python package and run
-import mktoc
-err = mktoc.main()
-exit(err)
+import mktoc.cmdline
+exit(mktoc.cmdline.main())
 
