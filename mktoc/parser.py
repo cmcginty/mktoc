@@ -14,6 +14,9 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+   mktoc.parser
+   ~~~~~~~~~~~~
+
    This module provides object(s) to parse text files describing the layout of
    an audio CD. After the parse step is complete, it is possible to access the
    data or convert into any other output format.

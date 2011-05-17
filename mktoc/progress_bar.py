@@ -14,6 +14,9 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+   mktoc.progress_bar
+   ~~~~~~~~~~~~~~~~~~
+
    Module for mktoc that prints a progress indication.
 
    The default usage is to prompt the user when an operation is running that

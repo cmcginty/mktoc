@@ -14,6 +14,9 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+   mktoc.disc
+   ~~~~~~~~~~
+
    A set of classes for representation of audio CD information.
 
    The following are a list of the classes provided in this module:

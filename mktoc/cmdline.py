@@ -14,6 +14,9 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+   mktoc.cmdline
+   ~~~~~~~~~~~~~
+
    Command-line interface for Mktoc.
 """
 

@@ -13,15 +13,20 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Standard defines used by all modules.
+"""
+   mktoc.base
+   ~~~~~~~~~~
 
-All modules in this package import this file into its root namespace."""
+   Standard defines used by all modules.
+
+   All modules in this package import this file into its root namespace.
+"""
 
 __date__       = '$Date$'
 __version__    = '$Revision$'
 
-__all__        = ['__author__', '__copyright__', '__email__', '__license__', \
-                  'VERSION', 'MkTocError' ,'FileNotFoundError', 'ParseError', \
+__all__        = ['__author__', '__copyright__', '__email__', '__license__',
+                  'VERSION', 'MkTocError' ,'FileNotFoundError', 'ParseError',
                   'UnderflowError', 'EmptyCueData' ]
 
 #: Project author string.

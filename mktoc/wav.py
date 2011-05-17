@@ -14,6 +14,9 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+   mktoc.wav
+   ~~~~~~~~~
+
    Module for mktoc that can holds utility functions for search and modifying
    WAV audio files.
 
