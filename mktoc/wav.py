@@ -102,18 +102,17 @@ class WavFileCache(object):
       # escape any special characters in the file, and the '$' prevents
       # matching if any extra chars come after the name
       sep = re.escape(os.sep)
-      dot_wav = re.escape('.wav')
-      fn_pat = sep + '.*' + re.escape(fn) + '.*' + dot_wav + '$'
+      fn_pat = sep + '.*' + re.escape(fn) + '.*'
       fn_pats = [fn_pat]
       # same as pat1, but replace spaces with underscores
       fn_us = fn.replace(' ','_')
-      fn_pat = sep + '.*' + re.escape(fn_us) + '.*' + dot_wav + '$'
+      fn_pat = sep + '.*' + re.escape(fn_us) + '.*'
       fn_pats.append( fn_pat )
       # same as pat1, but replace underscores with spaces
       fn_us = fn.replace('_',' ')
-      fn_pat = sep + '.*' + re.escape(fn_us) + '.*' + dot_wav + '$'
+      fn_pat = sep + '.*' + re.escape(fn_us) + '.*'
       fn_pats.append( fn_pat )
-      file_regex = re.compile( '|'.join(fn_pats), re.IGNORECASE)
+      file_regex = re.compile( '|'.join(set(fn_pats)), re.IGNORECASE)
       # search all WAV files using pattern 'file_regex'
       matchi = itr.imap( file_regex.search, self._get_cache() )
       # create tuple with input file and search results

@@ -23,7 +23,12 @@
 __date__       = '$Date$'
 __version__    = '$Revision$'
 
-import os,sys,traceback,logging,re
+import codecs
+import logging
+import os
+import re
+import sys
+import traceback
 from optparse import OptionParser
 
 from .base import *
@@ -53,23 +58,27 @@ class CommandLine(object):
    Interprets all program arguments and creates a CueParser object to
    generate a final TOC file.
    """
+   def run(self,argv=sys.argv):
+      """Execution entry point."""
+      try:
+         self._run()
+      except FileNotFoundError, e:
+         self._error_msg_file(e)
+      except MkTocError, e:
+         self._error_msg(e)
 
-   def __init__(self):
+   def _run(self,argv=sys.argv):
       # parse all command line arguments, exit if there is any error
-      opt,args = self._parse_args()
+      opt,args = self._parse_args(argv)
       # setup logging
       if opt.debug: logging.basicConfig(level=logging.DEBUG)
       # check if using WAV list or CUE file
       if opt.wav_files is None:
          # open CUE file
          if opt.cue_file:
-            try:
-               fh_in = open(opt.cue_file)
-               # set the working dir of the input file
-               cue_dir = os.path.dirname( fh_in.name ) or os.curdir
-            except:
-               print >> sys.stderr, sys.exc_value
-               exit(-1)
+            fh_in = self._open_file( opt.cue_file )
+            # set the working dir of the input file
+            cue_dir = os.path.dirname( fh_in.name ) or os.curdir
          else:
             cue_dir = os.curdir
             fh_in = sys.stdin
@@ -89,16 +98,20 @@ class CommandLine(object):
       toc = cd_data.getToc()
       # open TOC file
       if opt.toc_file:
-         try:
-            fh_out = open(opt.toc_file,'w')
-         except:
-            print >> sys.stderr, sys.exc_value
-            exit(-1)
+         fh_out = self._open_file( opt.toc_file,'wb')
       else:
          fh_out = sys.stdout
       fh_out.write( self._banner_msg() )
       fh_out.write( '\n'.join(toc) )
       fh_out.close()
+
+   def _open_file(self,name,mode='rb'):
+      """Wrapper for opening files. Ensures correct encoding is selected."""
+      try:
+         return codecs.open(name, mode, encoding='utf-8')
+      except:
+         print >> sys.stderr, sys.exc_value
+         exit(-1)
 
    def _banner_msg(self):
       """Returns a TOC comment header that is placed at the top of the
@@ -107,7 +120,7 @@ class CommandLine(object):
          "// %s, %s\n" % (__copyright__, __author__) + \
          "// Report bugs to <%s>\n" % __email__
 
-   def _parse_args(self):
+   def _parse_args(self,argv):
       """Use OptionParser object to handle all input arguments and
       return opt structure and args list as a tuple. All argument
       error checking is performed in this function."""
@@ -138,7 +151,7 @@ class CommandLine(object):
             action='callback', callback=self._parse_wav,
             help='write a TOC file using list of WAV files' )
       # execute parsing step
-      opt,args = parser.parse_args()
+      opt,args = parser.parse_args(argv)
 
       # test "WAV file not found" and "offset correction" argument combination
       if opt.wav_offset and not opt.find_wav:
@@ -202,27 +215,27 @@ class CommandLine(object):
          parser.error( '%s option requires one or more WAV file arguments' \
                         % opt_str )
 
+   def _error_msg(e):
+      """Print a default error message to the user."""
+      print >> sys.stderr, """
+      ERROR! -- An unrecoverable error has occurred. If you believe the CUE
+      file is correct, please send the input file to <%s>,
+      along with the error message below.
 
-def _error_msg(e):
-   """Print a default error message to the user."""
-   print >> sys.stderr, """
-   ERROR! -- An unrecoverable error has occurred. If you believe the CUE
-   file is correct, please send the input file to <%s>,
-   along with the error message below.
+      ---> %s
+      """ % (__email__,e)
 
-   ---> %s
-   """ % (__email__,e)
+   def _error_msg_file(e):
+      """Print a missing WAV file error message to the user."""
+      print >> sys.stderr, """
+      ERROR! -- Could not locate WAV file:
+      --->  '%s'
 
-def _error_msg_file(e):
-   """Print a missing WAV file error message to the user."""
-   print >> sys.stderr, """
-   ERROR! -- Could not locate WAV file:
-   --->  '%s'
+      Cdrdao can not correctly write pregaps in TOC files without explicit file
+      lengths. If you know what you are doing, you can disable this check with
+      the '%s' option.
+      """ % (e,_OPT_ALLOW_WAV_FNF)
 
-   Cdrdao can not correctly write pregaps in TOC files without explicit file
-   lengths. If you know what you are doing, you can disable this check with
-   the '%s' option.
-   """ % (e,_OPT_ALLOW_WAV_FNF)
 
 def main():
    """
@@ -234,12 +247,8 @@ def main():
    global progName
    progName = os.path.basename(sys.argv[0])
    try:
-      CommandLine()
+      CommandLine().run()
    except EmptyCueData: pass     # ignore NULL data input (Ctrl-C)
-   except FileNotFoundError, e:
-      _error_msg_file(e)
-   except MkTocError, e:
-      _error_msg(e)
    except Exception:
       traceback.print_exc()
    except: pass      # ignore base exceptions (exit,key-int)

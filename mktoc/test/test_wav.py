@@ -107,6 +107,12 @@ class WavFileCacheTests(unittest.TestCase):
       wc = WavFileCache(self._WAV_DIR)
       self.assertRaises( FileNotFoundError, wc.lookup, 'My Test File-3.wav')
 
+   def testUnicodeFileNameMatch(self):
+      """A unicode file should be matched correctly."""
+      wc = WavFileCache()
+      wc._data = [u'/\xf1']
+      self.assertTrue( wc.lookup(u'\xf1'))
+
 
 ##############################################################################
 class WavOffsetWriterTest(unittest.TestCase):

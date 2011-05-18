@@ -425,7 +425,7 @@ class _TrackTime(object):
                      c. Integer of the total frame length
                      d. :data:`None`, object is initialized to 0 length
       :type arg: str, :class:`tuple`, int, :data:`None`"""
-      if isinstance(arg,str):
+      if isinstance(arg,basestring):
          # extract time from string
          val = [int(x) for x in arg.split(':')]
          self._time = tuple(val)
