@@ -249,7 +249,7 @@ class CueParser(_Parser):
          \s+(.*)$                # match 'value'
       """),
       ('quote', r"""
-         ^\s*(CATALOG|PERFORMER|TITLE) # match 'key'
+         ^\s*(PERFORMER|TITLE) # match 'key'
          \s+"(.*)"$        # match 'value' surrounded with double quotes
       """),
       ('catalog', r"""
