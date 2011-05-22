@@ -202,8 +202,7 @@ class _Parser(object):
          try:  # attempt to find the WAV file
             file_on_disk = self._wav_file_cache.lookup(file_)
          except FileNotFoundError:
-            # file not found, but 'file_exists' indicates that the file
-            # must exists
+            # raise only if '_find_wav' option is True
             if self._find_wav: raise
             else: file_on_disk = file_
          self._file_map[file_] = file_on_disk
@@ -335,18 +334,19 @@ class CueParser(_Parser):
                          reversed(self._file_lines)).next()[1]
 
    def _build_lookup_tbl(self):
-      """Helper function to create the '_files', '_file_lines' and
-      '_track_lines' lists structures required before the class initialization
-      is complete."""
+      """Create the '_files', '_file_lines' and '_track_lines' lists structures
+      required before the class initialization is complete."""
       # return an iterator of tuples with line nums, re.match name, and
       # re.match data
       regex = _RegexStore( dict(self._FILE_REGEX +  self._TRACK_REGEX) )
-      matchi = itr.chain(*itr.imap( regex.match, self._cue ))
-      num_matchi = itr.izip( itr.count(), matchi, matchi )
+      matchi = itr.izip(*itr.imap( regex.match, self._cue ))
+      num_matchi = itr.izip( itr.count(), *matchi )
       # create list of valid matches
       matches = filter(op.itemgetter(2), num_matchi)
       # iterator of 'file' matches
       files = filter(lambda (i,key,match): key == 'file', matches)
+      if not files:
+         raise ParseError("'FILE' command(s) were not found")
       # create a list of 'wav file name'
       self._files = map( lambda m: self._lookup_file_name(m.group(1)),
                          itr.imap(op.itemgetter(2),files) )
@@ -354,6 +354,9 @@ class CueParser(_Parser):
       self._file_lines = zip( itr.imap(op.itemgetter(0),files), self._files )
       # iterator of 'track' matches
       tracks = itr.ifilter( lambda (i,key,match): key == 'track', matches)
+      if not tracks:
+         raise ParseError("'TRACK' command(s) were not found")
+      # create an arry of tracks => line number
       self._track_lines = map(op.itemgetter(0), tracks)
 
    def _parse_all_tracks(self,disc):
@@ -369,23 +372,21 @@ class CueParser(_Parser):
       disc_ = mt_disc.Disc()
       # splice disc data from the cue list, and return an iterator of tuples
       # returned by re.match
-      regex = _RegexStore( dict(self._FILE_REGEX + self._DISC_REGEX) )
+      regex = _RegexStore( dict(self._DISC_REGEX) )
       cue_data = map( regex.match,
-                      itr.islice(self._cue, 0, self._track_lines[0]) )
+                      itr.islice(self._cue, 0, self._track_lines[0]-1) )
       # raise error if unkown match is found
       for key,match in filter( lambda (key,match): not match, cue_data):
          raise ParseError, "Unmatched pattern in stream: '%s'" % key
-      # ignore 'file' matches
-      for key,value in (match.groups()
-            for key,match in cue_data if key != 'file'):
+      for key,value in (match.groups() for key,match in cue_data):
          key = key.lower()
          setattr(disc_, key, value.strip())
       return disc_
 
    def _parse_track(self, num, disc):
-      """Return a Track object that contains a single track element
-      from the parsed CUE text data. This method implements the
-      'track' scanning steps of the parser.
+      """Return a Track object that contains a single track element from the
+      parsed CUE text data. This method implements the 'track' scanning steps
+      of the parser.
 
       Parameters:
          num   : the track index of the track to parse. The first

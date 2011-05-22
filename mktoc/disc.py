@@ -42,7 +42,6 @@ __all__ = [ 'Disc', 'Track', 'TrackIndex' ]
 log = logging.getLogger('mktoc.disc')
 
 
-##############################################################################
 class Disc( object ):
    """
    Stores audio disc metadata values such as album title, performer, genre.
@@ -92,7 +91,6 @@ class Disc( object ):
       self._mode = 'CD_ROM_XA'
 
 
-##############################################################################
 class Track( object ):
    """
    Holds track metadata values such as title and performer. Each :class:`Track`
@@ -195,7 +193,6 @@ class Track( object ):
                must be :data:`None`.
       :type trk2: :class:`Track` or :data:`None`
       """
-
       # current index and "next" index or None
       for idx,idx2 in map(None, self.indexes, itr.islice(self.indexes,1,None)):
          #####
@@ -214,7 +211,6 @@ class Track( object ):
          idx.mung( idx2 )
 
 
-##############################################################################
 class TrackIndex(object):
    """
    Represent an *index* of an audio CD track.
@@ -396,12 +392,11 @@ class TrackIndex(object):
       return _TrackTime(frames)
 
 
-##############################################################################
 class _TrackTime(object):
-   """Container class to represent the sample count or position in audio
-   data. Allows mathematical operations to be easily performed on time
-   positions."""
-
+   """
+   Container class to represent the sample count or position in audio data.
+   Allows mathematical operations to be easily performed on time positions.
+   """
    #: Defines the number of audio *Frames Per Second*
    _FPS = 75
    #: Defines the number of *Seconds Per Minute*

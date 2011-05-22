@@ -158,7 +158,7 @@ class CueParserTests(unittest.TestCase):
    def testParseDisc_BadLine(self):
      cp = CueParser()
      cp._cue = ['BAD MATCH LINE']
-     cp._track_lines = [1]    # ignore lines after _cue[1]
+     cp._track_lines = [2]    # ignore lines after _cue[1]
      self.assertRaisesRegexp(
            ParseError, ".+: '%s'" % (cp._cue[0]), cp._parse_disc )
 
@@ -171,6 +171,23 @@ class CueParserTests(unittest.TestCase):
            ParseError, ".+: '%s'" % (cp._cue[1],),
            cp._parse_track, 0, Disc())
 
+   def testNoCueTracks(self):
+      cp = CueParser()
+      file_ = """REM GENRE Classical
+                 REM DATE 2003
+                 REM DISCID 5F0C0E07
+                 PERFORMER "artist"
+                 TITLE "album" """.split('\n')
+      self.assertRaises( ParseError, cp.parse, file_)
+
+   def testNoCueDiscInfo(self):
+         cp = CueParser(find_wav=False)
+         file_ = """FILE "track1.wav" WAVE
+                      TRACK 01 AUDIO
+                        TITLE "track name"
+                        PERFORMER "artist"
+                        INDEX 00 08:08:18""".split('\n')
+         self.assertTrue( cp.parse(file_) )
 
 class WavParserTests(unittest.TestCase):
    def testWavFiles(self):
