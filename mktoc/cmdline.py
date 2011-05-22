@@ -215,7 +215,7 @@ class CommandLine(object):
          parser.error( '%s option requires one or more WAV file arguments' \
                         % opt_str )
 
-   def _error_msg(e):
+   def _error_msg(self, e):
       """Print a default error message to the user."""
       print >> sys.stderr, """
       ERROR! -- An unrecoverable error has occurred. If you believe the CUE
@@ -225,7 +225,7 @@ class CommandLine(object):
       ---> %s
       """ % (__email__,e)
 
-   def _error_msg_file(e):
+   def _error_msg_file(self, e):
       """Print a missing WAV file error message to the user."""
       print >> sys.stderr, """
       ERROR! -- Could not locate WAV file:

@@ -21,8 +21,11 @@ __date__    = '$Date$'
 __version__ = '$Revision$'
 
 import unittest
+from mock import patch
+from contextlib import nested
 
 from mktoc.cmdline import *
+from mktoc.base import *
 
 class TestCmdLine( unittest.TestCase):
 
@@ -40,3 +43,18 @@ class TestCmdLine( unittest.TestCase):
       line = fh.read()
       fh.close()
       self.assertTrue( line == u'\xf1' )
+
+   def testParseError(self):
+      """Verify that ParseError exception is caught and handled."""
+      with nested (
+            patch.object(CommandLine, '_run'),
+            patch.object(CommandLine, '_error_msg')
+            ) as (run_method, err_method):
+         # throw a parseError
+         run_method.side_effect = ParseError('message')
+         self.cl.run()
+         self.assertEquals( err_method.call_count, 1 )
+         # the execption was passed to the err_method
+         self.assertEquals( err_method.call_args[0][0],
+                            run_method.side_effect )
+
