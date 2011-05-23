@@ -174,20 +174,30 @@ class CueParserTests(unittest.TestCase):
    def testNoCueTracks(self):
       cp = CueParser()
       file_ = """REM GENRE Classical
-                 REM DATE 2003
-                 REM DISCID 5F0C0E07
-                 PERFORMER "artist"
-                 TITLE "album" """.split('\n')
+         REM DATE 2003
+         REM DISCID 5F0C0E07
+         PERFORMER "artist"
+         TITLE "album" """.split('\n')
       self.assertRaises( ParseError, cp.parse, file_)
 
    def testNoCueDiscInfo(self):
-         cp = CueParser(find_wav=False)
-         file_ = """FILE "track1.wav" WAVE
-                      TRACK 01 AUDIO
-                        TITLE "track name"
-                        PERFORMER "artist"
-                        INDEX 00 08:08:18""".split('\n')
-         self.assertTrue( cp.parse(file_) )
+      cp = CueParser(find_wav=False)
+      file_ = """FILE "track1.wav" WAVE
+         TRACK 01 AUDIO
+         TITLE "track name"
+         PERFORMER "artist"
+         INDEX 00 08:08:18""".split('\n')
+      self.assertTrue( cp.parse(file_) )
+
+   def testIgnoreRemCmd(self):
+      cp = CueParser(find_wav=False)
+      file_ = """REM COMMENT some unknown comment
+         REM GENRE Rock
+         REM a general comment
+         FILE "track1.wav" WAVE
+         TRACK 01 AUDIO""".split('\n')
+      self.assertTrue( cp.parse(file_) )
+
 
 class WavParserTests(unittest.TestCase):
    def testWavFiles(self):

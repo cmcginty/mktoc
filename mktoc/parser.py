@@ -248,6 +248,11 @@ class CueParser(_Parser):
          \s+(GENRE|DATE|DISCID)  # match 'key'
          \s+(.*)$                # match 'value'
       """),
+      ('rem_unknown' , r"""
+         ^\s*REM                             # match 'REM'
+         \s+(?!(GENRE\s|DATE\s|DISCID\s))    # do not match match 'key'
+         .*                                  # match all strings
+      """),
       ('quote', r"""
          ^\s*(PERFORMER|TITLE) # match 'key'
          \s+"(.*)"$        # match 'value' surrounded with double quotes
@@ -378,7 +383,8 @@ class CueParser(_Parser):
       # raise error if unkown match is found
       for key,match in filter( lambda (key,match): not match, cue_data):
          raise ParseError, "Unmatched pattern in stream: '%s'" % key
-      for key,value in (match.groups() for key,match in cue_data):
+      for key,value in (match.groups() for key,match in cue_data
+            if key != 'rem_unknown'):  # ignore extranious REM comments
          key = key.lower()
          setattr(disc_, key, value.strip())
       return disc_
@@ -498,7 +504,8 @@ class _RegexStore(object):
    A helper class that simplifies the management of regular expressions.
 
    The RegexStore class is used to apply a list of regular expressions to a
-   single text stream. The first matching regular expression is returned.
+   single text stream. The first matching regular expression is returned and
+   the regext test order is not guaranteed.
    """
    # Dictionary of compiled regex's keyed by a user supplied string value.
    _searches = None
@@ -508,10 +515,9 @@ class _RegexStore(object):
       Initialize the '_searches' dictionary using the 'pat_dict' parameter.
 
       Parameters:
-         pat_dict : A dictionary of regular expression strings. The
-                    regex value is compiled and stored in the
-                    '_searches' dictionary, keyed by the original
-                    'pat_dict' key.
+         pat_dict : A dictionary of regular expression strings. The regex value
+                    is compiled and stored in the '_searches' dictionary, keyed
+                    by the original 'pat_dict' key.
       """
       # build RegEx searches
       re_searches = [re.compile(pat, re.VERBOSE) for pat in pat_dict.values()]
