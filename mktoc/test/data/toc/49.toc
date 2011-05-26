@@ -1,0 +1,106 @@
+CD_ROM_XA
+CD_TEXT { LANGUAGE_MAP { 0:EN }
+    LANGUAGE 0 {
+        TITLE "One-X"
+        PERFORMER "Three Days Grace"
+        DISC_ID "AA0C500D"
+}}
+
+//Track 1
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "It's All Over"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\01 - It's All Over.wav" 00:00:00
+
+//Track 2
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "Pain"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\02 - Pain.wav" 00:00:00
+
+//Track 3
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "Animal I Have Become"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\03 - Animal I Have Become.wav" 00:00:00
+
+//Track 4
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "Never Too Late"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\04 - Never Too Late.wav" 00:00:00
+
+//Track 5
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "On My Own"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\05 - On My Own.wav" 00:00:00
+
+//Track 6
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "Riot"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\06 - Riot.wav" 00:00:00
+
+//Track 7
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "Get Out Alive"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\07 - Get Out Alive.wav" 00:00:00
+
+//Track 8
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "Let It Die"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\08 - Let It Die.wav" 00:00:00
+
+//Track 9
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "Over and Over"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\09 - Over and Over.wav" 00:00:00
+
+//Track 10
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "Time of Dying"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\10 - Time of Dying.wav" 00:00:00 03:06:28
+
+//Track 11
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "Gone Forever"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\10 - Time of Dying.wav" 03:06:28
+    START
+    AUDIOFILE "Three Days Grace\One-X\11 - Gone Forever.wav" 00:00:00
+
+//Track 12
+TRACK AUDIO
+    CD_TEXT { LANGUAGE 0 {
+        TITLE "One-X"
+        PERFORMER "Three Days Grace"
+    }}
+    AUDIOFILE "Three Days Grace\One-X\12 - One-X.wav" 00:00:00 04:46:20
+

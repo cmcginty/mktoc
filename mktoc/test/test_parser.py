@@ -20,9 +20,9 @@ Unit testing framework for mktoc_paraser module.
 __date__    = '$Date$'
 __version__ = '$Revision$'
 
-import sys
-import os
 import inspect
+import os
+import sys
 import unittest
 
 from mktoc.base import *
@@ -118,7 +118,7 @@ class CueParserFileTests(unittest.TestCase):
    def testCueFile46(self): self._check_file()
    def testCueFile47(self): self._check_file()
    def testCueFile48(self): self._check_file()
-#   def testCueFile49(self): self._check_file()
+   def testCueFile49(self): self._check_file()
 #   def testCueFile50(self): self._check_file()
 
    def _create_toc_file(self):
@@ -127,10 +127,10 @@ class CueParserFileTests(unittest.TestCase):
       toc_path = os.path.join(self._TOC_DIR,self._toc_file)
       if not os.path.exists(toc_path):
          cue_fh = open(os.path.join(self._CUE_DIR,self._cue_file))
-         toc_fh = open(toc_path,'w')
+         toc_fh = open(toc_path,'wb')
          toc_str = CueParser( find_wav=False).parse( cue_fh).getToc()
          # write the data
-         toc_fh.write( toc_str.read() )
+         toc_fh.writelines( [l+'\n' for l in toc_str] )
          cue_fh.close()
          toc_fh.close()
 
@@ -139,18 +139,18 @@ class CueParserFileTests(unittest.TestCase):
       exercise the CueParser class, and verify the output data with known good
       TOC file data."""
       # calculate test data
-      cue_fh = open(os.path.join(self._CUE_DIR,self._cue_file))
-      toc = CueParser( find_wav=False).parse( cue_fh).getToc()
-      cue_fh.close()
+      with open(os.path.join(self._CUE_DIR,self._cue_file)) as cue_fh:
+         toc = CueParser( find_wav=False).parse( cue_fh).getToc()
       # read the known good data
-      toc_good = open(os.path.join(self._TOC_DIR,self._toc_file))
+      with open(os.path.join(self._TOC_DIR,self._toc_file)) as toc_fh:
+         toc_good = [x.rstrip() for x in toc_fh]
       # compare data sets
       if toc != toc_good:
-         for a,b in map(None,toc,toc_good):
-            err_str = "strings do not match\n  %s:%s\n  %s:%s" % \
-                        (self._cue_file,repr(a),self._toc_file,repr(b))
-            self.assertEqual(a,b[:-1],err_str)
-      toc_good.close()
+         for num,(a,b) in enumerate(map(None,toc,toc_good)):
+            err_str = "strings do not match\n  %s:%d:%s\n  %s:%d:%s" % \
+                        (self._cue_file,num,repr(a),
+                         self._toc_file,num,repr(b))
+            self.assertEqual(a,b,err_str)
 
 
 class CueParserTests(unittest.TestCase):

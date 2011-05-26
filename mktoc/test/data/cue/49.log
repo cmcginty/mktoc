@@ -1,0 +1,165 @@
+Exact Audio Copy V0.99 prebeta 5 from 4. May 2009
+
+EAC extraction logfile from 23. April 2011, 19:34
+
+Three Days Grace / One-X
+
+Used drive  : Optiarc DVD RW AD-7240S   Adapter: 2  ID: 0
+
+Read mode : Burst
+
+Read offset correction                      : 48
+Overread into Lead-In and Lead-Out          : No
+Fill up missing offset samples with silence : Yes
+Delete leading and trailing silent blocks   : No
+Null samples used in CRC calculations       : Yes
+Used interface                              : Installed external ASPI interface
+Gap handling                                : Appended to previous track
+
+Used output format              : User Defined Encoder
+Selected bitrate                : 768 kBit/s
+Quality                         : High
+Add ID3 tag                     : No
+Command line compressor         : C:\Program Files\Exact Audio Copy\FLAC\FLAC.EXE
+Additional command line options : --replay-gain -8 -V -T "TITLE=%t" -T "ARTIST=%a"  -T "ALBUM=%g" -T "DATE=%y" -T "TRACKNUMBER=%n" -T "GENRE=%m" %s -o %d
+
+
+TOC of the extracted CD
+
+     Track |   Start  |  Length  | Start sector | End sector 
+    ---------------------------------------------------------
+        1  |  0:00.00 |  4:09.24 |         0    |    18698   
+        2  |  4:09.24 |  3:22.73 |     18699    |    33921   
+        3  |  7:32.22 |  3:51.30 |     33922    |    51276   
+        4  | 11:23.52 |  3:29.25 |     51277    |    66976   
+        5  | 14:53.02 |  3:05.57 |     66977    |    80908   
+        6  | 17:58.59 |  3:27.44 |     80909    |    96477   
+        7  | 21:26.28 |  4:22.37 |     96478    |   116164   
+        8  | 25:48.65 |  3:09.23 |    116165    |   130362   
+        9  | 28:58.13 |  3:11.68 |    130363    |   144755   
+       10  | 32:10.06 |  3:08.38 |    144756    |   158893   
+       11  | 35:18.44 |  3:41.07 |    158894    |   175475   
+       12  | 38:59.51 |  4:46.20 |    175476    |   196945   
+       13  | 46:17.71 |  6:15.00 |    208346    |   236470   
+
+
+Track  1
+
+     Filename N:\music\flac\Three Days Grace\One-X\01 - It's All Over.wav
+
+     Pre-gap length  0:00:02.00
+
+     Peak level 96.6 %
+     Copy CRC 481CDF39
+     Accurately ripped (confidence 103)  [269C6E64]
+     Copy OK
+
+Track  2
+
+     Filename N:\music\flac\Three Days Grace\One-X\02 - Pain.wav
+
+     Timing problem 0:02:05
+
+     Peak level 96.6 %
+     Copy CRC CD6E8CC8
+     Accurately ripped (confidence 103)  [F165BE69]
+     Copy finished
+
+Track  3
+
+     Filename N:\music\flac\Three Days Grace\One-X\03 - Animal I Have Become.wav
+
+     Peak level 96.6 %
+     Copy CRC EC0DEDF5
+     Accurately ripped (confidence 101)  [8545F71B]
+     Copy OK
+
+Track  4
+
+     Filename N:\music\flac\Three Days Grace\One-X\04 - Never Too Late.wav
+
+     Peak level 96.6 %
+     Copy CRC C9A7FCE5
+     Accurately ripped (confidence 104)  [B32B2E79]
+     Copy OK
+
+Track  5
+
+     Filename N:\music\flac\Three Days Grace\One-X\05 - On My Own.wav
+
+     Peak level 96.6 %
+     Copy CRC E5BA1846
+     Accurately ripped (confidence 103)  [631EE061]
+     Copy OK
+
+Track  6
+
+     Filename N:\music\flac\Three Days Grace\One-X\06 - Riot.wav
+
+     Peak level 96.6 %
+     Copy CRC 5A7F519C
+     Accurately ripped (confidence 102)  [5E3F78A7]
+     Copy OK
+
+Track  7
+
+     Filename N:\music\flac\Three Days Grace\One-X\07 - Get Out Alive.wav
+
+     Peak level 96.6 %
+     Copy CRC B715E48C
+     Accurately ripped (confidence 102)  [77765A59]
+     Copy OK
+
+Track  8
+
+     Filename N:\music\flac\Three Days Grace\One-X\08 - Let It Die.wav
+
+     Peak level 96.6 %
+     Copy CRC 235D6883
+     Accurately ripped (confidence 103)  [3E7EB9F8]
+     Copy OK
+
+Track  9
+
+     Filename N:\music\flac\Three Days Grace\One-X\09 - Over and Over.wav
+
+     Peak level 96.6 %
+     Copy CRC 7C8C35F2
+     Accurately ripped (confidence 103)  [9F2B7D09]
+     Copy OK
+
+Track 10
+
+     Filename N:\music\flac\Three Days Grace\One-X\10 - Time of Dying.wav
+
+     Peak level 96.6 %
+     Copy CRC 1ECDE63A
+     Accurately ripped (confidence 103)  [0B756672]
+     Copy OK
+
+Track 11
+
+     Filename N:\music\flac\Three Days Grace\One-X\11 - Gone Forever.wav
+
+     Pre-gap length  0:00:02.10
+
+     Peak level 96.6 %
+     Copy CRC 991C7C50
+     Accurately ripped (confidence 103)  [299394F6]
+     Copy OK
+
+Track 12
+
+     Filename N:\music\flac\Three Days Grace\One-X\12 - One-X.wav
+
+     Peak level 96.6 %
+     Copy CRC 2D201592
+     Accurately ripped (confidence 101)  [35BA36D4]
+     Copy OK
+
+
+All tracks accurately ripped
+
+No errors occurred
+
+End of status report
