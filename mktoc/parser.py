@@ -121,7 +121,7 @@ class ParseData(object):
       # create WavOffset object, initialize sample offset and progress output
       wo = mt_wav.WavOffsetWriter( samples, mt_pb.ProgressBar,
                                    ('processing WAV files:',))
-      new_files = wo.execute( self._files, tmp )
+      new_files = wo( self._files, tmp )
 
       # change all index file names to newly generated files
       file_map = dict( zip(self._files,new_files) )
@@ -200,7 +200,7 @@ class _Parser(object):
          return self._file_map[file_]
       else:
          try:  # attempt to find the WAV file
-            file_on_disk = self._wav_file_cache.lookup(file_)
+            file_on_disk = self._wav_file_cache(file_)
          except FileNotFoundError:
             # raise only if '_find_wav' option is True
             if self._find_wav: raise

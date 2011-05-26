@@ -48,70 +48,70 @@ class WavFileCacheTests(unittest.TestCase):
       """A file that can not be found in the test dir must through an
       exception."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertRaises( FileNotFoundError, wc.lookup, 'not a file')
+      self.assertRaises( FileNotFoundError, wc, 'not a file')
 
    def testExactMatch(self):
       """A source name with an exact match in the test dir must be found."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertTrue( wc.lookup('My Test File-1.wav'))
+      self.assertTrue( wc('My Test File-1.wav'))
 
    def testWhiteSpaceMatch(self):
       """A source name with extra white space added to an exact match in the
       test dir must be found."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertTrue( wc.lookup('  My Test File-1.wav  '))
+      self.assertTrue( wc('  My Test File-1.wav  '))
 
    def testSubDirSrcMatch(self):
       """A source name with a pre-appended sub-dir to an exact match in the
       test dir must be found."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertTrue( wc.lookup('./dir2/My Test File-1.wav'))
+      self.assertTrue( wc('./dir2/My Test File-1.wav'))
 
    def testSubDirDestMatch(self):
       """A name with an exact match in a sub-dir of the test dir must be
       found."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertTrue( wc.lookup('My Test File In A Dir-1.wav'))
+      self.assertTrue( wc('My Test File In A Dir-1.wav'))
 
    def testSubDirReverseMatch(self):
       """A source name with a pre-appended DOS path sub-dir to an exact match
       in the test dir must be found."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertTrue( wc.lookup('C:\dir1\dir2\My Test File-1.wav'))
+      self.assertTrue( wc('C:\dir1\dir2\My Test File-1.wav'))
 
    def testUnderlineAsSpaceMatch(self):
       """A source name with underscores instead of spaces must be found in the
       test dir."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertTrue( wc.lookup('My_Test_File-1.wav'))
+      self.assertTrue( wc('My_Test_File-1.wav'))
 
    def testSpaceAsUnderlinesMatch(self):
       """A source name with spaces instead of underscores must be found in the
       test dir."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertTrue( wc.lookup('My Test File-2.wav'))
+      self.assertTrue( wc('My Test File-2.wav'))
 
    def testMatchAsLeadSubstr(self):
       """A source name matches a substring of a file in the test dir."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertTrue( wc.lookup('Text My Test File-3.wav'))
+      self.assertTrue( wc('Text My Test File-3.wav'))
 
    def testMatchAsTrailSubstr(self):
       """A source name matches a substring of a file in the test dir."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertTrue( wc.lookup('My Test File-3 Trail.wav'))
+      self.assertTrue( wc('My Test File-3 Trail.wav'))
 
    def testFailMatchAsNSubstr(self):
       """A source name matches a substring of multiple files in the test dir
       should raise an exception."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertRaises( FileNotFoundError, wc.lookup, 'My Test File-3.wav')
+      self.assertRaises( FileNotFoundError, wc, 'My Test File-3.wav')
 
    def testUnicodeFileNameMatch(self):
       """A unicode file should be matched correctly."""
       wc = WavFileCache()
       wc._data = [u'/\xf1']
-      self.assertTrue( wc.lookup(u'\xf1'))
+      self.assertTrue( wc(u'\xf1'))
 
 
 ##############################################################################

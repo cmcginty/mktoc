@@ -73,11 +73,14 @@ class WavFileCache(object):
 
       :param _dir:   Base path location to perform the WAV file search.
       :type _dir:    str
+
+      .. Docuemnt private members
+      .. automethod:: __call__
       """
       assert(_dir)
       self._src_dir = _dir
 
-   def lookup(self, file_):
+   def __call__(self, file_):
       """
       Search the cache for a fuzzy-logic match of the file name in
       :attr:`file_` parameter. This method will always return the exact file
@@ -194,13 +197,16 @@ class WavOffsetWriter(object):
                         the first argument of the progress bar init routine is
                         calculated by this class.
       :type pb_args:    list
+
+      .. Document private members
+      .. automethod:: __call__
       """
       self._offset  = offset_samples
       self._pb_class = pb_class
       self._pb_args  = pb_args
       self._progName = os.path.basename( sys.argv[0] )
 
-   def execute(self, files, use_tmp_dir):
+   def __call__(self, files, use_tmp_dir):
       """
       Initiate the WAV offsetting algorithm.
 
