@@ -58,16 +58,16 @@ class CommandLine(object):
    Interprets all program arguments and creates a CueParser object to
    generate a final TOC file.
    """
-   def run(self,argv=sys.argv):
+   def run(self,argv=sys.argv[1:]):
       """Execution entry point."""
       try:
-         self._run()
+         self._run(argv)
       except FileNotFoundError, e:
          self._error_msg_file(e)
       except MkTocError, e:
          self._error_msg(e)
 
-   def _run(self,argv=sys.argv):
+   def _run(self,argv):
       # parse all command line arguments, exit if there is any error
       opt,args = self._parse_args(argv)
       # setup logging
