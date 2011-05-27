@@ -280,7 +280,12 @@ class CueParser(_Parser):
       ('flag', r"""
          ^\s*FLAGS               # a FLAG command
          \s+(.*)$                # one or more flags
-      """)]
+      """),
+      ('rem', r"""
+         ^\s*REM                 # a REM command
+         \s+(.*)$                # one or more flags
+      """),
+         ]
 
    # list of processed CUE text data. The processing step removes text comments
    # and strips white spaces.
@@ -443,6 +448,8 @@ class CueParser(_Parser):
                                   match.group(1).split() ):
                if f == '4CH': f = 'four_ch'     # change '4CH' flag name
                setattr(trk, f.lower(), True)
+         elif re_key == 'rem':
+            pass
          else:
             raise RuntimeError("unexpected key: %s" % (re_key,))
       return trk

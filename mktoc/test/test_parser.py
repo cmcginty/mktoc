@@ -119,7 +119,7 @@ class CueParserFileTests(unittest.TestCase):
    def testCueFile47(self): self._check_file()
    def testCueFile48(self): self._check_file()
    def testCueFile49(self): self._check_file()
-#   def testCueFile50(self): self._check_file()
+   def testCueFile50(self): self._check_file()
 
    def _create_toc_file(self):
       """Use the CueParser class to create a new TOC file from the currently
