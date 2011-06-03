@@ -76,12 +76,26 @@ class Disc( object ):
       out += ['}}']
       return '\n'.join(out)
 
-   def mung(self):
+   def set_field(self, name, value):
       """
-      Convert class data to a corrected and standardized format. Not used at
-      this time.
+      Set a disc field value as a class attributes.
+
+      This method provides additional formating to any data fields. For
+      example, removing quoting and checking the field name.
+
+      :param name: Field name to set
+      :type  name: string
+
+      :param value: Value of field
+      :type  value: string
+
+      :return: True if field is written to the class data, or False
       """
-      pass
+      name = name.lower()
+      if hasattr(self,name):
+         setattr(self,name,value.strip('"'))
+         return True
+      return False
 
    def setMultisession(self):
       """
@@ -169,46 +183,29 @@ class Track( object ):
 
       return '\n'.join(out)
 
-   def appendIdx(self, idx):
+   def set_field(self, name, value):
       """
-      Append a new :class:`TrackIndex` object to the end of :data:`indexes`. It
-      is assumed that :class:`TrackIndex`\s are added in correct order.
+      Set a track field value as a class attributes.
 
-      :param idx: a new index appended to the :class:`Track` object.
-      :type idx: :class:`TrackIndex`
+      This method provides additional formating to any data fields. For
+      example, removing quoting and checking the field name.
+
+      :param name: Field name to set
+      :type  name: string
+
+      :param value: Value of field
+      :type  value: string
+
+      :return: True if field is written to the class data, or False
       """
-      self.indexes.append(idx)
-
-   def mung(self,trk2):
-      """
-      For use after the :class:`Track` is updated with all data and indexes, to
-      fix any inconstancies or errors in the :class:`Track` data.
-
-      This method must be called before the :class:`Track` data is used. That
-      is because before calling this method, the data can be in an inconsistent
-      state.
-
-      :param trk2: track immediately following the current :class:`Track`.
-               If current :class:`Track` is the last one, then this value
-               must be :data:`None`.
-      :type trk2: :class:`Track` or :data:`None`
-      """
-      # current index and "next" index or None
-      for idx,idx2 in map(None, self.indexes, itr.islice(self.indexes,1,None)):
-         #####
-         # Set the LENGTH argument on a track that must stop before EOF
-         #
-         # details:  if TOC command for current track is AUDIOFILE, then
-         #           if next track uses the same file, then current INDEX
-         #           must end before the next track INDEX starts. Note:
-         #           TrackIndex.INDEX cmds do not have 'len' values.
-         if trk2 and idx.cmd == TrackIndex.AUDIO and \
-               idx.file_ == trk2.indexes[0].file_:
-            end_time = trk2.indexes[0].time
-            idx.len_ = end_time - idx.time
-
-         # modify index values
-         idx.mung( idx2 )
+      name = name.lower()
+      if hasattr(self,name):
+         if isinstance(value,basestring):
+            setattr(self,name,value.strip('"'))
+         elif isinstance(value,bool):
+            setattr(self,name,value)
+         return True
+      return False
 
 
 class TrackIndex(object):
@@ -310,67 +307,6 @@ class TrackIndex(object):
       if self.cmd == self.PREAUDIO:
          out += ['\tSTART']
       return '\n'.join(out)
-
-   def mung(self, idx2):
-      """
-      For use after the :class:`TrackIndex` is updated with all data, to fix
-      any inconstancies or errors in the :class:`TrackIndex` data.
-
-      This method must be called before the :class:`TrackIndex` data is used.
-      That is because before calling this method, the data can be in an
-      inconsistent state. In some cases a variable will be deleted because it
-      is not required for the future functions of the object.
-
-      :param idx2:   the track index that immediately follows the
-                     current object in a :class:`Track` object. If this
-                     object is the last :class:`TrackIndex` in the
-                     :class:`Track` object, then *idx2* should be
-                     :data:`None`.
-      :type idx2:    :class:`TrackIndex` or :data:`None`
-      """
-      #####
-      # Add 'START' command after pregap audio file
-      #
-      # details:  if 'index' is a track pregap (num == 0) and the file for
-      #           'next index' is not the same, then designate the 'index'
-      #           as a pregap audio only. The result is to place a TOC
-      #           'START' command between this 'index' and the 'next
-      #           index' in the TOC file.
-      #
-      if self.num == 0 and idx2 and self.file_ != idx2.file_:
-         self.cmd = self.PREAUDIO
-
-      #####
-      # There are two case below to handle when a single WAV file is used
-      # for multiple internal track indexes. Usually these indexes are
-      # ignore by CD players, but they should be part of the CD.
-      if idx2 and self.file_ == idx2.file_:
-         #####
-         # Designate the 'true' start index of a track when the track data
-         # file contains pregap data. This is done with the TOC command
-         # 'START'
-         #
-         # details:  if the current index is the pregap data (0), then the
-         #           pregap must be set by changing the 'next' index cmd to
-         #           'START', and the length of the pregap must be set.
-         if self.num == 0:
-            idx2.cmd = self.START
-            idx2.len_ = idx2.time - self.time
-            del idx2.time # remove for safety, do not use
-         #####
-         # Else not a pregap, change the TOC command for a new track to
-         # 'INDEX' when a single logical 'track' has multiple index values
-         # (by default, the TOC command is AUDIOFILE when a track has a
-         # single index).
-         #
-         # details:  the outside 'if' guarantee that the current and next
-         #           index use the same file. Also, since it is not a
-         #           pregap the TOC format must use 'INDEX' keyword
-         #           instead of AUDIOFILE. No other calculations are
-         #           needed because INDEX is specified by file offset.
-         else:
-            idx2.cmd = self.INDEX
-            del idx2.len_ # remove for safety, do not use
 
    def _file_len(self,file_):
       """Returns the number of audio samples in the WAV file, *file_*.

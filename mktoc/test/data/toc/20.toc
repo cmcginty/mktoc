@@ -41,7 +41,7 @@ TRACK AUDIO
 //Track 5
 TRACK AUDIO
     CD_TEXT { LANGUAGE 0 {
-        TITLE "Spindrift"
+        TITLE "Spindrift "
         PERFORMER "Rush"
     }}
     AUDIOFILE "05-Spindrift.flac" 00:00:00

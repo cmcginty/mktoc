@@ -9,7 +9,7 @@ CD_TEXT { LANGUAGE_MAP { 0:EN }
 //Track 1
 TRACK AUDIO
     CD_TEXT { LANGUAGE 0 {
-        TITLE "Somewhere I Belong"
+        TITLE "Somewhere I Belong "
         PERFORMER "Linkin Park"
     }}
     AUDIOFILE "01 - Somewhere I Belong (Live).wav" 00:00:00
@@ -17,7 +17,7 @@ TRACK AUDIO
 //Track 2
 TRACK AUDIO
     CD_TEXT { LANGUAGE 0 {
-        TITLE "Breaking The Habit"
+        TITLE "Breaking The Habit "
         PERFORMER "Linkin Park"
     }}
     AUDIOFILE "02 - Breaking the Habit (Live).wav" 00:00:00
@@ -25,7 +25,7 @@ TRACK AUDIO
 //Track 3
 TRACK AUDIO
     CD_TEXT { LANGUAGE 0 {
-        TITLE "Public Service Announcement - Intro"
+        TITLE "Public Service Announcement - Intro "
         PERFORMER "Linkin Park"
     }}
     AUDIOFILE "03 - Public Service Announcement - Intro (Live).wav" 00:00:00
@@ -33,7 +33,7 @@ TRACK AUDIO
 //Track 4
 TRACK AUDIO
     CD_TEXT { LANGUAGE 0 {
-        TITLE "Dirt Off Your Shoulder / Lying From You"
+        TITLE "Dirt Off Your Shoulder / Lying From You "
         PERFORMER "Linkin Park"
     }}
     AUDIOFILE "04 - Dirt Off Your Shoulder , Lying from You (Live).wav" 00:00:00
@@ -41,7 +41,7 @@ TRACK AUDIO
 //Track 5
 TRACK AUDIO
     CD_TEXT { LANGUAGE 0 {
-        TITLE "Big Pimpin' / Papercut"
+        TITLE "Big Pimpin' / Papercut "
         PERFORMER "Linkin Park"
     }}
     AUDIOFILE "05 - Big Pimpin' , Papercut (Live).wav" 00:00:00
@@ -49,7 +49,7 @@ TRACK AUDIO
 //Track 6
 TRACK AUDIO
     CD_TEXT { LANGUAGE 0 {
-        TITLE "Jigga What / Faint"
+        TITLE "Jigga What / Faint "
         PERFORMER "Linkin Park"
     }}
     AUDIOFILE "06 - Jigga What , Faint (Live).wav" 00:00:00

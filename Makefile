@@ -24,7 +24,7 @@ help:
 
 .PHONY: test
 test:
-	python -m unittest discover
+	python -m unittest discover -f
 
 .PHONY: install
 install:
