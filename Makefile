@@ -40,6 +40,10 @@ readme:
 
 .PHONY: doc
 doc: readme
+	make -C doc html
+
+.PHONY: doc-clean
+doc-clean: readme
 	make -C doc clean html
 
 .PHONY: doc-svnprop

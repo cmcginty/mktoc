@@ -50,6 +50,11 @@ _OPT_TEMP_WAV        = '-t'
 # WAV File List
 # - create a TOC file using a list of WAV files
 _OPT_WAV_LIST        = '-w'
+# Mulitsession TOC
+# - required when writting a multi-session TOC
+_OPT_MULTI_SESSION  = '-m'
+# - disable multi-session features, don't prompt
+_OPT_IGNORE_MULTI_SESSION = '-z'
 
 
 class CommandLine(object):
@@ -88,25 +93,44 @@ class CommandLine(object):
          # create CUE file parser
          assert(cue_dir)
          p = CueParser( cue_dir, opt.find_wav)
-         cd_data = p.parse( fh_in)
+         cd_obj = p.parse( fh_in)
          fh_in.close()
       else:
          wav_dir = os.path.dirname( opt.wav_files[0] ) or os.curdir
          # create WAV list parser
          assert( wav_dir)
          p = WavParser( wav_dir, opt.find_wav)
-         cd_data = p.parse( opt.wav_files)
+         cd_obj = p.parse( opt.wav_files)
+      # warn user when TOC is multi-session
+      self._check_multisession_opt( cd_obj, opt)
       if opt.wav_offset:
-         cd_data.modWavOffset( opt.wav_offset, opt.write_tmp )
-      toc = cd_data.getToc()
+         cd_obj.modWavOffset( opt.wav_offset, opt.write_tmp )
+      toc = cd_obj.getToc()
       # open TOC file
       if opt.toc_file:
          fh_out = self._open_file( opt.toc_file,'wb')
       else:
          fh_out = sys.stdout
-      fh_out.write( self._banner_msg() )
-      fh_out.write( '\n'.join(toc) )
+      fh_out.write( self._banner_msg())
+      for l in toc:
+         fh_out.write("%s\n" % l)
       fh_out.close()
+      # print multi-session instructions; data session size is calulated by
+      # frame length minus 2 frames. I'm not actually sure why 2 frames must be
+      # subtracked, but it was verify to be correct. If your system/drive
+      # behaves differntly, please file a bug report.
+      print >> sys.stderr, textwrap.dedent("""
+      #########################################################
+      # Multi-Session TOC Mode
+      #########################################################
+
+      1. Burn TOC file w/ cdrdao '--multi' option
+      2. Finalize disc with dummy data session command:
+
+         cdrecord --tsize=%ds /dev/zero
+
+      #########################################################
+      """ % (cd_obj.last_index.len_.frames-2))    # see note for '-2'
 
    def _open_file(self,name,mode='rb'):
       """Wrapper for opening files. Ensures correct encoding is selected."""
@@ -115,6 +139,26 @@ class CommandLine(object):
       except:
          print >> sys.stderr, sys.exc_value
          exit(-1)
+
+   def _check_multisession_opt(self, cd, opt):
+      """Check multi-session run-time options match track info."""
+      if not cd.disc.is_multisession:
+         return
+      if opt.no_multisession:
+         # disable multi-session
+         cd.disc.is_multisession = False
+      elif not opt.multisession:
+         # multisesssion option must be set to prevent usage error
+         print >> sys.stderr, textwrap.dedent("""
+            WARNING! - Detected multi-session track info.
+
+            For safety, '%s' option must be specified when creating a TOC
+            for a multi-session disc.
+
+            If you want to ignore this check, and disable multi-session
+            features, use the '%s' argument.""" %
+               (_OPT_MULTI_SESSION,_OPT_IGNORE_MULTI_SESSION))
+         sys.exit(-1)
 
    def _banner_msg(self):
       """Returns a TOC comment header that is placed at the top of the
@@ -138,13 +182,17 @@ class CommandLine(object):
             help='do not abort when WAV file(s) are missing, (experts only)')
       parser.add_option( _OPT_OFFSET_CORRECT, '--offset-correction',
             dest='wav_offset', type='int',
-            help='correct reader/writer offset by creating WAV file(s) '\
-                 'shifted by WAV_OFFSET samples (original data is '\
+            help='correct reader/writer offset by creating WAV file(s) '
+                 'shifted by WAV_OFFSET samples (original data is '
                  'not modified)' )
       parser.add_option('-d', '--debug', dest='debug', action="store_true",
             default=False, help='enable debugging statements' )
       parser.add_option( _OPT_CUE_FILE, '--file', dest='cue_file',
             help='specify the input CUE file to read')
+      parser.add_option( _OPT_MULTI_SESSION, '--multi', dest='multisession',
+            action='store_true', default=False,
+            help='for safety, this option must be set when creating a '
+                 'mulit-session TOC file' )
       parser.add_option('-o', '--output', dest='toc_file',
             help='specify the output TOC file to write')
       parser.add_option( _OPT_TEMP_WAV, '--use-temp', dest='write_tmp',
@@ -153,6 +201,10 @@ class CommandLine(object):
       parser.add_option( _OPT_WAV_LIST, '--wave', dest='wav_files',
             action='callback', callback=self._parse_wav,
             help='write a TOC file using list of WAV files' )
+      parser.add_option( _OPT_IGNORE_MULTI_SESSION, '--no-multi',
+            dest='no_multisession', action='store_true', default=False,
+            help='disable multi-session support; program assumes TOC will be '
+                 'written in single-session mode' )
       # execute parsing step
       opt,args = parser.parse_args(argv)
 
@@ -168,6 +220,10 @@ class CommandLine(object):
       if opt.cue_file is not None and opt.wav_files is not None:
          parser.error("Can not combine '%s' and '%s' options!" % \
                         (_OPT_CUE_FILE, _OPT_WAV_LIST) )
+      # test "--multi" and "--no-multi" argument combination
+      if opt.multisession and opt.no_multisession:
+         parser.error("Can not combine '%s' and '%s' options!" % \
+                        (_OPT_MULTI_SESSION, _OPT_IGNORE_MULTI_SESSION) )
       # The '-w' option is used to create a TOC file using a list of WAV files.
       # The default mode is to convert a CUE file. The 'if' checks for the
       # default mode.

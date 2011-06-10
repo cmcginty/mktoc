@@ -72,7 +72,3 @@ FILE "Big Brother.wav" WAVE
     TITLE "Big Brother"
     PERFORMER "Kanye West"
     INDEX 01 00:00:00
-  TRACK 14 MODEx/2xxx
-    TITLE "DATA"
-    PERFORMER "Kanye West"
-    INDEX 00 04:47:43

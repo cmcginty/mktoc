@@ -46,6 +46,10 @@ class Disc( object ):
    """
    Stores audio disc metadata values such as album title, performer, genre.
    """
+   #: disc mode string for single session
+   MODE_SINGLE_SESSION  = 'CD_DA'
+   #: disc mode string for multi sessions
+   MODE_MULTI_SESSION   = 'CD_ROM_XA'
    #: String representing the Catalog Id of a disc.
    catalog   = None
    #: String representing the release year of a disc.
@@ -60,10 +64,8 @@ class Disc( object ):
    #: String representing the album title of a disc.
    title     = None
 
-   # String that defines the write mode of disc. The default value is CD_DA
-   # which defines a standard audio CD. It is also possible to be changed to
-   # define a multi-session audio CD.
-   _mode     = 'CD_DA'
+   def __init__(self):
+      self.is_multisession = False
 
    def __str__(self):
       """Return a string of TOC formatted disc information."""
@@ -84,12 +86,13 @@ class Disc( object ):
       example, removing quoting and checking the field name.
 
       :param name: Field name to set
-      :type  name: string
+      :type  name: str
 
       :param value: Value of field
-      :type  value: string
+      :type  value: str
 
-      :return: True if field is written to the class data, or False
+      :return: :data:`True` if field is written to the class data, or
+               :data:`False`
       """
       name = name.lower()
       if hasattr(self,name):
@@ -97,12 +100,24 @@ class Disc( object ):
          return True
       return False
 
-   def setMultisession(self):
+   @property
+   def is_multisession(self):
       """
-      Indicate the current object is a multi-session CD. An Audio only CD is
-      assumed by default.
+      :return: :data:`True` if disc is defined as multi-sesssion.
       """
-      self._mode = 'CD_ROM_XA'
+      return self._mode == self.MODE_MULTI_SESSION
+
+   @is_multisession.setter
+   def is_multisession(self,val):
+      """
+      Change the mode of a disc to either 'single-session' or 'multi-session'.
+
+      :param val: :data:`True` if disc is multi-session, :data:`False`
+                  otherwise.
+      :type  val: bool
+      """
+      if val:  self._mode = self.MODE_MULTI_SESSION
+      else:    self._mode = self.MODE_SINGLE_SESSION
 
 
 class Track( object ):
@@ -151,21 +166,26 @@ class Track( object ):
    #: String representing the title of the track.
    title        = None
 
-   def __init__(self,num):
+   def __init__(self,num,is_data=False):
       """
       :param num: Track index in the audio CD.
       :type num:  int
+
+      :param is_data: :data:`True` if track is data instead of audio.
+      :type  is_data: bool
       """
       # create an empty list of :class:`TrackIndex` objects, and
       # assign track number.
       self.indexes   = []    # list of indexes in the track
       self.num       = num
+      self.is_data   = is_data
 
    def __str__(self):
       """Return the TOC formated representation of the :class:`Track`
       object including the :class:`TrackIndex` objects. Data tracks will
       not generate any output."""
-      if self.is_data: return ''    # do not print data tracks
+      if self.is_data:
+         return ''     # do not output to TOC
       out = ['\n//Track %d' % self.num]
       out += ['TRACK AUDIO']
       if self.isrc:       out += ['\tISRC "%s"' % self.isrc]
@@ -191,12 +211,13 @@ class Track( object ):
       example, removing quoting and checking the field name.
 
       :param name: Field name to set
-      :type  name: string
+      :type  name: str
 
       :param value: Value of field
-      :type  value: string
+      :type  value: str
 
-      :return: True if field is written to the class data, or False
+      :return: :data:`True` if field is written to the class data, or
+               :data:`False`
       """
       name = name.lower()
       if hasattr(self,name):
@@ -235,57 +256,71 @@ class TrackIndex(object):
 
    .. data:: START
 
-      Same as :const:`INDEX`, but :class:`TrackIndex` preceding it is was the
-      pre-gap audio of the same :class:`Track`.
+      Same as :const:`INDEX`, but :class:`TrackIndex` preceding it is was
+      the pre-gap audio of the same :class:`Track`.
+
+   .. rubric::  Attributes
+
+   .. attribute:: file_
+
+      String representing a WAV file's path and name. This is used to read the
+      audio data of the :class:`TrackIndex`.
+
+   .. attribute:: len_
+
+      Empty string or :class:`_TrackTime` value that specifies the number of
+      audio frames associated with the :class:`TrackIndex`. By default, this
+      value will equal the total length of the WAV data, but might be truncated
+      if the track starts after, or ends before the WAV data.
+
+   .. attribute:: num
+
+      Integer specifying the location of the :class:`TrackIndex` in the track.
+      The first index *num* is always 0.
+
+   .. attribute:: time
+
+      :class:`_TrackTime` value that specifies the starting time index of the
+      :class:`TrackIndex` object relative to the start of the audio data.
+      Usually this value is ``0``.
    """
 
    #: Enum of valid :class:`TrackIndex` types.
-   PREAUDIO, AUDIO, INDEX, START = range(4)
+   PREAUDIO, AUDIO, INDEX, START, DATA = range(5)
 
-   #: Integer set to :const:`PREAUDIO` or :const:`AUDIO` or
-   #: :const:`INDEX` or :const:`START`. Indicate the mode of
-   #: :class:`TrackIndex` object.
-   cmd    = AUDIO
-   #: String representing a WAV file's path and name. This is used
-   #: to read the audio data of the :class:`TrackIndex`.
-   file_  = None
-   #: Empty string or :class:`_TrackTime` value that specifies the
-   #: number of audio frames associated with the :class:`TrackIndex`. By
-   #: default, this value will equal the total length of the WAV data, but
-   #: might be truncated if the track starts after, or ends before the WAV
-   #: data.
-   len_   = None
-   #: Integer specifying the location of the :class:`TrackIndex` in
-   #: the track. The first index *num* is always 0.
-   num    = None
-   #: :class:`_TrackTime` value that specifies the starting time index of
-   #: the :class:`TrackIndex` object relative to the start of the audio
-   #: data. Usually this value is ``0``.
-   time   = None
+   #: Integer set to :const:`PREAUDIO` or :const:`AUDIO` or :const:`INDEX` or
+   #: :const:`START`. Indicate the mode of :class:`TrackIndex` object.
+   cmd = AUDIO
 
-   def __init__(self, num, time, file_):
+   def __init__(self, num, time, file_, len_=None):
       """
       If possible the sample count of the :class:`TrackIndex` is calculated by
       reading the WAV audio data.
 
-      :param num:    index number position in the :class:`Track`, starting
+      :param num:    Index number position in the :class:`Track`, starting
                      at 0.
       :type num:     int
 
-      :param time:   the indexes starting offset in the audio data file.
-      :type time:    :class:`_TrackTime`
+      :param time:   The indexes starting offset in the audio data file.
+      :type  time:   :class:`_TrackTime`
 
-      :param file_:  string representing the path location of a WAV file
+      :param file_:  String representing the path location of a WAV file
                      associated with this index.
-      :type file_:   str
+      :type  file_:  str
+
+      :param len_:   Track length in format supported by :class:`_TrackTime`.
+      :type  len_:   str, tuple, int (see :class:`_TrackTime`)
       """
       self.file_  = file_
       self.num    = int(num)
       self.time   = _TrackTime(time)
-      # set length to maximum possible for now (total - start)
-      file_len = self._file_len(self.file_)
-      if file_len: self.len_ = file_len - self.time
-      else:        self.len_ = ''
+      if len_:
+         self.len_ = _TrackTime(len_)
+      else:
+         # set length to maximum possible for now (total - start)
+         file_len = self._file_len(self.file_)
+         if file_len: self.len_ = file_len - self.time
+         else:        self.len_ = ''
       log.debug( 'creating index %s' % repr(self) )
 
    def __repr__(self):
@@ -296,6 +331,8 @@ class TrackIndex(object):
       """Return the TOC formated string representation of the
       :class:`TrackIndex` object."""
       out = []
+      if self.cmd == self.DATA:
+         return ''     # do not output to TOC
       if self.cmd in [self.AUDIO, self.PREAUDIO]:
          out += ['\tAUDIOFILE "%(file_)s" %(time)s %(len_)s' % self.__dict__]
       elif self.cmd == self.INDEX:
@@ -320,7 +357,7 @@ class TrackIndex(object):
       :rtype:        :class:`_TrackTime` of audio samples or
                      :data:`None`"""
 
-      if not os.path.exists(file_):
+      if not (file_ and os.path.exists(file_)):
          return None
       w = wave.open(file_)
       frames = w.getnframes() / (w.getframerate()/75)
@@ -393,4 +430,10 @@ class _TrackTime(object):
       if mn<0: raise UnderflowError, \
          'Track time calculation resulted in a negative value'
       return _TrackTime((mn,sc,fr))
+
+   @property
+   def frames(self):
+      """Convert min,sec,frame to total frames."""
+      return sum( [x*y for x,y in
+                     zip(self._time,[self._FPM,self._FPS,1]) ])
 

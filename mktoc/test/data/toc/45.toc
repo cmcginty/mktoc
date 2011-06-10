@@ -1,4 +1,4 @@
-CD_ROM_XA
+CD_DA
 CD_TEXT { LANGUAGE_MAP { 0:EN }
     LANGUAGE 0 {
         TITLE "Graduation"
@@ -114,4 +114,4 @@ TRACK AUDIO
         TITLE "Big Brother"
         PERFORMER "Kanye West"
     }}
-    AUDIOFILE "Big Brother.wav" 00:00:00 04:47:43
+    AUDIOFILE "Big Brother.wav" 00:00:00

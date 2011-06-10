@@ -109,9 +109,11 @@ class CueParserFileTests(unittest.TestCase):
       if not os.path.exists(toc_path):
          cue_fh = open(os.path.join(self._CUE_DIR,self._cue_file))
          toc_fh = open(toc_path,'wb')
-         toc_str = CueParser( find_wav=False).parse( cue_fh).getToc()
+         toc_str = CueParser( find_wav=False,
+                              dir_=self._CUE_DIR).parse( cue_fh).getToc()
          # write the data
-         toc_fh.write('\n'.join(toc_str))
+         for l in toc_str:
+            toc_fh.write("%s\n" % l)
          cue_fh.close()
          toc_fh.close()
 
@@ -124,10 +126,12 @@ class CueParserFileTests(unittest.TestCase):
       self._create_toc_file()
       # calculate test data
       with open(os.path.join(self._CUE_DIR,self._cue_file)) as cue_fh:
-         toc = CueParser( find_wav=False).parse( cue_fh).getToc()
+         toc = CueParser( find_wav=False,
+                          dir_=self._CUE_DIR).parse( cue_fh).getToc()
+         toc = [t+'\n' for t in toc]
       # read the known good data
       with open(os.path.join(self._TOC_DIR,self._toc_file)) as toc_fh:
-         toc_good = toc_fh.read().split('\n')
+         toc_good = toc_fh.readlines()
       # compare data sets
       if toc != toc_good:
          for num,(a,b) in enumerate(map(None,toc,toc_good)):

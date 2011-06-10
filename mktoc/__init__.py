@@ -53,36 +53,61 @@
 
    Options
    =======
-   --version
-         show program's version number and exit
 
-   -h    show help message and exit
+   .. option:: --version
 
-   --help
-         show detailed usage instructions and exit
+      show program's version number and exit
 
-   -a, --allow-missing-wav
-         do not abort when WAV file(s) are missing, (experts only). It is
-         possible when using this option that a bug in cdrdao will create a CD
-         that ignores the pregap definitions in the TOC file. Only use this
-         option if the CUE file does not contain pregaps, or if you do not wish
-         to retain the pregap information.
+   .. option:: -h
 
-   -c WAV_OFFSET, --offset-correction=WAV_OFFSET
-         correct reader/writer offset by creating WAV file(s) shifted by
-         WAV_OFFSET samples (original data is not modified)
+      show help message and exit
 
-   -f CUE_FILE, --file=CUE_FILE
-         specify the input CUE file to read
+   .. option:: --help
 
-   -o TOC_FILE, --output=TOC_FILE
-         specify the output TOC file to write
+      show detailed usage instructions and exit
 
-   -t, --use-temp
-        write offset corrected WAV files to /tmp directory
+   .. option:: -a, --allow-missing-wav
 
-   -w, --wave
-        write a TOC file using list of WAV files
+      do not abort when WAV file(s) are missing, (experts only). It is possible
+      when using this option that a bug in cdrdao will create a CD that ignores
+      the pregap definitions in the TOC file.  Only use this option if the CUE
+      file does not contain pregaps, or if you do not wish to retain the pregap
+      information.
+
+   .. option:: -c <WAV_OFFSET>, --offset-correction=<WAV_OFFSET>
+
+      correct reader/writer offset by creating WAV file(s) shifted by
+      WAV_OFFSET samples (original data is not modified)
+
+   .. option:: -d, --debug
+
+      enable debugging statements
+
+   .. option:: -f <CUE_FILE>, --file=<CUE_FILE>
+
+      specify the input CUE file to read
+
+   .. option:: -m, --multi
+
+      for safety, this option must be set when creating a mulit-session TOC
+      file
+
+   .. option:: -o <TOC_FILE>, --output=<TOC_FILE>
+
+      specify the output TOC file to write
+
+   .. option:: -t, --use-temp
+
+      write offset corrected WAV files to /tmp directory
+
+   .. option:: -w, --wave
+
+      write a TOC file using list of WAV files
+
+   .. option:: -z, --no-multi
+
+      disable multi-session support; program assumes TOC will be written in
+      single-session mode
 
    Examples
    ========
