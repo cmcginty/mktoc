@@ -105,7 +105,7 @@ class WavFileCacheTests(unittest.TestCase):
       """A source name matches a substring of multiple files in the test dir
       should raise an exception."""
       wc = WavFileCache(self._WAV_DIR)
-      self.assertRaises( FileNotFoundError, wc, 'My Test File-3.wav')
+      self.assertRaises( TooManyFilesMatchError, wc, 'My Test File-3.wav')
 
    def testUnicodeFileNameMatch(self):
       """A unicode file should be matched correctly."""

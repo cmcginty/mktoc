@@ -124,7 +124,10 @@ class WavFileCache(object):
       if len(matches) == 1:   # success if ONE match is found
          log.debug("--> FOUND '%s'" % matches[0][0])
          return matches[0][0]
-      raise FileNotFoundError, file_ # zero or multiple matches is an error
+      elif len(matches) == 0:
+         raise FileNotFoundError, file_ # zero or multiple matches is an error
+      else:
+         raise TooManyFilesMatchError, (file_, [m[0] for m in matches])
 
    def _get_cache(self):
       """

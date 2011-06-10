@@ -28,6 +28,7 @@ import logging
 import os
 import re
 import sys
+import textwrap
 import traceback
 from optparse import OptionParser
 
@@ -62,8 +63,10 @@ class CommandLine(object):
       """Execution entry point."""
       try:
          self._run(argv)
-      except FileNotFoundError, e:
-         self._error_msg_file(e)
+      except TooManyFilesMatchError as e:
+         self._error_msg_multi_files(e)
+      except FileNotFoundError as e:
+         self._error_msg_no_file(e)
       except MkTocError, e:
          self._error_msg(e)
 
@@ -217,24 +220,39 @@ class CommandLine(object):
 
    def _error_msg(self, e):
       """Print a default error message to the user."""
-      print >> sys.stderr, """
-      ERROR! -- An unrecoverable error has occurred. If you believe the CUE
-      file is correct, please send the input file to <%s>,
-      along with the error message below.
+      print >> sys.stderr, textwrap.dedent("""
+      ERROR! -- An unrecoverable error has occurred.
+
+      If you believe the CUE file is correct, please send the input file to
+      <%s>, along with the error message below.
 
       ---> %s
-      """ % (__email__,e)
+      """ % (__email__,e))
 
-   def _error_msg_file(self, e):
+   def _error_msg_multi_files(self, e):
+      """Print error when duplicate WAV files are found."""
+      print >> sys.stderr, textwrap.dedent( """
+      ERROR! -- Could not resolve WAV file:
+         '%s'\n""" % (e.src_file,))
+
+      print >> sys.stderr, "   Conflicting matches are:"
+      for f in e.found_files:
+         print >> sys.stderr, '      ' + f
+
+      print >> sys.stderr, textwrap.dedent( """
+      Cdrdao can not correctly write pregaps in TOC files without explicit
+      file lengths. If you know what you are doing, you can disable this
+      check with the '%s' option.""" % (_OPT_ALLOW_WAV_FNF,))
+
+   def _error_msg_no_file(self, e):
       """Print a missing WAV file error message to the user."""
-      print >> sys.stderr, """
-      ERROR! -- Could not locate WAV file:
-      --->  '%s'
+      print >> sys.stderr, textwrap.dedent( """
+      ERROR! -- Could not find the WAV file:
+         '%s'
 
-      Cdrdao can not correctly write pregaps in TOC files without explicit file
-      lengths. If you know what you are doing, you can disable this check with
-      the '%s' option.
-      """ % (e,_OPT_ALLOW_WAV_FNF)
+      Cdrdao can not correctly write pregaps in TOC files without explicit
+      file lengths. If you know what you are doing, you can disable this
+      check with the '%s' option.""" % (e,_OPT_ALLOW_WAV_FNF,))
 
 
 def main():

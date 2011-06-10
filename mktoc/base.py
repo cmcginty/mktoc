@@ -26,8 +26,9 @@ __date__       = '$Date$'
 __version__    = '$Revision$'
 
 __all__        = ['__author__', '__copyright__', '__email__', '__license__',
-                  'VERSION', 'MkTocError' ,'FileNotFoundError', 'ParseError',
-                  'UnderflowError', 'EmptyCueData' ]
+                  'VERSION', 'MkTocError' ,'FileNotFoundError',
+                  'TooManyFilesMatchError', 'ParseError', 'UnderflowError',
+                  'EmptyCueData' ]
 
 #: Project author string.
 __author__     = 'Patrick C. McGinty'
@@ -48,6 +49,13 @@ class FileNotFoundError(MkTocError):
    """Exception class used whenever a file can not be located and is
    required by the system."""
    pass
+
+class TooManyFilesMatchError(MkTocError):
+   """Exception class used whenever multiple files are found that match the
+   source file required by the system."""
+   def __init__(self,src_file,found_files):
+      self.src_file = src_file
+      self.found_files = found_files
 
 class ParseError(MkTocError):
    """Exception class indicates that a CUE file could not be parsed do to
