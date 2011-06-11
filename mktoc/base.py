@@ -13,9 +13,6 @@
    All modules in this package import this file into its root namespace.
 """
 
-__date__       = '$Date$'
-__version__    = '$Revision$'
-
 __all__        = ['__author__', '__copyright__', '__email__', '__license__',
                   'VERSION', 'MkTocError' ,'FileNotFoundError',
                   'TooManyFilesMatchError', 'ParseError', 'UnderflowError',

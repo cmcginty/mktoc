@@ -155,10 +155,6 @@
    |  http://blog.tuxcoder.com
 """
 
-__date__       = '$Date$'
-__version__    = '$Revision$'
-
-
 import sys
 import mktoc.cmdline
 

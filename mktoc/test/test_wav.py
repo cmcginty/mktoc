@@ -8,9 +8,6 @@
    Unit testing framework for mktoc_wav module.
 """
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 import os
 import sys
 import unittest

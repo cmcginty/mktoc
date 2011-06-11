@@ -8,9 +8,6 @@
    Unit testing framework for mktoc_paraser module.
 """
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 import inspect
 import os
 import sys

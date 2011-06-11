@@ -10,9 +10,6 @@
    Distools setup file for the mktoc application.
 """
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 import os
 from distutils.core import setup
 

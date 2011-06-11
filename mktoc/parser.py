@@ -21,9 +21,6 @@
 
 from __future__ import absolute_import
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 from itertools import *
 import logging
 import operator as op

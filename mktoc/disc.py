@@ -17,9 +17,6 @@
    * :class:`TrackIndex`
 """
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 import os
 import re
 import wave

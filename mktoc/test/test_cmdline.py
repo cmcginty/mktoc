@@ -8,9 +8,6 @@
    Unit testing framework for mktoc.cmdline module.
 """
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 import unittest
 from mock import patch
 from contextlib import nested

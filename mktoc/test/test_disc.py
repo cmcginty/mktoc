@@ -8,9 +8,6 @@
    Unit testing framework for mktoc_disc module.
 """
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 import unittest
 
 from mktoc.base import *

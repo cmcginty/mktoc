@@ -14,9 +14,6 @@
    the user must wait for. The following object classes are:
 """
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 import time
 
 from mktoc.base import *

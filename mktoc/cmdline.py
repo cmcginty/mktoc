@@ -11,9 +11,6 @@
    Command-line interface for Mktoc.
 """
 
-__date__       = '$Date$'
-__version__    = '$Revision$'
-
 import codecs
 import logging
 import os

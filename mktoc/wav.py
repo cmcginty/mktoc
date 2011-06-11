@@ -16,9 +16,6 @@
    * :class:`WavOffsetWriter`
 """
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 import os
 import sys
 import re

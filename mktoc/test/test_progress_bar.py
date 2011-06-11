@@ -8,9 +8,6 @@
    Unit testing framework for mktoc_progress_bar module.
 """
 
-__date__    = '$Date$'
-__version__ = '$Revision$'
-
 import unittest
 from mktoc.base import *
 
