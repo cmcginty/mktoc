@@ -1,5 +1,5 @@
-include CHANGELOG.txt
+include CHANGELOG.rst
 include COPYING.txt
-include INSTALL.txt
-include README.txt
+include INSTALL.rst
+include README.rst
 include Makefile

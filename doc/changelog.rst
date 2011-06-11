@@ -4,5 +4,5 @@
 Change Log
 ##########
 
-.. include:: ../CHANGELOG.txt
+.. include:: ../CHANGELOG.rst
 

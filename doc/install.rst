@@ -4,4 +4,4 @@
 Install Steps
 #############
 
-.. include:: ../INSTALL.txt
+.. include:: ../INSTALL.rst

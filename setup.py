@@ -31,7 +31,7 @@ from mktoc.base import *
 def _read( *path_name ):
    return open( os.path.join(os.path.dirname(__file__), *path_name)).read()
 
-long_doc = mktoc.__doc__ + '\n' + _read('INSTALL.txt')
+long_doc = mktoc.__doc__ + '\n' + _read('INSTALL.rst')
 
 setup( name='mktoc',
        version=VERSION,

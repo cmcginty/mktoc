@@ -15,7 +15,7 @@ help:
 	@echo "  test           to run all unit-tests"
 	@echo "  install        to install the applicataion"
 	@echo "  clean          to remove tmp files"
-	@echo "  readme         to generate the README.txt file"
+	@echo "  readme         to generate the README.rst file"
 	@echo "  doc            to genearte Sphinx html documents"
 	@echo "  doc-svnprop    to set correct svn prop mime type on docs"
 	@echo "  dist           to generate a complete source archive"
@@ -36,7 +36,9 @@ clean:
 
 .PHONY: readme
 readme:
-	python -c "import mktoc; print mktoc.__doc__" > README.txt
+	python -c "import mktoc; \
+              from textwrap import dedent; \
+              print dedent(mktoc.__doc__)" > README.rst
 
 .PHONY: doc
 doc: readme
