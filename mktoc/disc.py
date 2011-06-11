@@ -46,9 +46,9 @@ class Disc( object ):
    """
    Stores audio disc metadata values such as album title, performer, genre.
    """
-   #: disc mode string for single session
+   #: Disc mode string for single session
    MODE_SINGLE_SESSION  = 'CD_DA'
-   #: disc mode string for multi sessions
+   #: Disc mode string for multi sessions
    MODE_MULTI_SESSION   = 'CD_ROM_XA'
    #: String representing the Catalog Id of a disc.
    catalog   = None

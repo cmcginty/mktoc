@@ -41,9 +41,10 @@ setup( name='mktoc',
        long_description=long_doc,
        author=__author__,
        author_email=__email__,
-       url='http://mktoc.googlecode.com',
+       url='https://github.com/cmcginty/mktoc',
        download_url=(
-          'http://mktoc.googlecode.com/files/mktoc-%s.tar.gz' % (VERSION,)),
+          'https://github.com/cmcginty/mktoc/blob/master/dist/mktoc-%s.tar.gz'
+            % (VERSION,)),
        packages=['mktoc'],
        scripts=['bin/mktoc'],
        classifiers=[

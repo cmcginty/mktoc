@@ -17,8 +17,7 @@
    mktoc.wav
    ~~~~~~~~~
 
-   Module for mktoc that can holds utility functions for search and modifying
-   WAV audio files.
+   Utility classes for search and modifying WAV audio files.
 
    The following are a list of the classes provided in this module:
 

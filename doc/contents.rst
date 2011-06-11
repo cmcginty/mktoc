@@ -1,10 +1,11 @@
 .. _contents:
 
-Contents
-========
+Table of Contents
+=================
 
 .. toctree::
    :numbered:
+   :maxdepth: 1
 
    overview
    install

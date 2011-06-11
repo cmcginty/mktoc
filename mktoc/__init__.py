@@ -160,7 +160,7 @@
 
    Info
    ----
-   |  http://mktoc.googlecode.com
+   |  https://github.com/cmcginty/mktoc
    |  http://blog.tuxcoder.com
 """
 
