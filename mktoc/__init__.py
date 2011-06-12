@@ -5,7 +5,7 @@
 #
 #  See LICENSE text for more details.
 """
-   .. Mktoc // (c) 2008, Patrick C. McGinty
+   .. Mktoc // (c) 2011, Patrick C. McGinty
    .. mktoc[@]tuxcoder[dot]com
 
    Mktoc simplifies the steps needed to create audio CD TOC files for the
@@ -16,7 +16,7 @@
    Features
    ========
 
-   * Create a TOC file from a list of WAV files
+   * Create a TOC file from a list of WAV files.
    * Convert an ExactAudioCopy (EAC) CUE file to the TOC format that
      is usable by cdrdao.
    * Multi-session aware CUE parsing, necessary for making CDDB and

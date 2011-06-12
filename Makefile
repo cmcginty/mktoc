@@ -1,4 +1,4 @@
-# mktoc // (c) 2008 Patrick C. McGinty
+# mktoc // (c) 2011 Patrick C. McGinty
 # mktoc[@]tuxcoder[dot]com
 #
 
