@@ -1,18 +1,9 @@
-#  Copyright 2008, Patrick C. McGinty
-
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
-
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-
-#  You should have received a copy of the GNU General Public License
-#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+#  Copyright (c) 2011, Patrick C. McGinty
+#
+#  This program is free software: you can redistribute it and/or modify it
+#  under the terms of the Simplified BSD License.
+#
+#  See LICENSE text for more details.
 """
    mktoc.disc
    ~~~~~~~~~~
@@ -25,9 +16,6 @@
    * :class:`Track`
    * :class:`TrackIndex`
 """
-
-__date__    = '$Date$'
-__version__ = '$Revision$'
 
 import os
 import re
@@ -46,9 +34,9 @@ class Disc( object ):
    """
    Stores audio disc metadata values such as album title, performer, genre.
    """
-   #: disc mode string for single session
+   #: Disc mode string for single session
    MODE_SINGLE_SESSION  = 'CD_DA'
-   #: disc mode string for multi sessions
+   #: Disc mode string for multi sessions
    MODE_MULTI_SESSION   = 'CD_ROM_XA'
    #: String representing the Catalog Id of a disc.
    catalog   = None

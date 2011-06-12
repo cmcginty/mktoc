@@ -1,5 +1,16 @@
-.. mktoc // (c) 2008, Patrick C. McGinty
+.. mktoc // (c) 2011, Patrick C. McGinty
    mktoc[@]tuxcoder[dot]com
+
+v1.2
+==========
+:Release Date: 6/11/2011
+
+* Improve error handling of malformed CUE files.
+* Add support for UTF-8 CUE files.
+* Ignore unknown REM commands in CUE, instead of failing.
+* Improve quality of error message for failed WAV file searches.
+* New support for multi-session CUE parsing. Disc copies can now be corrected
+  to allow true CDDB and AccurateRip disc matching.
 
 v1.1.3
 ==========

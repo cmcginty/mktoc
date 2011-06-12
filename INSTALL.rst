@@ -1,5 +1,4 @@
-1. Any one of the following command will install Mktoc. Make sure to run as
-   ``root`` user:
+1. Any one of the following command will install Mktoc.
 
    a. Use :command:`pip` from the `pip package
       <http://pypi.python.org/pypi/pip>`_::
@@ -13,4 +12,4 @@
          cd mktoc-*
          python setup.py install --user
 
-2. View online docs or :file:`README.txt` for usage instructions.
+2. View online docs or :file:`README` for usage instructions.

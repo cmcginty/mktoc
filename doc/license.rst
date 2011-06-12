@@ -4,4 +4,4 @@
 License
 #######
 
-.. literalinclude:: ../COPYING.txt
+.. literalinclude:: ../LICENSE

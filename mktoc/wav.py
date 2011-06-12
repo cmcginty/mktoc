@@ -1,33 +1,20 @@
-#  Copyright 2008, Patrick C. McGinty
-
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
-
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-
-#  You should have received a copy of the GNU General Public License
-#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+#  Copyright (c) 2011, Patrick C. McGinty
+#
+#  This program is free software: you can redistribute it and/or modify it
+#  under the terms of the Simplified BSD License.
+#
+#  See LICENSE text for more details.
 """
    mktoc.wav
    ~~~~~~~~~
 
-   Module for mktoc that can holds utility functions for search and modifying
-   WAV audio files.
+   Utility classes for search and modifying WAV audio files.
 
    The following are a list of the classes provided in this module:
 
    * :class:`WavFileCache`
    * :class:`WavOffsetWriter`
 """
-
-__date__    = '$Date$'
-__version__ = '$Revision$'
 
 import os
 import sys
