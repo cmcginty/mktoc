@@ -12,4 +12,4 @@
          cd mktoc-*
          python setup.py install --user
 
-2. View online docs or :file:`README.rst` for usage instructions.
+2. View online docs or :file:`README` for usage instructions.

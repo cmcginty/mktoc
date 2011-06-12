@@ -15,7 +15,7 @@ help:
 	@echo "  test           to run all unit-tests"
 	@echo "  install        to install the applicataion"
 	@echo "  clean          to remove tmp files"
-	@echo "  readme         to generate the README.rst file"
+	@echo "  readme         to generate the README file"
 	@echo "  doc            to genearte Sphinx html documents"
 	@echo "  doc-svnprop    to set correct svn prop mime type on docs"
 	@echo "  dist           to generate a complete source archive"
@@ -38,7 +38,7 @@ clean:
 readme:
 	python -c "import mktoc; \
               from textwrap import dedent; \
-              print dedent(mktoc.__doc__)" > README.rst
+              print dedent(mktoc.__doc__)" > README
 
 .PHONY: doc
 doc: readme
@@ -57,7 +57,7 @@ doc-svnprop:
 
 .PHONY: dist
 dist:
-	python setup.py sdist --force-manifest
+	python setup.py sdist
 	make clean
 
 .PHONY: dist-test
@@ -71,5 +71,5 @@ release: test readme dist dist-test
 
 .PHONY: register
 register:
-	python setup.py register
+	python setup.py register --strict
 

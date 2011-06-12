@@ -15,6 +15,7 @@
 
    Features
    ========
+
    * Create a TOC file from a list of WAV files
    * Convert an ExactAudioCopy (EAC) CUE file to the TOC format that
      is usable by cdrdao.
@@ -45,19 +46,19 @@
    Options
    =======
 
-   .. option:: --version
+   --version
 
       show program's version number and exit
 
-   .. option:: -h
+   -h
 
       show help message and exit
 
-   .. option:: --help
+   --help
 
       show detailed usage instructions and exit
 
-   .. option:: -a, --allow-missing-wav
+   -a, --allow-missing-wav
 
       do not abort when WAV file(s) are missing, (experts only). It is possible
       when using this option that a bug in cdrdao will create a CD that ignores
@@ -65,48 +66,49 @@
       file does not contain pregaps, or if you do not wish to retain the pregap
       information.
 
-   .. option:: -c <WAV_OFFSET>, --offset-correction=<WAV_OFFSET>
+   -c <WAV_OFFSET>, --offset-correction=<WAV_OFFSET>
 
       correct reader/writer offset by creating WAV file(s) shifted by
       WAV_OFFSET samples (original data is not modified)
 
-   .. option:: -d, --debug
+   -d, --debug
 
       enable debugging statements
 
-   .. option:: -f <CUE_FILE>, --file=<CUE_FILE>
+   -f <CUE_FILE>, --file=<CUE_FILE>
 
       specify the input CUE file to read
 
-   .. option:: -m, --multi
+   -m, --multi
 
       for safety, this option must be set when creating a mulit-session TOC
       file
 
-   .. option:: -o <TOC_FILE>, --output=<TOC_FILE>
+   -o <TOC_FILE>, --output=<TOC_FILE>
 
       specify the output TOC file to write
 
-   .. option:: -t, --use-temp
+   -t, --use-temp
 
       write offset corrected WAV files to /tmp directory
 
-   .. option:: -w, --wave
+   -w, --wave
 
       write a TOC file using list of WAV files
 
-   .. option:: -z, --no-multi
+   -z, --no-multi
 
       disable multi-session support; program assumes TOC will be written in
       single-session mode
 
    Examples
    ========
+
    1. Create a TOC file from a set of WAV files::
 
          mktoc -w *.wav
 
-   2. Write a TOC file to :file:`toc_file.toc`, from a set of WAV files::
+   2. Write a TOC file to ``toc_file.toc``, from a set of WAV files::
 
          mktoc -w *.wav toc_file.toc
          mktoc -w *.wav > toc_file.toc
@@ -118,7 +120,7 @@
          mktoc < cue_file.cue
          mktoc -f cue_file.cue
 
-   4. Write a TOC file to :file:`toc_file.toc`, given an input CUE file::
+   4. Write a TOC file to ``toc_file.toc``, given an input CUE file::
 
          mktoc cue_file.cue toc_file.toc
          mktoc < cue_file.cue > toc_file.toc
@@ -138,7 +140,7 @@
          mktoc -c 30 < cue_file.cue
 
    7. Adjust WAV files for a CD writer offset value, but create new files in
-      the :file:`/tmp directory`::
+      the ``/tmp`` directory::
 
          mktoc -c 30 -t < cue_file.cue
 
@@ -147,10 +149,13 @@
 
    E-mail
    ------
+
    |  mktoc[@]tuxcoder[dot]com
 
    Info
    ----
+
+   |  http://packages.python.org/mktoc/
    |  https://github.com/cmcginty/mktoc
    |  http://blog.tuxcoder.com
 """
