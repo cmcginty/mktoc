@@ -37,9 +37,9 @@ clean:
 
 .PHONY: readme
 readme:
-	python -c "import mktoc; \
+	python -c "import ${NAME}; \
               from textwrap import dedent; \
-              print dedent(mktoc.__doc__)" > README
+              print dedent(${NAME}.__doc__)" > README
 
 .PHONY: doc
 doc: readme
