@@ -19,6 +19,8 @@
    * Create a TOC file from a list of WAV files
    * Convert an ExactAudioCopy (EAC) CUE file to the TOC format that
      is usable by cdrdao.
+   * Multi-session aware CUE parsing, necessary for making CDDB and
+     AccurateRip matchable discs.
    * Non-compliant CUE sheet support.
    * Support for various pregap methods.
    * Can create offset corrected WAV files for true 'bit-for-bit'
