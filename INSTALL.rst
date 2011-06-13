@@ -1,7 +1,6 @@
 1. Any one of the following command will install Mktoc.
 
-   a. Use :command:`pip` from the `pip package
-      <http://pypi.python.org/pypi/pip>`_::
+   a. Use ``pip`` from the `pip package <http://pypi.python.org/pypi/pip>`_::
 
          pip install mktoc --upgrade --user
 
