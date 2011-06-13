@@ -17,17 +17,12 @@ from textwrap import dedent
 import mktoc
 from mktoc.base import *
 
-def _read( *path_name ):
-   return open( os.path.join(os.path.dirname(__file__), *path_name)).read()
-
-long_doc = dedent(mktoc.__doc__)
-
 setup(
    name='mktoc',
    version=VERSION,
    description= 'Simple command line tool generates TOC files '
                 'for audio CD burning with cdrdao.',
-   long_description=long_doc,
+   long_description=dedent(mktoc.__doc__),
    author=__author__,
    author_email=__email__,
    url='http://packages.python.org/mktoc/',
@@ -38,7 +33,8 @@ setup(
    entry_points = {
       'console_scripts': ['mktoc = mktoc.cmdline:main',],
    },
-   keywords = "cdrdao cue toc cd-writing audio-cd",
+   keywords = 'cdrdao cue toc cd-writing audio-cd mktoc mkcue cue2toc '
+              'eac exactaudiocopy pregap',
    classifiers=[
       'Development Status :: 5 - Production/Stable',
       'Environment :: Console',
