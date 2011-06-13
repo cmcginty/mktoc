@@ -10,7 +10,7 @@ create TOC files using a previously generated CUE sheet.
 Features
 ========
 
-* Create a TOC file from a list of WAV files
+* Create a TOC file from a list of WAV files.
 * Convert an ExactAudioCopy (EAC) CUE file to the TOC format that
   is usable by cdrdao.
 * Multi-session aware CUE parsing, necessary for making CDDB and
