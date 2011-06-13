@@ -32,7 +32,7 @@ setup(
    author_email=__email__,
    url='http://packages.python.org/mktoc/',
    download_url=(
-      'https://github.com/cmcginty/mktoc/blob/master/dist/mktoc-%s.tar.gz'
+      'https://github.com/cmcginty/mktoc/raw/master/dist/mktoc-%s.tar.gz'
       % (VERSION,)),
    packages=['mktoc'],
    entry_points = {
