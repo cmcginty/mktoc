@@ -1,6 +1,16 @@
 {% extends "layout.html" %}
 {% set title = 'Home' %}
+
 {% block body %}
+
+   <div style="display:block;float:right;">
+   <a class="FlattrButton" style="display:none;"
+       title="{{project}}"
+       data-flattr-uid="cmcginty"
+       data-flattr-category="software"
+       href="http://packages.python.org/{{project|lower}}/">
+   </a>
+   </div>
 
    <h1>{{ docstitle }}</h1>
    <p>This is the official documentation for {{project}} {{release}}.</p>
