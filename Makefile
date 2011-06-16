@@ -49,7 +49,7 @@ doc: readme
 
 .PHONY: doc-clean
 doc-clean:
-	make -C doc clean html
+	make -C doc clean
 
 .PHONY: dist
 dist: doc
