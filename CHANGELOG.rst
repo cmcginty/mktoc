@@ -1,6 +1,12 @@
 .. mktoc // (c) 2011, Patrick C. McGinty
    mktoc[@]tuxcoder[dot]com
 
+v1.2.1
+==========
+:Release Date: 6/23/2011
+
+* Prevent assertion error on standard CUE files.
+
 v1.2
 ==========
 :Release Date: 6/11/2011
