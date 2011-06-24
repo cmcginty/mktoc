@@ -103,22 +103,24 @@ class CommandLine(object):
       for l in toc:
          fh_out.write("%s\n" % l)
       fh_out.close()
-      # print multi-session instructions; data session size is calulated by
-      # frame length minus 2 frames. I'm not actually sure why 2 frames must be
-      # subtracked, but it was verify to be correct. If your system/drive
-      # behaves differntly, please file a bug report.
-      print >> sys.stderr, textwrap.dedent("""
-      #########################################################
-      # Multi-Session TOC Mode
-      #########################################################
 
-      1. Burn TOC file w/ cdrdao '--multi' option
-      2. Finalize disc with dummy data session command:
+      if cd_obj.disc.is_multisession:
+         # print multi-session instructions; data session size is calulated by
+         # frame length minus 2 frames. I'm not actually sure why 2 frames must
+         # be subtracked, but it was verify to be correct. If your system/drive
+         # behaves differntly, please file a bug report.
+         print >> sys.stderr, textwrap.dedent("""
+         #########################################################
+         # Multi-Session TOC Mode
+         #########################################################
 
-         cdrecord --tsize=%ds /dev/zero
+         1. Burn TOC file w/ cdrdao '--multi' option
+         2. Finalize disc with dummy data session command:
 
-      #########################################################
-      """ % (cd_obj.last_index.len_.frames-2))    # see note for '-2'
+            cdrecord --tsize=%ds /dev/zero
+
+         #########################################################
+         """ % (cd_obj.last_index.len_.frames-2))    # see note for '-2'
 
    def _open_file(self,name,mode='rb'):
       """Wrapper for opening files. Ensures correct encoding is selected."""
