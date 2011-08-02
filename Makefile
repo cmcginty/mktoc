@@ -3,7 +3,7 @@
 #
 
 NAME=mktoc
-VER=1.2.1
+VER=1.2.2
 DIST_DIR=dist
 TAR=${DIST_DIR}/${NAME}-${VER}.tar.gz
 HTML_ZIP=${DIST_DIR}/${NAME}-html-${VER}.zip
