@@ -23,11 +23,11 @@ class TestCmdLine( unittest.TestCase):
       self.cl = CommandLine()
 
    def testFileOpenUtf8(self):
-      fh = self.cl._open_file( self._FILE_NAME,'wb')
+      fh = self.cl._open_file( self._FILE_NAME,'wb','utf-8')
       fh.write( u'\xf1' )
       fh.close()
 
-      fh = self.cl._open_file( self._FILE_NAME )
+      fh = self.cl._open_file( self._FILE_NAME, encoding='utf-8')
       line = fh.read()
       fh.close()
       self.assertTrue( line == u'\xf1' )

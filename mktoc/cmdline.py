@@ -12,6 +12,7 @@
 """
 
 import codecs
+import chardet.universaldetector
 import logging
 import os
 import re
@@ -122,10 +123,18 @@ class CommandLine(object):
          #########################################################
          """ % (cd_obj.last_index.len_.frames-2))    # see note for '-2'
 
-   def _open_file(self,name,mode='rb'):
+   def _open_file(self,name,mode='rb',encoding=None):
       """Wrapper for opening files. Ensures correct encoding is selected."""
       try:
-         return codecs.open(name, mode, encoding='utf-8')
+         if encoding is None:
+            # detect file character encoding
+            with open(name,mode) as fh:
+               d = chardet.universaldetector.UniversalDetector()
+               for line in fh.readlines():
+                  d.feed(line)
+               d.close()
+               encoding = d.result['encoding']
+         return codecs.open(name, mode, encoding=encoding)
       except:
          print >> sys.stderr, sys.exc_value
          exit(-1)
