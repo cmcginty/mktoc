@@ -414,13 +414,21 @@ class _CueStateMachine(fsm.StateMachine):
       :type  trk_idx: int
       """
       import codecs
+      import chardet.universaldetector
       size = None
       files = os.listdir(self.dir_)
       logs = [f for f in files if os.path.splitext(f)[1] == '.log']
       logs.sort()
       for f in logs:
+         # detect file character encoding
+         with open(os.path.join(self.dir_,f),'rb') as fh:
+            d = chardet.universaldetector.UniversalDetector()
+            for line in fh.readlines():
+               d.feed(line)
+            d.close()
+            encoding = d.result['encoding']
          with codecs.open( os.path.join(self.dir_,f),
-                           'rb', encoding='utf-8') as fh:
+                           'rb', encoding=encoding) as fh:
             lines = fh.readlines()
          regex = re.compile(r'^\s+%d\s+\|.+\|\s+(.+)\s+\|.+\|.+$' % (trk_idx,))
          matches = filter(None,map(regex.match,lines))
