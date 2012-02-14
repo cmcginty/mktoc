@@ -56,15 +56,18 @@ class Disc( object ):
       self.is_multisession = False
 
    def __str__(self):
+      raise NotImplementedError
+
+   def __unicode__(self):
       """Return a string of TOC formatted disc information."""
-      out = ['%s' % self._mode]
-      if self.catalog:   out += ['CATALOG "%s"' % self.catalog]
-      out += ['CD_TEXT { LANGUAGE_MAP { 0:EN }\n\tLANGUAGE 0 {']
-      if self.title:     out += ['\t\tTITLE "%s"' % self.title]
-      if self.performer: out += ['\t\tPERFORMER "%s"' % self.performer]
-      if self.discid:    out += ['\t\tDISC_ID "%s"' % self.discid]
-      out += ['}}']
-      return '\n'.join(out)
+      out = [u'%s' % self._mode]
+      if self.catalog:   out += [u'CATALOG "%s"' % self.catalog]
+      out += [u'CD_TEXT { LANGUAGE_MAP { 0:EN }\n\tLANGUAGE 0 {']
+      if self.title:     out += [u'\t\tTITLE "%s"' % self.title]
+      if self.performer: out += [u'\t\tPERFORMER "%s"' % self.performer]
+      if self.discid:    out += [u'\t\tDISC_ID "%s"' % self.discid]
+      out += [u'}}']
+      return u'\n'.join(out)
 
    def set_field(self, name, value):
       """
@@ -169,27 +172,30 @@ class Track( object ):
       self.is_data   = is_data
 
    def __str__(self):
+      raise NotImplementedError
+
+   def __unicode__(self):
       """Return the TOC formated representation of the :class:`Track`
       object including the :class:`TrackIndex` objects. Data tracks will
       not generate any output."""
       if self.is_data:
          return ''     # do not output to TOC
-      out = ['\n//Track %d' % self.num]
-      out += ['TRACK AUDIO']
-      if self.isrc:       out += ['\tISRC "%s"' % self.isrc]
-      if self.dcp:        out += ['\tCOPY']
-      if self.four_ch:    out += ['\tFOUR_CHANNEL_AUDIO']
-      if self.pre:        out += ['\tPRE_EMPHASIS']
-      out += ['\tCD_TEXT { LANGUAGE 0 {']
-      if self.title:      out += ['\t\tTITLE "%s"' % self.title]
-      if self.performer:  out += ['\t\tPERFORMER "%s"' % self.performer]
-      out += ['\t}}']
-      if self.pregap:     out += ['\tPREGAP %s' % self.pregap]
+      out = [u'\n//Track %d' % self.num]
+      out += [u'TRACK AUDIO']
+      if self.isrc:       out += [u'\tISRC "%s"' % self.isrc]
+      if self.dcp:        out += [u'\tCOPY']
+      if self.four_ch:    out += [u'\tFOUR_CHANNEL_AUDIO']
+      if self.pre:        out += [u'\tPRE_EMPHASIS']
+      out += [u'\tCD_TEXT { LANGUAGE 0 {']
+      if self.title:      out += [u'\t\tTITLE "%s"' % self.title]
+      if self.performer:  out += [u'\t\tPERFORMER "%s"' % self.performer]
+      out += [u'\t}}']
+      if self.pregap:     out += [u'\tPREGAP %s' % self.pregap]
 
       for idx in self.indexes:
-         out.append( str(idx) )
+         out.append( unicode(idx) )
 
-      return '\n'.join(out)
+      return u'\n'.join(out)
 
    def set_field(self, name, value):
       """
@@ -316,22 +322,25 @@ class TrackIndex(object):
       return "'%s, %s'" % (self.file_, self.time)
 
    def __str__(self):
+      raise NotImplementedError
+
+   def __unicode__(self):
       """Return the TOC formated string representation of the
       :class:`TrackIndex` object."""
       out = []
       if self.cmd == self.DATA:
-         return ''     # do not output to TOC
+         return u''     # do not output to TOC
       if self.cmd in [self.AUDIO, self.PREAUDIO]:
-         out += ['\tAUDIOFILE "%(file_)s" %(time)s %(len_)s' % self.__dict__]
+         out += [u'\tAUDIOFILE "%(file_)s" %(time)s %(len_)s' % self.__dict__]
       elif self.cmd == self.INDEX:
-         out += ['\tINDEX %(time)s' % self.__dict__]
+         out += [u'\tINDEX %(time)s' % self.__dict__]
       elif self.cmd == self.START:
-         out += ['\tSTART %(len_)s' % self.__dict__]
+         out += [u'\tSTART %(len_)s' % self.__dict__]
       else: raise Exception
       # add start command for pregap audio
       if self.cmd == self.PREAUDIO:
-         out += ['\tSTART']
-      return '\n'.join(out)
+         out += [u'\tSTART']
+      return u'\n'.join(out)
 
    def _file_len(self,file_):
       """Returns the number of audio samples in the WAV file, *file_*.

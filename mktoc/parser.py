@@ -77,9 +77,9 @@ class ParseData(object):
       Access method to return a text stream of the CUE data in TOC format.
       """
       toc = []
-      toc.extend( str(self.disc).split('\n') )
+      toc.extend( unicode(self.disc).split(u'\n') )
       for trk in self._tracks:
-         toc.extend( str(trk).split('\n') )
+         toc.extend( unicode(trk).split(u'\n') )
       # expand tabs to 4 spaces, strip trailing white space on each line
       toc = [line.expandtabs(4).rstrip() for line in toc]
       return toc
