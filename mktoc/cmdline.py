@@ -98,11 +98,15 @@ class CommandLine(object):
       # open TOC file
       if opt.toc_file:
          fh_out = self._open_file( opt.toc_file,'wb')
+         fh_out.write( self._banner_msg())
+         for l in toc:
+            fh_out.write("%s\n" % l)
       else:
          fh_out = sys.stdout
-      fh_out.write( self._banner_msg())
-      for l in toc:
-         fh_out.write("%s\n" % l)
+         fh_out.write( self._banner_msg())
+         for l in toc:
+            # assume utf-8 encoding to sysout
+            fh_out.write(unicode("%s\n" % l).encode('utf-8'))
       fh_out.close()
 
       if cd_obj.disc.is_multisession:
