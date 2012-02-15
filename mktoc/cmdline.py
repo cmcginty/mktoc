@@ -279,24 +279,24 @@ class CommandLine(object):
 
    def _error_msg(self, e):
       """Print a default error message to the user."""
-      print >> sys.stderr, textwrap.dedent("""
+      print >> sys.stderr, textwrap.dedent((u"""
       ERROR! -- An unrecoverable error has occurred.
 
       If you believe the CUE file is correct, please send the input file to
       <%s>, along with the error message below.
 
       ---> %s
-      """ % (__email__,e))
+      """ % (__email__,e)).encode('utf-8'))
 
    def _error_msg_multi_files(self, e):
       """Print error when duplicate WAV files are found."""
-      print >> sys.stderr, textwrap.dedent( """
+      print >> sys.stderr, textwrap.dedent( (u"""
       ERROR! -- Could not resolve WAV file:
-         '%s'\n""" % (e.src_file,))
+         '%s'\n""" % (e.src_file,)).encode('utf-8'))
 
       print >> sys.stderr, "   Conflicting matches are:"
       for f in e.found_files:
-         print >> sys.stderr, '      ' + f
+         print >> sys.stderr, '      ' + unicode(f).encode('utf-8')
 
       print >> sys.stderr, textwrap.dedent( """
       Cdrdao can not correctly write pregaps in TOC files without explicit
@@ -305,13 +305,13 @@ class CommandLine(object):
 
    def _error_msg_no_file(self, e):
       """Print a missing WAV file error message to the user."""
-      print >> sys.stderr, textwrap.dedent( """
+      print >> sys.stderr, textwrap.dedent( (u"""
       ERROR! -- Could not find the WAV file:
          '%s'
 
       Cdrdao can not correctly write pregaps in TOC files without explicit
       file lengths. If you know what you are doing, you can disable this
-      check with the '%s' option.""" % (e,_OPT_ALLOW_WAV_FNF,))
+      check with the '%s' option.""" % (e,_OPT_ALLOW_WAV_FNF,)).encode('utf-8'))
 
 
 def main():
