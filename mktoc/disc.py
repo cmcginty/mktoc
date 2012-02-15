@@ -319,7 +319,7 @@ class TrackIndex(object):
 
    def __repr__(self):
       """Return a string used for debug logging."""
-      return "'%s, %s'" % (self.file_, self.time)
+      return ("'%s, %s'" % (self.file_, self.time)).encode('utf-8')
 
    def __str__(self):
       raise NotImplementedError
