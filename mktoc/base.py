@@ -27,7 +27,7 @@ __email__      = 'mktoc[@]tuxcoder[dot]com'
 #: Project license string.
 __license__    = 'BSD'
 #: Project version number string.
-VERSION        = '1.2.2'
+VERSION        = '1.3'
 
 class MkTocError(Exception):
    """A base exception class for all mktoc exceptions classes."""

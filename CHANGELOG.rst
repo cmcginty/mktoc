@@ -1,6 +1,13 @@
 .. mktoc // (c) 2011, Patrick C. McGinty
    mktoc[@]tuxcoder[dot]com
 
+v1.3
+==========
+:Release Date: 2/14/2012
+
+* Add unicode support to disc and track classes
+* Add utf-8 encoding support for writing stdout
+
 v1.2.2
 ==========
 :Release Date: 8/1/2011

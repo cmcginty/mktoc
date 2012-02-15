@@ -3,7 +3,7 @@
 #
 
 NAME=mktoc
-VER=1.2.2
+VER=$(shell python setup.py --version)
 DIST_DIR=dist
 TAR=${DIST_DIR}/${NAME}-${VER}.tar.gz
 HTML_ZIP=${DIST_DIR}/${NAME}-html-${VER}.zip
