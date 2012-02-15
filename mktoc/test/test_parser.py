@@ -16,6 +16,9 @@ import unittest
 from mktoc.base import *
 from mktoc.parser import *
 from mktoc.disc import *
+from mktoc.cmdline import CommandLine
+
+uopen = CommandLine._open_file
 
 
 class CueParserFileTests(unittest.TestCase):
@@ -89,14 +92,15 @@ class CueParserFileTests(unittest.TestCase):
    def testCueFile48(self): self._check_file('48.cue')
    def testCueFile49(self): self._check_file('49.cue')
    def testCueFile50(self): self._check_file('50.cue')
+   def testCueFile51(self): self._check_file('51.cue')
 
    def _create_toc_file(self):
       """Use the CueParser class to create a new TOC file from the currently
       selected CUE file."""
       toc_path = os.path.join(self._TOC_DIR,self._toc_file)
       if not os.path.exists(toc_path):
-         cue_fh = open(os.path.join(self._CUE_DIR,self._cue_file))
-         toc_fh = open(toc_path,'wb')
+         cue_fh = uopen(os.path.join(self._CUE_DIR,self._cue_file))
+         toc_fh = uopen(toc_path,'wb')
          toc_str = CueParser( find_wav=False,
                               dir_=self._CUE_DIR).parse( cue_fh).getToc()
          # write the data
@@ -113,12 +117,12 @@ class CueParserFileTests(unittest.TestCase):
       self._toc_file = fname.rstrip('cue')+'toc'
       self._create_toc_file()
       # calculate test data
-      with open(os.path.join(self._CUE_DIR,self._cue_file)) as cue_fh:
+      with uopen(os.path.join(self._CUE_DIR,self._cue_file)) as cue_fh:
          toc = CueParser( find_wav=False,
                           dir_=self._CUE_DIR).parse( cue_fh).getToc()
          toc = [t+'\n' for t in toc]
       # read the known good data
-      with open(os.path.join(self._TOC_DIR,self._toc_file)) as toc_fh:
+      with uopen(os.path.join(self._TOC_DIR,self._toc_file)) as toc_fh:
          toc_good = toc_fh.readlines()
       # compare data sets
       if toc != toc_good:

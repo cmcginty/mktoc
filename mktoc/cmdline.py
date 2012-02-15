@@ -127,7 +127,8 @@ class CommandLine(object):
          #########################################################
          """ % (cd_obj.last_index.len_.frames-2))    # see note for '-2'
 
-   def _open_file(self,name,mode='rb',encoding=None):
+   @staticmethod
+   def _open_file(name,mode='rb',encoding=None):
       """Wrapper for opening files. Ensures correct encoding is selected."""
       try:
          if encoding is None:
