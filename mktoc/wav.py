@@ -104,17 +104,17 @@ class WavFileCache(object):
       fn_pats.append( fn_pat )
       file_regex = re.compile( '|'.join(set(fn_pats)), re.IGNORECASE)
       # search all WAV files using pattern 'file_regex'
-      matchi = itr.imap( file_regex.search, self._get_cache() )
+      matchi = map( file_regex.search, self._get_cache() )
       # create tuple with input file and search results
-      matches = itr.izip( self._get_cache(), matchi )
-      matches = filter( op.itemgetter(1), matches )
+      matches = zip( self._get_cache(), matchi )
+      matches = list(filter( op.itemgetter(1), matches ))
       if len(matches) == 1:   # success if ONE match is found
          log.debug("--> FOUND '%s'" % matches[0][0])
          return matches[0][0]
       elif len(matches) == 0:
-         raise FileNotFoundError, file_ # zero or multiple matches is an error
+         raise FileNotFoundError(file_) # zero or multiple matches is an error
       else:
-         raise TooManyFilesMatchError, (file_, [m[0] for m in matches])
+         raise TooManyFilesMatchError(file_, [m[0] for m in matches])
 
    def _get_cache(self):
       """
@@ -136,13 +136,13 @@ class WavFileCache(object):
       for root, dirs, files in os.walk(self._src_dir):
          if fc > 1000: break     # only cache first n files
          fc += len(files)
-         f_tup = zip( [root]*len(files), files )
+         f_tup = list(zip( [root]*len(files), files ))
          wav_files = [os.path.join(r,f) for r,f in f_tup \
                            if self._WAV_REGEX.search(f)]
          self._data.extend( wav_files )
       self._is_init = True
       log.debug('-> Found %d files:' % len(self._data) )
-      map( lambda f: log.debug('--> %s' % f), self._data )
+      list(map( lambda f: log.debug('--> %s' % f), self._data ))
 
 
 ##############################################################################
@@ -216,7 +216,7 @@ class WavOffsetWriter(object):
       # set the dir name generation function, and create out_file list
       if not use_tmp_dir: outdir = self._get_new_name
       else              : outdir = self._get_tmp_name
-      out_files = map( outdir, files )
+      out_files = list(map( outdir, files ))
 
       # positive offset correction, insert silence in first track,
       # all other tracks insert end data of previous track
@@ -231,7 +231,7 @@ class WavOffsetWriter(object):
          # create a list of 'next' file names
          f2_list = files[1:] + [None]
 
-      map( offsetter_fnct, out_files, files, f2_list )
+      list(map( offsetter_fnct, out_files, files, f2_list ))
       # return a list of the new files names
       return out_files
 
@@ -296,7 +296,7 @@ class WavOffsetWriter(object):
 
       Parameter:
          files : List of WAV files to read."""
-      return sum(itr.imap( lambda f: wave.open(f).getnframes(), files))
+      return sum(map( lambda f: wave.open(f).getnframes(), files))
 
    def _get_tmp_name(self, f):
       """Generates a new name a location to write

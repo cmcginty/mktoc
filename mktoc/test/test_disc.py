@@ -35,7 +35,7 @@ class TrackTimeTests(unittest.TestCase):
       """Time object must not be equal to each other."""
       a = _TrackTime('01:20:03')
       b = _TrackTime('01:02:03')
-      self.failIfEqual( a, b )
+      self.assertNotEqual( a, b )
 
    def testSubtractionOfSelf(self):
       """Time object must subtract correctly."""

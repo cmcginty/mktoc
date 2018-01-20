@@ -61,7 +61,7 @@ class CommandLine(object):
          self._error_msg_multi_files(e)
       except FileNotFoundError as e:
          self._error_msg_no_file(e)
-      except MkTocError, e:
+      except MkTocError as e:
          self._error_msg(e)
 
    def _run(self,argv):
@@ -97,7 +97,7 @@ class CommandLine(object):
       toc = cd_obj.getToc()
       # open TOC file
       if opt.toc_file:
-         fh_out = self._open_file( opt.toc_file,'wb')
+         fh_out = self._open_file( opt.toc_file,'wb','utf-8' )
          fh_out.write( self._banner_msg())
          for l in toc:
             fh_out.write("%s\n" % l)
@@ -105,8 +105,7 @@ class CommandLine(object):
          fh_out = sys.stdout
          fh_out.write( self._banner_msg())
          for l in toc:
-            # assume utf-8 encoding to sysout
-            fh_out.write(unicode("%s\n" % l).encode('utf-8'))
+            fh_out.write(str("%s\n" % l))
       fh_out.close()
 
       if cd_obj.disc.is_multisession:
@@ -114,7 +113,7 @@ class CommandLine(object):
          # frame length minus 2 frames. I'm not actually sure why 2 frames must
          # be subtracked, but it was verify to be correct. If your system/drive
          # behaves differntly, please file a bug report.
-         print >> sys.stderr, textwrap.dedent("""
+         print(textwrap.dedent("""
          #########################################################
          # Multi-Session TOC Mode
          #########################################################
@@ -125,7 +124,7 @@ class CommandLine(object):
             cdrecord --tsize=%ds /dev/zero
 
          #########################################################
-         """ % (cd_obj.last_index.len_.frames-2))    # see note for '-2'
+         """ % (cd_obj.last_index.len_.frames-2)), file=sys.stderr)    # see note for '-2'
 
    @staticmethod
    def _open_file(name,mode='rb',encoding=None):
@@ -141,7 +140,7 @@ class CommandLine(object):
                encoding = d.result['encoding']
          return codecs.open(name, mode, encoding=encoding)
       except:
-         print >> sys.stderr, sys.exc_value
+         print(sys.exc_info()[1], file=sys.stderr)
          exit(-1)
 
    def _check_multisession_opt(self, cd, opt):
@@ -153,7 +152,7 @@ class CommandLine(object):
          cd.disc.is_multisession = False
       elif not opt.multisession:
          # multisesssion option must be set to prevent usage error
-         print >> sys.stderr, textwrap.dedent("""
+         print(textwrap.dedent("""
             WARNING! - Detected multi-session track info.
 
             For safety, '%s' option must be specified when creating a TOC
@@ -161,7 +160,7 @@ class CommandLine(object):
 
             If you want to ignore this check, and disable multi-session
             features, use the '%s' argument.""" %
-               (_OPT_MULTI_SESSION,_OPT_IGNORE_MULTI_SESSION))
+               (_OPT_MULTI_SESSION,_OPT_IGNORE_MULTI_SESSION)), file=sys.stderr)
          sys.exit(-1)
 
    def _banner_msg(self):
@@ -280,39 +279,39 @@ class CommandLine(object):
 
    def _error_msg(self, e):
       """Print a default error message to the user."""
-      print >> sys.stderr, textwrap.dedent((u"""
+      print(textwrap.dedent(("""
       ERROR! -- An unrecoverable error has occurred.
 
       If you believe the CUE file is correct, please send the input file to
       <%s>, along with the error message below.
 
       ---> %s
-      """ % (__email__,e)).encode('utf-8'))
+      """ % (__email__,e))), file=sys.stderr)
 
    def _error_msg_multi_files(self, e):
       """Print error when duplicate WAV files are found."""
-      print >> sys.stderr, textwrap.dedent( (u"""
+      print(textwrap.dedent( ("""
       ERROR! -- Could not resolve WAV file:
-         '%s'\n""" % (e.src_file,)).encode('utf-8'))
+         '%s'\n""" % (e.src_file,))), file=sys.stderr)
 
-      print >> sys.stderr, "   Conflicting matches are:"
+      print("   Conflicting matches are:", file=sys.stderr)
       for f in e.found_files:
-         print >> sys.stderr, '      ' + unicode(f).encode('utf-8')
+         print('      ' + str(f), file=sys.stderr)
 
-      print >> sys.stderr, textwrap.dedent( """
+      print(textwrap.dedent( """
       Cdrdao can not correctly write pregaps in TOC files without explicit
       file lengths. If you know what you are doing, you can disable this
-      check with the '%s' option.""" % (_OPT_ALLOW_WAV_FNF,))
+      check with the '%s' option.""" % (_OPT_ALLOW_WAV_FNF,)), file=sys.stderr)
 
    def _error_msg_no_file(self, e):
       """Print a missing WAV file error message to the user."""
-      print >> sys.stderr, textwrap.dedent( (u"""
+      print(textwrap.dedent( ("""
       ERROR! -- Could not find the WAV file:
          '%s'
 
       Cdrdao can not correctly write pregaps in TOC files without explicit
       file lengths. If you know what you are doing, you can disable this
-      check with the '%s' option.""" % (e,_OPT_ALLOW_WAV_FNF,)).encode('utf-8'))
+      check with the '%s' option.""" % (e,_OPT_ALLOW_WAV_FNF,))), file=sys.stderr)
 
 
 def main():

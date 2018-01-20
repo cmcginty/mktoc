@@ -126,7 +126,7 @@ class CueParserFileTests(unittest.TestCase):
          toc_good = toc_fh.readlines()
       # compare data sets
       if toc != toc_good:
-         for num,(a,b) in enumerate(map(None,toc,toc_good)):
+         for num,(a,b) in enumerate(zip(toc,toc_good)):
             err_str = "strings do not match\n  %s:%d:%s\n  %s:%d:%s" % \
                         (self._cue_file,num,repr(a),
                          self._toc_file,num,repr(b))
@@ -138,7 +138,7 @@ class CueParserTests(unittest.TestCase):
    def testParseDisc_BadLine(self):
       cp = CueParser()
       file_ = ['BAD MATCH LINE']
-      self.assertRaisesRegexp(
+      self.assertRaisesRegex(
          ParseError, ".+: '%s'" % (file_[0]), cp.parse, file_ )
 
    def testParseTrack_BadLine(self):
@@ -146,7 +146,7 @@ class CueParserTests(unittest.TestCase):
       file_ = ['FILE "track1.wav" WAVE',
          'TRACK 01 AUDIO',
          'BAD MATCH LINE',]
-      self.assertRaisesRegexp(
+      self.assertRaisesRegex(
          ParseError, ".+: '%s'" % (file_[2],), cp.parse, file_)
 
    def testNoCueTracks(self):
