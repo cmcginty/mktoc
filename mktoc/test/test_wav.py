@@ -98,8 +98,8 @@ class WavFileCacheTests(unittest.TestCase):
    def testUnicodeFileNameMatch(self):
       """A unicode file should be matched correctly."""
       wc = WavFileCache()
-      wc._data = [u'/\xf1']
-      self.assertTrue( wc(u'\xf1'))
+      wc._data = ['/\xf1']
+      self.assertTrue( wc('\xf1'))
 
 
 ##############################################################################

@@ -58,16 +58,16 @@ class Disc( object ):
    def __str__(self):
       raise NotImplementedError
 
-   def __unicode__(self):
+   def __str__(self):
       """Return a string of TOC formatted disc information."""
-      out = [u'%s' % self._mode]
-      if self.catalog:   out += [u'CATALOG "%s"' % self.catalog]
-      out += [u'CD_TEXT { LANGUAGE_MAP { 0:EN }\n\tLANGUAGE 0 {']
-      if self.title:     out += [u'\t\tTITLE "%s"' % self.title]
-      if self.performer: out += [u'\t\tPERFORMER "%s"' % self.performer]
-      if self.discid:    out += [u'\t\tDISC_ID "%s"' % self.discid]
-      out += [u'}}']
-      return u'\n'.join(out)
+      out = ['%s' % self._mode]
+      if self.catalog:   out += ['CATALOG "%s"' % self.catalog]
+      out += ['CD_TEXT { LANGUAGE_MAP { 0:EN }\n\tLANGUAGE 0 {']
+      if self.title:     out += ['\t\tTITLE "%s"' % self.title]
+      if self.performer: out += ['\t\tPERFORMER "%s"' % self.performer]
+      if self.discid:    out += ['\t\tDISC_ID "%s"' % self.discid]
+      out += ['}}']
+      return '\n'.join(out)
 
    def set_field(self, name, value):
       """
@@ -174,28 +174,28 @@ class Track( object ):
    def __str__(self):
       raise NotImplementedError
 
-   def __unicode__(self):
+   def __str__(self):
       """Return the TOC formated representation of the :class:`Track`
       object including the :class:`TrackIndex` objects. Data tracks will
       not generate any output."""
       if self.is_data:
          return ''     # do not output to TOC
-      out = [u'\n//Track %d' % self.num]
-      out += [u'TRACK AUDIO']
-      if self.isrc:       out += [u'\tISRC "%s"' % self.isrc]
-      if self.dcp:        out += [u'\tCOPY']
-      if self.four_ch:    out += [u'\tFOUR_CHANNEL_AUDIO']
-      if self.pre:        out += [u'\tPRE_EMPHASIS']
-      out += [u'\tCD_TEXT { LANGUAGE 0 {']
-      if self.title:      out += [u'\t\tTITLE "%s"' % self.title]
-      if self.performer:  out += [u'\t\tPERFORMER "%s"' % self.performer]
-      out += [u'\t}}']
-      if self.pregap:     out += [u'\tPREGAP %s' % self.pregap]
+      out = ['\n//Track %d' % self.num]
+      out += ['TRACK AUDIO']
+      if self.isrc:       out += ['\tISRC "%s"' % self.isrc]
+      if self.dcp:        out += ['\tCOPY']
+      if self.four_ch:    out += ['\tFOUR_CHANNEL_AUDIO']
+      if self.pre:        out += ['\tPRE_EMPHASIS']
+      out += ['\tCD_TEXT { LANGUAGE 0 {']
+      if self.title:      out += ['\t\tTITLE "%s"' % self.title]
+      if self.performer:  out += ['\t\tPERFORMER "%s"' % self.performer]
+      out += ['\t}}']
+      if self.pregap:     out += ['\tPREGAP %s' % self.pregap]
 
       for idx in self.indexes:
-         out.append( unicode(idx) )
+         out.append( str(idx) )
 
-      return u'\n'.join(out)
+      return '\n'.join(out)
 
    def set_field(self, name, value):
       """
@@ -215,7 +215,7 @@ class Track( object ):
       """
       name = name.lower()
       if hasattr(self,name):
-         if isinstance(value,basestring):
+         if isinstance(value,str):
             setattr(self,name,value.strip('"'))
          elif isinstance(value,bool):
             setattr(self,name,value)
@@ -280,7 +280,7 @@ class TrackIndex(object):
    """
 
    #: Enum of valid :class:`TrackIndex` types.
-   PREAUDIO, AUDIO, INDEX, START, DATA = range(5)
+   PREAUDIO, AUDIO, INDEX, START, DATA = list(range(5))
 
    #: Integer set to :const:`PREAUDIO` or :const:`AUDIO` or :const:`INDEX` or
    #: :const:`START`. Indicate the mode of :class:`TrackIndex` object.
@@ -319,28 +319,28 @@ class TrackIndex(object):
 
    def __repr__(self):
       """Return a string used for debug logging."""
-      return ("'%s, %s'" % (self.file_, self.time)).encode('utf-8')
+      return ("'%s, %s'" % (self.file_, self.time))
 
    def __str__(self):
       raise NotImplementedError
 
-   def __unicode__(self):
+   def __str__(self):
       """Return the TOC formated string representation of the
       :class:`TrackIndex` object."""
       out = []
       if self.cmd == self.DATA:
-         return u''     # do not output to TOC
+         return ''     # do not output to TOC
       if self.cmd in [self.AUDIO, self.PREAUDIO]:
-         out += [u'\tAUDIOFILE "%(file_)s" %(time)s %(len_)s' % self.__dict__]
+         out += ['\tAUDIOFILE "%(file_)s" %(time)s %(len_)s' % self.__dict__]
       elif self.cmd == self.INDEX:
-         out += [u'\tINDEX %(time)s' % self.__dict__]
+         out += ['\tINDEX %(time)s' % self.__dict__]
       elif self.cmd == self.START:
-         out += [u'\tSTART %(len_)s' % self.__dict__]
+         out += ['\tSTART %(len_)s' % self.__dict__]
       else: raise Exception
       # add start command for pregap audio
       if self.cmd == self.PREAUDIO:
-         out += [u'\tSTART']
-      return u'\n'.join(out)
+         out += ['\tSTART']
+      return '\n'.join(out)
 
    def _file_len(self,file_):
       """Returns the number of audio samples in the WAV file, *file_*.
@@ -390,14 +390,14 @@ class _TrackTime(object):
                      c. Integer of the total frame length
                      d. :data:`None`, object is initialized to 0 length
       :type arg: str, :class:`tuple`, int, :data:`None`"""
-      if isinstance(arg,basestring):
+      if isinstance(arg,str):
          # extract time from string
          val = [int(x) for x in arg.split(':')]
          self._time = tuple(val)
       elif isinstance(arg,tuple):
          # assume arg is correct format
          self._time = arg
-      elif isinstance(arg,(int,long)):
+      elif isinstance(arg,int):
          # convert frame count to min,sec,frames
          min_,fr = divmod(arg, self._FPM)
          sec,fr = divmod(fr, self._FPS)
@@ -421,11 +421,10 @@ class _TrackTime(object):
 
    def __sub__(self, other):
       """Return result of *self* - *other*."""
-      mn,sc,fr = map(lambda x,y: x-y, self._time, other._time)
+      mn,sc,fr = list(map(lambda x,y: x-y, self._time, other._time))
       if fr<0: sc-=1; fr+=self._FPS
       if sc<0: mn-=1; sc+=self._SPM
-      if mn<0: raise UnderflowError, \
-         'Track time calculation resulted in a negative value'
+      if mn<0: raise UnderflowError('Track time calculation resulted in a negative value')
       return _TrackTime((mn,sc,fr))
 
    @property

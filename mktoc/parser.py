@@ -19,7 +19,7 @@
    * :class:`WavParser`
 """
 
-from __future__ import absolute_import
+
 
 from itertools import *
 import logging
@@ -77,9 +77,9 @@ class ParseData(object):
       Access method to return a text stream of the CUE data in TOC format.
       """
       toc = []
-      toc.extend( unicode(self.disc).split(u'\n') )
+      toc.extend( str(self.disc).split('\n') )
       for trk in self._tracks:
-         toc.extend( unicode(trk).split(u'\n') )
+         toc.extend( str(trk).split('\n') )
       # expand tabs to 4 spaces, strip trailing white space on each line
       toc = [line.expandtabs(4).rstrip() for line in toc]
       return toc
@@ -107,8 +107,8 @@ class ParseData(object):
       new_files = wo( self._files, tmp )
 
       # change all index file names to newly generated files
-      file_map = dict( zip(self._files,new_files) )
-      indexes = imap(op.attrgetter('indexes'), self._tracks);
+      file_map = dict( list(zip(self._files,new_files)) )
+      indexes = map(op.attrgetter('indexes'), self._tracks);
       for idx in chain(*indexes):
          if idx.file_: # data tracks do not have valid files
             log.debug( "updating index file '%s'", idx.file_ )
@@ -401,7 +401,7 @@ class _CueStateMachine(fsm.StateMachine):
 
    def cmd_flags( self, match_name, cmd, flags):
       """Set the state of flag fields in a :class:`disc.Track` instance."""
-      for f in filter(lambda x: x in ['DCP','4CH','PRE'],flags.split()):
+      for f in [x for x in flags.split() if x in ['DCP','4CH','PRE']]:
          if f == '4CH': f = 'four_ch'     # change '4CH' flag name
          self.track.set_field(f,True)
 
@@ -431,7 +431,7 @@ class _CueStateMachine(fsm.StateMachine):
                            'rb', encoding=encoding) as fh:
             lines = fh.readlines()
          regex = re.compile(r'^\s+%d\s+\|.+\|\s+(.+)\s+\|.+\|.+$' % (trk_idx,))
-         matches = filter(None,map(regex.match,lines))
+         matches = [_f for _f in map(regex.match,lines) if _f]
          if matches:
             # convert first match from '1:11.11' to '1:11:11'
             size = matches[0].group(1).replace('.',':')
@@ -510,9 +510,10 @@ class WavParser(object):
 
       :returns: :class:`ParseData` instance that mirrors the WAV data.
       """
-      files = map(self.file_lookup, wav_files)
+      files = list(map(self.file_lookup, wav_files))
       # return a new Track object with a single Index using 'file_'
-      def mk_track((idx,file_)):
+      def mk_track(tuple):
+         (idx,file_) = tuple
          # create a new track for the WAV file
          trk = disc.Track(idx+1)
          # add the WAV file to the first index in the track
@@ -520,5 +521,5 @@ class WavParser(object):
          return trk
       # return a new ParseData object with empy Disc and complete Track list
       return ParseData( disc.Disc(),
-                        map( mk_track, enumerate(files)), files )
+                        list(map( mk_track, enumerate(files))), files )
 
